@@ -53,7 +53,7 @@ development:
 		helpers: null
 		
 	database:
-		driver: driver
+		driver: pdo_mysql
 		host: host
 		dbname: dbname
 		user: user

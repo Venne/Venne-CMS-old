@@ -20,6 +20,7 @@ class InstallationPresenter extends \Venne\Application\UI\Presenter {
 
 	public function beforeRender()
 	{
+		parent::beforeRender();
 		$this->template->hideMenuItems = true;
 	}
 
