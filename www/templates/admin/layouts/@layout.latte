@@ -1,0 +1,61 @@
+{**
+ * Venne:CMS layout template.
+ *
+ * @copyright  Copyright (c) 2011 Josef Kříž 
+ *
+ * @param string   $basePath	web base path
+ * @param array    $flashes		flash messages
+ *}
+
+{js /js/jquery-1.6.min.js}
+{js /js/jquery-ui-1.8.12.custom.min.js}
+{js /js/netteForms.js}
+{js /js/venne.js}
+{js /templates/admin/js/admin.js}
+
+{css /css/jquery-ui-1.8.12.custom.min.js}
+{css /templates/admin/css/style.css}
+
+{capture $body}
+<body>
+	{if !isset($installationMode)}{element panel}{/if}
+	<div id="page">
+		<div id="top">
+			<a href="{link :Default:Default:}"><div id="logo"></div></a>
+			<div id="menu">
+				{*element navigation:main*}
+				{if !isset($hideMenuItems)}
+				<ul>
+					<li><a href="{plink :Webs:Default:}" {if $presenter->isCurrent("Webs:*")}class="active"{/if}>Správa webů</a></li>
+					<li><a href="{plink :Modules:Default:}" {if $presenter->isCurrent("Modules:*")}class="active"{/if}>Správa modulů</a></li>
+					<li><a href="{plink :Security:Default:}" {if $presenter->isCurrent("Security:*")}class="active"{/if}>Security settings</a></li>
+					<li><a href="{plink :Application:Default:}" {if $presenter->isCurrent("Application:*")}class="active"{/if}>Správa systému</a></li>
+				</ul>
+				{/if}
+			</div>
+		</div>
+		<div id="middle">
+			<div id="middle-left">
+				<div id="submenu">
+					{if !isset($hideMenuItems)}
+						<h3>{_"Main settings"}</h3>
+						{element navigation:main}
+					{/if}
+				</div>
+			</div>
+			<div id="content" class="module-">
+				{if !isset($hideMenuItems)}{element navigation:path}{/if}
+				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+				{include #content}
+			</div>
+		</div>
+		<div id="bottom">
+			<span>Copyright © 2011 Josef Kříž</span> | <span>version {$venneVersionId} {$venneVersionState}</span> | <span><a href="{link :Default:About:}">about Venne:CMS</a></span>
+		</div>
+	</div>
+</body>
+</html>
+{/capture}
+
+{element header:html5}
+{!$body}

@@ -1,0 +1,41 @@
+{block content}
+
+{include "../head.latte"}
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+
+		function setVisibility(){
+			if($("#frmformMenu-type").val() == "dir"){
+				$("#par1").hide();
+				$("#par3").hide();
+				$("#par2").hide();
+				$("#par4").hide();
+				$("#linkto").hide();
+				$("#frmformMenu-url").parent().parent().hide();
+			}else if($("#frmformMenu-type").val() == "link"){
+				$("#par1").show();
+				$("#par3").show();
+				$("#par2").show();
+				$("#par4").show();
+				$("#linkto").show();
+				$("#frmformMenu-url").parent().parent().hide();
+			}else{
+				$("#frmformMenu-url").parent().parent().show();
+				$("#par1").hide();
+				$("#par3").hide();
+				$("#par2").hide();
+				$("#par4").hide();
+				$("#linkto").hide();
+			}
+		}
+
+		$("#frmformMenu-type").change(function(){
+			setVisibility();
+		})
+		setVisibility();
+
+    });
+</script>
+
+{control formMenu}

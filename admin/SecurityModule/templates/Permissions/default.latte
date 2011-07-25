@@ -1,0 +1,44 @@
+{block content}
+
+{include "../head.latte"}
+
+{*control menu*}
+
+{control formRole}
+
+{var $form=>$presenter["form"]}
+{var $dep=>NULL}
+<?php echo $form->getRenderer()->render($form, "begin"); ?>
+
+
+{block #items}
+<ul{if $dep == ""} class="sortable"{/if}>
+		{if $items}
+			{foreach $items as $item}
+			{if $presenter->getContext()->authorizator->isAllowed($role, $item->name)}
+				{var $allowed=>true}
+			{else}
+				{var $allowed=>false}
+			{/if}
+
+			<li id="item-{$item->id}">
+				<div{if $allowed} style="background: #00aa00; border-color: #008800; color: #ffffff;"{/if}>
+					<span class="text">
+						{=str_replace($dep."-", "", $item->name)}
+					</span>
+					<span class="buttons">
+						{if !isset($permissions[$item->name])}
+							{$control['form']["allow_".$item->id]->control}
+						{else}
+							{$control['form']["delete_".$item->id]->control}
+						{/if}
+					</span>
+				</div>
+				{if $item->childrens}{include #items, "items"=>$item->childrens, 'dep' => $item->name}{/if}
+			</li>
+			{/foreach}
+		{/if}
+</ul>
+{/block}
+
+<?php echo $form->getRenderer()->render($form, "end"); ?>

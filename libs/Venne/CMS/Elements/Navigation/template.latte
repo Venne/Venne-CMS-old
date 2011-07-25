@@ -1,0 +1,9 @@
+{block #menu}
+<ul>
+	{foreach $items as $item}
+		<li {if $presenter->isCurrentUrl($item->getLink($presenter))}class="active"{/if}><a href="{$item->getLink($presenter)}" {if $presenter->isCurrentUrl($item->getLink($presenter))}class="active"{/if}>{$item->name}</a></li>
+		{if is_array($item->childrens)} {include #menu, "items"=>$item->childrens} {/if}
+	{/foreach}
+</ul>
+{/block}
+

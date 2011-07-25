@@ -1,0 +1,172 @@
+<?php
+
+namespace NavigationModule;
+
+use Nette\Utils\Html;
+
+/**
+ * @allowed(administration-navigation)
+ */
+class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
+
+
+	/** @var \Venne\CMS\Modules\Navigation */
+	protected $model;
+	/** @persistent */
+	public $id;
+
+	public function startup()
+	{
+		parent::startup();
+		$this->model = $this->getContext()->navigation;
+
+		$this->getNavigation()->addPath("Navigation", $this->link(":Navigation:Default:"));
+		$this->template->menu = $this->model->getCurrentFrontNavigation($this->getHttpRequest());
+		$this->template->dep = Null;
+	}
+
+
+	/**
+	 * @allowed(administration-navigation-edit)
+	 */
+	public function actionCreate()
+	{
+		$this->getNavigation()->addPath("new item", $this->link(":Navigation:Default:create"));
+	}
+
+
+	/**
+	 * @allowed(administration-navigation-edit)
+	 */
+	public function actionEdit()
+	{
+		$this->getNavigation()->addPath("edit" . " (" . $this->id . ")", $this->link(":Navigation:Default:edit"));
+	}
+
+
+	public function createComponentForm($name)
+	{
+		$form = new \Venne\Application\UI\Form($this, $name);
+		$this->formRecursion($form, $this->template->menu);
+		$form->onSuccess[] = array($this, "handleSave");
+		return $form;
+	}
+
+
+	public function createComponentFormSort()
+	{
+		$form = new \Venne\Application\UI\Form($this, "formSort");
+		$form->addHidden("hash");
+		$form->addSubmit("Save", "Save")->onClick[] = array($this, "handleSortSave");
+		return $form;
+	}
+
+
+	public function formRecursion($form, $menu)
+	{
+		if ($menu) {
+			foreach ($menu as $item) {
+				$form->addSubmit("settings_" . $item->id, "Settings");
+				$form->addSubmit("delete_" . $item->id, "Delete")->getControlPrototype()->class = "grey";
+				if ($item->childrens)
+					$this->formRecursion($form, $item->childrens);
+			}
+		}
+	}
+
+
+	public function formSaveRecursion($form, $menu)
+	{
+		foreach ($menu as $key => $item) {
+			if ($form["delete_" . $item->id]->isSubmittedBy()) {
+				$this->getNavigation()->remove($this->getNavigation()->getRepository()->find($item->id));
+				$this->flashMessage("Menu item has been deleted", "success");
+				$this->redirect("this");
+			}
+			if ($form["settings_" . $item->id]->isSubmittedBy()) {
+				$this->redirect("edit", array("id" => $item->id));
+			}
+
+			if ($item->childrens)
+				$this->formSaveRecursion($form, $item->childrens);
+		}
+	}
+
+
+	/**
+	 * @allowed(administration-navigation-edit)
+	 */
+	public function handleSave()
+	{
+		$this->formSaveRecursion($this["form"], $this->template->menu);
+	}
+
+
+	/**
+	 * @allowed(administration-navigation-edit)
+	 */
+	public function handleSortSave()
+	{
+		$data = array();
+		$val = $this["formSort"]->getValues();
+		$hash = explode("&", $val["hash"]);
+		foreach ($hash as $item) {
+			$item = explode("=", $item);
+			$depend = $item[1];
+			if ($depend == "root")
+				$depend = Null;
+			$id = \substr($item[0], 5, -1);
+			if (!isset($data[$depend]))
+				$data[$depend] = array();
+			$order = count($data[$depend]) + 1;
+			$data[$depend][] = array("id" => $id, "order" => $order, "navigation_id" => $depend);
+		}
+		$this->model->setStructure($data);
+		$this->flashMessage("Structure has been saved.", "success");
+		$this->redirect("this");
+	}
+
+
+	public function createComponentFormMenu($name)
+	{
+		$form = new \Venne\CMS\Modules\NavigationForm($this, $name);
+		$form->setSuccessLink("this");
+		$form->setFlashMessage("Navigation has been created");
+		$form["navigation_id"]->setItems($this->getNavigation()->getCurrentFrontList($this->getHttpRequest()));
+		$form["navigation_id"]->setPrompt("root");
+		return $form;
+	}
+
+
+	public function createComponentFormMenuEdit($name)
+	{
+		$form = new \Venne\CMS\Modules\NavigationForm($this, $name);
+		$form->setSuccessLink("this");
+		$form->setFlashMessage("Navigation has been updated");
+		$form->setEntity($this->getNavigation()->getRepository()->find($this->getParam("id")));
+		$form["navigation_id"]->setItems($this->getNavigation()->getCurrentFrontList($this->getHttpRequest(), $this->id));
+		$form["navigation_id"]->setPrompt("root");
+		return $form;
+	}
+
+	public function beforeRender()
+	{
+		parent::beforeRender();
+		$this->setTitle("Venne:CMS | Navigation administration");
+		$this->setKeywords("navigation administration");
+		$this->setDescription("Navigation administration");
+		$this->setRobots(self::ROBOTS_NOINDEX | self::ROBOTS_NOFOLLOW);
+	}
+
+	public function renderDefault()
+	{
+		$this->template->form = $this["form"];
+	}
+
+
+	public function renderCreate()
+	{
+		
+	}
+
+}

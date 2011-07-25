@@ -1,0 +1,17 @@
+{**
+ * Venne:CMS layout template.
+ *
+ * @copyright  Copyright (c) 2011 Josef Kříž 
+ *
+ * @param string   $basePath	web base path
+ * @param array    $flashes		flash messages
+ *}
+
+{element header:html5}
+<body>
+
+	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+
+	{include #content}
+</body>
+</html>
