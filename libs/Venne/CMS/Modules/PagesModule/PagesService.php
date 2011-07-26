@@ -60,7 +60,7 @@ implements
 		$prefix = $url->getScheme() . "://" . $url->getHost() . $url->getBasePath() . $this->container->params["CMS"]["modules"]["pagesModule"]["routePrefix"];
 		
 		foreach($pages as $page){
-			$sitemap->addItem($prefix . $page->url->url, $page->updated->format('Y-m-d'), \Venne\CMS\Sitemap\Sitemap::CHANGE_WEEKLY, round(0.5 * $priority * 10)/10);
+			$sitemap->addItem($prefix . $page->url, $page->updated->format('Y-m-d'), \Venne\CMS\Sitemap\Sitemap::CHANGE_WEEKLY, round(0.5 * $priority * 10)/10);
 		}
 		
 		return $sitemap->getXml();
