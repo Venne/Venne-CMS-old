@@ -21,7 +21,9 @@
 	{if !isset($installationMode)}{element panel}{/if}
 	<div id="page">
 		<div id="top">
-			<a href="{link :Default:Default:}"><div id="logo"></div></a>
+			{if !$venneModeInstallation}<a href="{link :Default:Default:}">{/if}
+				<div id="logo"></div>
+			{if !$venneModeInstallation}</a>{/if}
 			<div id="menu">
 				{*element navigation:main*}
 				{if !isset($hideMenuItems)}
@@ -50,7 +52,7 @@
 			</div>
 		</div>
 		<div id="bottom">
-			<span>Copyright © 2011 Josef Kříž</span> | <span>version {$venneVersionId} {$venneVersionState}</span> | <span><a href="{link :Default:About:}">about Venne:CMS</a></span>
+			<span>Copyright © 2011 Josef Kříž</span> | <span>version {$venneVersionId} {$venneVersionState}</span>{if !$venneModeInstallation} | <span><a href="{link :Default:About:}">about Venne:CMS</a></span>{/if}
 		</div>
 	</div>
 </body>

@@ -52,6 +52,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	public function actionFinish()
 	{
 		$this->getContext()->configurator->setInstallationDone();
+		$this->template->websiteUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
 	}
 
 
