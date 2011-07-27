@@ -16,7 +16,7 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class HeaderElement extends \Venne\Application\UI\Element {
+class HeaderElement extends \Venne\CMS\Developer\Element {
 
 
 	public function beforeRender()

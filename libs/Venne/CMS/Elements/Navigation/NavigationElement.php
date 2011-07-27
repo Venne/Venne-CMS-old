@@ -16,7 +16,7 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class NavigationElement extends \Venne\Application\UI\Element {
+class NavigationElement extends \Venne\CMS\Developer\Element {
 
 
 	public function startup()

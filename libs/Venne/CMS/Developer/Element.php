@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Application\UI;
+namespace Venne\CMS\Developer;
 
 use Venne;
 
@@ -18,7 +18,7 @@ use Venne;
  *
  * @author Josef Kříž
  */
-class Element extends Control {
+class Element extends Venne\Application\UI\Control implements IElement {
 	
 	/** @var integer */
 	protected $key;

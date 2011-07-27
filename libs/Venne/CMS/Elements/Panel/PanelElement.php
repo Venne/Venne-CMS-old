@@ -16,7 +16,7 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class PanelElement extends \Venne\Application\UI\Element {
+class PanelElement extends \Venne\CMS\Developer\Element {
 
 
 	public function startup()

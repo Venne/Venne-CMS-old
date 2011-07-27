@@ -16,7 +16,7 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class ContentExtensionElement extends \Venne\Application\UI\Element {
+class ContentExtensionElement extends \Venne\CMS\Developer\Element {
 
 	protected $moduleName;
 	protected $moduleItemId;
