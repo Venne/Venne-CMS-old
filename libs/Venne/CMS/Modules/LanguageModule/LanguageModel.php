@@ -28,7 +28,13 @@ class LanguageModel extends Venne\CMS\Developer\Model {
 	 */
 	public function saveItem($entity, $lang, $name, $alias, $websiteEntity = NULL)
 	{
-		if(!$websiteEntity) $websiteEntity = $this->container->website->currentFront;
+		if(!$websiteEntity){
+			if(defined("VENNE_MODE_INSTALLATION")){
+				$websiteEntity = $this->container->website->getRepository()->find(-1);
+			}else{
+				$websiteEntity = $this->container->website->currentFront;
+			}
+		}
 		
 		if(!$entity){
 			$entity = new Language;

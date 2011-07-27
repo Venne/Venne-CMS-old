@@ -40,7 +40,7 @@ class AdminPresenter extends \Venne\Application\UI\Presenter {
 		 * Website
 		 */
 		if (!$this->webId)
-			$this->webId = $this->getWebsite()->getCurrentFrontWebsite($this->getHttpRequest())->id;
+			$this->webId = $this->getWebsite()->currentFront->id;
 
 		/*
 		 * Login
