@@ -101,7 +101,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		 * Security
 		 */
 		if (!$this->isAllowed("this")) {
-			throw new \Exception("Low permission");
+			throw new \Nette\Application\ForbiddenRequestException;
 		}
 
 		/*
