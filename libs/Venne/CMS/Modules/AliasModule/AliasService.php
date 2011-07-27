@@ -20,13 +20,14 @@ class AliasService
 extends BaseService
 implements
 	\Venne\CMS\Developer\IContentExtensionModule,
-	 \Venne\CMS\Developer\ICallbackModule	
+	\Venne\CMS\Developer\ICallbackModule,
+	\Venne\CMS\Developer\IModelModule
 {
 
 	/** @var string */
 	protected $className = "alias";
 
-	public function getContentExtension()
+	public function createServiceContentExtension()
 	{
 		return new AliasContentExtension($this->container);
 	}
@@ -57,6 +58,13 @@ implements
 		}
 	}
 
+	/**
+	 * @return AliasModel 
+	 */
+	public function createServiceModel()
+	{
+		return new AliasModel($this->container, $this);
+	}
 
 }
 

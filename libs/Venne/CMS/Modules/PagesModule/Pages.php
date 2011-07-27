@@ -24,7 +24,7 @@ namespace Venne\CMS\Modules;
  * @property $created
  * @property $updated
  * @property $website
- * @property $urls
+ * @property $url
  */
 class Pages extends \Venne\Models\BaseEntity{
 	

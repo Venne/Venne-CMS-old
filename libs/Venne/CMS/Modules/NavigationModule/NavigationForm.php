@@ -118,7 +118,7 @@ class NavigationForm extends \Venne\Forms\EntityForm{
 		$this->mapToEntity($this->entity);
 		$this->entity->parent = $service->getRepository()->find($values["navigation_id"]);
 		$this->entity->active = true;
-		$this->entity->website = $presenter->getContext()->website->getCurrentFrontWebsite($presenter->getContext()->httpRequest);
+		$this->entity->website = $presenter->getContext()->website->currentFront;
 		$em->flush();
 	}
 

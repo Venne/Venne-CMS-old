@@ -16,7 +16,7 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class BaseService extends \Nette\Object {
+class BaseService extends \Nette\DI\Container {
 
 	/** @var \Nette\DI\Container */
 	protected $container;

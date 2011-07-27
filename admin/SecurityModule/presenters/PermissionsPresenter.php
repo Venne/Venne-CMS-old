@@ -25,7 +25,7 @@ class PermissionsPresenter extends BasePresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->getNavigation()->addPath("Permissions", $this->link(":Security:Permissions:"));
+		$this->addPath("Permissions", $this->link(":Security:Permissions:"));
 
 		$this->template->items = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Resource")->findBy(array("parent" => NULL));
 		$this->template->roles = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->findAll();

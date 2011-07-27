@@ -20,7 +20,7 @@ class BasePresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->getNavigation()->addPath("Security", $this->link(":Security:Default:"));
+		$this->addPath("Security", $this->link(":Security:Default:"));
 	}
 	
 	public function beforeRender()

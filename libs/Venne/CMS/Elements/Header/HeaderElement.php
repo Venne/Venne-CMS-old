@@ -22,7 +22,7 @@ class HeaderElement extends \Venne\Application\UI\Element {
 	public function beforeRender()
 	{
 		$this->template->setFile(__DIR__ . "/" . $this->key . ".latte");
-		$this->template->templateName = $this->presenter->getWebsite()->getCurrentWebsite($this->presenter->getContext()->httpRequest)->template;
+		$this->template->templateName = $this->presenter->getWebsite()->current->template;
 	}
 
 }

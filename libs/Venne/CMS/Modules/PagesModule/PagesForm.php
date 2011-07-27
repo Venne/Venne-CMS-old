@@ -24,7 +24,7 @@ class PagesForm extends \Venne\Forms\ContentEntityForm {
 	{
 		parent::startup();
 		
-		$pages = $this->getPresenter()->getContext()->pages;
+		$model = $this->getPresenter()->getContext()->pages->model;
 		
 		$this->addGroup();
 		$this->addText("title", "Title")
@@ -39,7 +39,7 @@ class PagesForm extends \Venne\Forms\ContentEntityForm {
 		$this->addGroup("URL");
 		$this->addCheckbox("mainPage", "Main page");
 		$this->addText("url", "URL")
-				->addRule(callback($pages, "isUrlAvailable"), "This URL is used.")
+				->addRule(callback($model, "isUrlAvailable"), "This URL is used.")
 				->setOption("description", "(example: 'contact')");
 		$this->addGroup("Text");
 		$this->addTextArea("text", "", Null, 20);
@@ -61,28 +61,13 @@ class PagesForm extends \Venne\Forms\ContentEntityForm {
 	{
 		parent::save();
 		$values = $this->getValues();
-		$presenter = $this->getPresenter();
-		$service = $presenter->getContext()->pages;
-		$em = $service->getEntityManager();
-		$website = $presenter->getContext()->website->getCurrentFrontWebsite($presenter->getContext()->httpRequest);
+		$model = $this->getPresenter()->getContext()->pages->model;
 
-		if (!$this->entity) {
-			$this->entity = new Pages;
-			$em->persist($this->entity);
-		}
-		$this->mapToEntity($this->entity);
-
-		/* set main Page */
-		if ($values["mainPage"]) {
-			foreach ($service->getRepository()->findByWebsite($website->id) as $page) {
-				$page->mainPage = false;
-			}
-			$this->entity->mainPage = true;
-		}
-
-		$this->entity->website = $website;
-		
-		$em->flush();
+		$this->entity = $model->saveItem(
+					$this->entity, $values["title"], $values["url"], $values["text"],
+					$values["mainPage"], $values["keywords"], $values["description"],
+					$values["created"], $values["updated"]
+				);		
 	}
 
 

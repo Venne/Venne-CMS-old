@@ -31,16 +31,15 @@ class NavigationContentExtension extends BaseService implements \Venne\CMS\Devel
 		
 		if(!$menu){
 			if($values["use"]){
-				$this->container->navigation->getRepository()->addModuleItem($moduleName, $moduleItemId, $values["name"], $values["navigation_id"], $linkParams, $this->container->website->getCurrentFrontWebsite($this->container->httpRequest)->id);
+				$this->container->navigation->model->addModuleItem($moduleName, $moduleItemId, $values["name"], $values["navigation_id"], $linkParams, $this->container->website->currentFront->id);
 			}
 		}else{
 			if($values["use"]){
-				$this->container->navigation->getRepository()->updateModuleItem($menu, $moduleName, $moduleItemId, $values["name"], $values["navigation_id"], $linkParams, $this->container->website->getCurrentFrontWebsite($this->container->httpRequest)->id);
+				$this->container->navigation->model->updateModuleItem($menu, $moduleName, $moduleItemId, $values["name"], $values["navigation_id"], $linkParams, $this->container->website->currentFront->id);
 			}else{
-				$this->container->navigation->getRepository()->removeModuleItem($menu);
+				$this->container->navigation->model->removeModuleItem($menu);
 			}
 		}
-		$this->container->navigation->getEntityManager()->flush();
 	}
 
 
@@ -49,7 +48,7 @@ class NavigationContentExtension extends BaseService implements \Venne\CMS\Devel
 		$container->addCheckbox("use", "Create navigation item");
 		$container->addText("name", "Navigation name");
 		$container->addSelect("navigation_id", "Navigation parent")
-				->setItems($this->container->navigation->getCurrentFrontList($this->container->httpRequest))
+				->setItems($this->container->navigation->model->getCurrentFrontList($this->container->httpRequest))
 				->setPrompt("root");
 	}
 	

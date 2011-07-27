@@ -90,6 +90,10 @@ class EntityForm extends Form {
 
 	public function onSubmitForm()
 	{
+		if(!$this->isValid()){
+			return ;
+		}
+		
 		$this->save();
 		if ($this->flash)
 			$this->getPresenter()->flashMessage($this->flash, "success");

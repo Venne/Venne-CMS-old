@@ -17,7 +17,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->getNavigation()->addPath("Pages", $this->link(":Pages:Default:"));
+		$this->addPath("Pages", $this->link(":Pages:Default:"));
 	}
 
 	/**
@@ -25,7 +25,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->getNavigation()->addPath("new item", $this->link(":Navigation:Default:create"));
+		$this->addPath("new item", $this->link(":Navigation:Default:create"));
 	}
 
 	/**
@@ -33,7 +33,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionEdit()
 	{
-		$this->getNavigation()->addPath("Edit ({$this->id})", $this->link(":Pages:Default:edit"));
+		$this->addPath("Edit ({$this->id})", $this->link(":Pages:Default:edit"));
 	}
 
 
@@ -82,7 +82,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 	public function renderDefault()
 	{
-		$this->template->table = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findByWebsite($this->getWebsite()->getCurrentFrontWebsite($this->getHttpRequest())->id);
+		$this->template->table = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findByWebsite($this->getWebsite()->currentFront->id);
 	}
 
 }

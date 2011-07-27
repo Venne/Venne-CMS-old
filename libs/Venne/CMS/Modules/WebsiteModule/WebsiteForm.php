@@ -22,8 +22,13 @@ class WebsiteForm extends \Venne\Forms\EntityForm{
 	
 	public function startup()
 	{
+		parent::startup();
+		$model = $this->getPresenter()->getContext()->website->model;
+		
 		$this->addGroup();
-		$this->addText("name", "Website name")->addRule(Form::FILLED, 'Enter website name');
+		$this->addText("name", "Website name")
+				->addRule(Form::FILLED, 'Enter website name')
+				->addRule(callback($model, "isNameAvailable"), "This name is used.");
 		$this->addText("template", "Template")
 				->setDefaultValue("venne")
 				->addRule(Form::FILLED, 'Enter template');
@@ -57,32 +62,22 @@ class WebsiteForm extends \Venne\Forms\EntityForm{
 	public function save()
 	{
 		$values = $this->getValues();
-		$presenter = $this->getPresenter();
-		$service = $presenter->getContext()->website;
-		$em = $service->getEntityManager();
+		$model = $this->getPresenter()->getContext()->website->model;
+		$langModel = $this->getPresenter()->getContext()->language->model;
 		
-		if(!$this->entity){
-			$this->entity = new Website;
-			$entityLang = new Language;
-			$entityLang->website = $this->entity;
-			$em->persist($this->entity);
-			$em->persist($entityLang);
-			$this->mapToEntity($this->entity);
-			
-			$entityLang->lang = $values["lang"];
-			$entityLang->name = $values["langName"];
-			$entityLang->alias = $values["langAlias"];
-			
-			$em->flush();
-			$this->entity->langDefault = $entityLang->id;
-		}else{
-			$this->mapToEntity($this->entity);
-			$entityLang = $presenter->getContext()->language->getRepository()->find($this->entity->langDefault);
-			$entityLang->lang = $values["lang"];
-			$entityLang->name = $values["langName"];
-			$entityLang->alias = $values["langAlias"];
-		}
-		$em->flush();
+		/*
+		 * Update language
+		 */
+		$langEntity = $this->entity ? $this->getPresenter()->getContext()->language->getRepository()->find($this->entity->langDefault) : NULL; 
+		$langEntity = $langModel->saveItem($langEntity, $values["lang"], $values["langName"], $values["langAlias"], $this->entity);
+		
+		
+		$this->entity = $model->saveItem(
+					$this->entity, $values["name"], $values["regex"], $values["template"],
+					$values["langType"], $values["langValue"], $langEntity->id, $values["routePrefix"]
+				);
+		
+		$langEntity = $langModel->saveItem($langEntity, $values["lang"], $values["langName"], $values["langAlias"], $this->entity);
 	}
 
 }

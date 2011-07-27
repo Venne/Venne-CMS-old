@@ -22,10 +22,10 @@ class NavigationElement extends \Venne\Application\UI\Element {
 	public function startup()
 	{
 		if ($this->key == "main") {
-			$this->template->items = $this->getContext()->navigation->getCurrentNavigation($this->getContext()->httpRequest);
+			$this->template->items = $this->getContext()->navigation->model->getRootItems();
 		} else if ($this->key == "path") {
 			$this->template->setFile(__DIR__ . "/path.latte");
-			$this->template->items = $this->getContext()->navigation->getPaths();
+			$this->template->items = $this->getContext()->navigation->model->getPaths();
 		}
 	}
 

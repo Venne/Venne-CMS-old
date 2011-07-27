@@ -16,7 +16,7 @@ namespace Venne\CMS\Developer;
  */
 interface IModelModule{
 	
-	public function getModel();
+	public function createServiceModel();
 
 }
 

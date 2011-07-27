@@ -16,61 +16,63 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class LanguageService extends BaseService {
-	
+class LanguageService extends BaseService implements
+\Venne\CMS\Developer\IModelModule {
+
+
 	protected $className = "language";
-	
 	protected $currentLang;
-	
 	protected $currentFrontLang;
-	
+
+
 	public function getCurrentLang(\Nette\Http\Request $httpRequest)
 	{
-		if(!$this->currentLang){
+		if (!$this->currentLang) {
 			$repo = $this->getRepository();
-			$website = $this->getContainer()->website->getCurrentWebsite($httpRequest);
-			
-			if(defined("VENNE_MODE_INSTALLATION")){
+			$website = $this->getContainer()->website->current;
+
+			if (defined("VENNE_MODE_INSTALLATION")) {
 				$this->currentLang = new Language;
 				$this->currentLang->name = "en";
 				$this->currentLang->alias = "en";
 				$this->currentLang->name = "english";
-			}else if($website->langType == \Venne\CMS\Modules\Website::LANG_PARSE_URL){
+			} else if ($website->langType == \Venne\CMS\Modules\Website::LANG_PARSE_URL) {
 				$url = explode("/", str_replace(".", "/", str_replace("http://", "", $httpRequest->getUrl())));
 				$langAlias = $url[$website->langValue];
-				
-				$this->currentLang = $repo->findOneBy(array("website"=>$website->id, "alias"=>$langAlias));
-				if(!$this->currentLang){
-					$this->currentLang = $repo->findOneBy(array("id"=>$website->langDefault));
+
+				$this->currentLang = $repo->findOneBy(array("website" => $website->id, "alias" => $langAlias));
+				if (!$this->currentLang) {
+					$this->currentLang = $repo->findOneBy(array("id" => $website->langDefault));
 				}
-			}else if($website->langType == \Venne\CMS\Modules\Website::LANG_IN_GET){
-				$this->currentLang = $repo->findOneBy(array("website"=>$website->id, "alias"=>$httpRequest->getQuery($website->langValue)));
-				if(!$this->currentLang){
-					$this->currentLang = $repo->findOneBy(array("id"=>$website->langDefault));
+			} else if ($website->langType == \Venne\CMS\Modules\Website::LANG_IN_GET) {
+				$this->currentLang = $repo->findOneBy(array("website" => $website->id, "alias" => $httpRequest->getQuery($website->langValue)));
+				if (!$this->currentLang) {
+					$this->currentLang = $repo->findOneBy(array("id" => $website->langDefault));
 				}
-			}else{
+			} else {
 				$this->currentLang = NULL;
 			}
-			if(!$this->currentLang){
+			if (!$this->currentLang) {
 				throw new BadLanguageException("Language doesn't exist");
 			}
 		}
 		return $this->currentLang;
 	}
-	
+
+
 	public function getCurrentFrontLang(\Nette\Http\Request $httpRequest)
 	{
-		if(!$this->currentFrontLang){
+		if (!$this->currentFrontLang) {
 			$repo = $this->getRepository();
-			$website = $this->getContainer()->website->getCurrentFrontWebsite($httpRequest);
-			
+			$website = $this->getContainer()->website->currentFront;
+
 			$langId = $httpRequest->getQuery("langEdit");
-			if(!$langId){
-				$this->currentFrontLang = $repo->findOneBy(array("id"=>$website->langDefault));
-			}else{
-				$this->currentFrontLang = $repo->findOneBy(array("alias"=>$langId, "website"=>$website->id));
+			if (!$langId) {
+				$this->currentFrontLang = $repo->findOneBy(array("id" => $website->langDefault));
+			} else {
+				$this->currentFrontLang = $repo->findOneBy(array("alias" => $langId, "website" => $website->id));
 			}
-			if(!$this->currentFrontLang){
+			if (!$this->currentFrontLang) {
 				throw new BadLanguageException("Language doesn't exist");
 			}
 		}
@@ -80,10 +82,10 @@ class LanguageService extends BaseService {
 
 	public function getCurrentLanguages($httpRequest)
 	{
-		$website = $this->getContainer()->website->getCurrentWebsite($httpRequest);
+		$website = $this->getContainer()->website->current;
 		$repo = $this->getRepository();
-		
-		$res = $repo->findBy(array("website"=>$website->id));
+
+		$res = $repo->findBy(array("website" => $website->id));
 
 		$arr = array();
 		foreach ($res as $doc) {
@@ -92,13 +94,14 @@ class LanguageService extends BaseService {
 
 		return $arr;
 	}
-	
+
+
 	public function getCurrentFrontLanguages($httpRequest)
 	{
-		$website = $this->getContainer()->website->getCurrentFrontWebsite($httpRequest);
+		$website = $this->getContainer()->website->currentFront;
 		$repo = $this->getRepository();
-		
-		$res = $repo->findBy(array("website"=>$website->id));
+
+		$res = $repo->findBy(array("website" => $website->id));
 
 		$arr = array();
 		foreach ($res as $doc) {
@@ -107,22 +110,33 @@ class LanguageService extends BaseService {
 
 		return $arr;
 	}
-	
+
+
 	/**
 	 * @param string $alias 
 	 */
 	public function getLanguageIdByAlias($alias)
 	{
-		return $this->getRepository()->findOneBy(array("alias"=>$alias))->id;
+		return $this->getRepository()->findOneBy(array("alias" => $alias))->id;
 	}
-	
+
+
 	/**
 	 * @param string $alias 
 	 */
 	public function getLanguageAliasById($id)
 	{
-		return $this->getRepository()->findOneBy(array("id"=>$id))->alias;
+		return $this->getRepository()->findOneBy(array("id" => $id))->alias;
 	}
-	
+
+
+	/**
+	 * @return LanguageModel 
+	 */
+	public function createServiceModel()
+	{
+		return new LanguageModel($this->container, $this);
+	}
+
 }
 

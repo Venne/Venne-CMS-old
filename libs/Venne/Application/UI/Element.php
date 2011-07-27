@@ -62,7 +62,7 @@ class Element extends Control {
 	{
 		$dir = dirname($this->getReflection()->getFileName());
 		return array(
-			WWW_DIR . "/templates/" . $this->getContext()->website->getCurrentWebsite($this->getPresenter()->getContext()->httpRequest)->template . "/templates/".  ucfirst($this->name) . "Element/template.latte",
+			WWW_DIR . "/templates/" . $this->getContext()->website->current->template . "/templates/".  ucfirst($this->name) . "Element/template.latte",
 			$dir . "/template.latte"
 		);
 	}

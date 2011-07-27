@@ -27,7 +27,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->getNavigation()->addPath("Websites setting", $this->link(":Webs:Default:", array("id" => NULL)));
+		$this->addPath("Websites setting", $this->link(":Webs:Default:", array("id" => NULL)));
 	}
 
 	/**
@@ -35,7 +35,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->getNavigation()->addPath("new item", $this->link(":Webs:Default:create"));
+		$this->addPath("new item", $this->link(":Webs:Default:create"));
 	}
 
 
@@ -44,7 +44,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionEdit()
 	{
-		$this->getNavigation()->addPath("edit" . " (" . $this->id . ")", $this->link(":Webs:Default:edit"));
+		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Webs:Default:edit"));
 	}
 
 

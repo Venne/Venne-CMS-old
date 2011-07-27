@@ -19,7 +19,7 @@ interface IContentExtensionModule{
 	/**
 	 * @return \Venne\CMS\Developer\ContentExtension
 	 */
-	public function getContentExtension();
+	public function createServiceContentExtension();
 
 }
 

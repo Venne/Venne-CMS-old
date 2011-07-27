@@ -36,7 +36,7 @@ class RoutingManager{
 	 */
 	public function setFrontRoutes($router){
 				
-		$prefix = $this->container->website->getCurrentWebsite($this->container->httpRequest)->routePrefix;
+		$prefix = $this->container->website->current->routePrefix;
 		
 		/*
 		 * Default route values
@@ -46,9 +46,9 @@ class RoutingManager{
 					\Nette\Application\Routers\Route::FILTER_OUT => callback($this->container->language, "getLanguageAliasById"),
 			);
 		/* Hide default lang */
-		if($this->container->website->getCurrentWebsite($this->container->httpRequest)->langType == Modules\Website::LANG_IN_GET){
+		if($this->container->website->current->langType == Modules\Website::LANG_IN_GET){
 			$values += array(
-				\Nette\Application\Routers\Route::VALUE => $this->container->website->getCurrentWebsite($this->container->httpRequest)->langDefault,
+				\Nette\Application\Routers\Route::VALUE => $this->container->website->current->langDefault,
 			);
 		}
 		$values = array("lang"=>$values);

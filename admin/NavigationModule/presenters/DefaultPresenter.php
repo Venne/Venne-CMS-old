@@ -10,18 +10,16 @@ use Nette\Utils\Html;
 class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 
-	/** @var \Venne\CMS\Modules\Navigation */
-	protected $model;
 	/** @persistent */
 	public $id;
+
 
 	public function startup()
 	{
 		parent::startup();
-		$this->model = $this->getContext()->navigation;
 
-		$this->getNavigation()->addPath("Navigation", $this->link(":Navigation:Default:"));
-		$this->template->menu = $this->model->getCurrentFrontNavigation($this->getHttpRequest());
+		$this->addPath("Navigation", $this->link(":Navigation:Default:"));
+		$this->template->menu = $this->getNavigation()->model->getFrontRootItems();
 		$this->template->dep = Null;
 	}
 
@@ -31,7 +29,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->getNavigation()->addPath("new item", $this->link(":Navigation:Default:create"));
+		$this->addPath("new item", $this->link(":Navigation:Default:create"));
 	}
 
 
@@ -40,7 +38,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionEdit()
 	{
-		$this->getNavigation()->addPath("edit" . " (" . $this->id . ")", $this->link(":Navigation:Default:edit"));
+		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Navigation:Default:edit"));
 	}
 
 
@@ -132,7 +130,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form = new \Venne\CMS\Modules\NavigationForm($this, $name);
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Navigation has been created");
-		$form["navigation_id"]->setItems($this->getNavigation()->getCurrentFrontList($this->getHttpRequest()));
+		$form["navigation_id"]->setItems($this->getNavigation()->model->getCurrentFrontList($this->getHttpRequest()));
 		$form["navigation_id"]->setPrompt("root");
 		return $form;
 	}
@@ -144,10 +142,11 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Navigation has been updated");
 		$form->setEntity($this->getNavigation()->getRepository()->find($this->getParam("id")));
-		$form["navigation_id"]->setItems($this->getNavigation()->getCurrentFrontList($this->getHttpRequest(), $this->id));
+		$form["navigation_id"]->setItems($this->getNavigation()->model->getCurrentFrontList($this->getHttpRequest(), $this->id));
 		$form["navigation_id"]->setPrompt("root");
 		return $form;
 	}
+
 
 	public function beforeRender()
 	{
@@ -157,6 +156,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$this->setDescription("Navigation administration");
 		$this->setRobots(self::ROBOTS_NOINDEX | self::ROBOTS_NOFOLLOW);
 	}
+
 
 	public function renderDefault()
 	{

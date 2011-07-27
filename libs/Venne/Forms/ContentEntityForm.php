@@ -28,7 +28,7 @@ class ContentEntityForm extends EntityForm {
 		foreach ($this->getPresenter()->getContext()->moduleManager->getContentExtensionModules() as $module) {
 			$this->addGroup("Module $module settings")->setOption('container', \Nette\Utils\Html::el('fieldset')->class('collapsible collapsed'));
 			$container = $this->addContainer("module_$module");
-			$this->getPresenter()->getContext()->{$module}->getContentExtension()->setForm($container);
+			$this->getPresenter()->getContext()->{$module}->contentExtension->setForm($container);
 			$this->setCurrentGroup();
 		}
 	}
@@ -44,7 +44,7 @@ class ContentEntityForm extends EntityForm {
 		
 		foreach ($this->getPresenter()->getContext()->moduleManager->getContentExtensionModules() as $module) {
 			$container = $this->getComponent("module_$module");
-			$this->getPresenter()->getContext()->{$module}->getContentExtension()->saveForm($container, $this->getModuleName(), $this->getModuleItemId(), $this->getLinkParams());
+			$this->getPresenter()->getContext()->{$module}->contentExtension->saveForm($container, $this->getModuleName(), $this->getModuleItemId(), $this->getLinkParams());
 			$this->removeComponent($container);
 		}
 
@@ -64,7 +64,7 @@ class ContentEntityForm extends EntityForm {
 			
 			foreach ($this->getPresenter()->getContext()->moduleManager->getContentExtensionModules() as $module) {
 				$container = $this->getComponent("module_$module");
-				$this->getPresenter()->getContext()->{$module}->getContentExtension()->setValues($container, $this->getModuleName(), $this->getModuleItemId(), $this->getLinkParams());
+				$this->getPresenter()->getContext()->{$module}->contentExtension->setValues($container, $this->getModuleName(), $this->getModuleItemId(), $this->getLinkParams());
 			}
 		}
 	}

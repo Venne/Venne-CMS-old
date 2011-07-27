@@ -16,17 +16,15 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class CommentsService
-extends BaseService
-implements
-	\Venne\CMS\Developer\IContentExtensionModule,
-	\Venne\CMS\Developer\IRenderableContentExtensionModule
-{
+class CommentsService extends BaseService implements
+\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IRenderableContentExtensionModule, \Venne\CMS\Developer\IModelModule {
+
 
 	/** @var string */
 	protected $className = "comments";
 
-	public function getContentExtension()
+
+	public function createServiceContentExtension()
 	{
 		return new CommentsContentExtension($this->container);
 	}
@@ -37,6 +35,14 @@ implements
 		return "comments";
 	}
 
+
+	/**
+	 * @return CommentsModel 
+	 */
+	public function createServiceModel()
+	{
+		return new CommentsModel($this->container, $this);
+	}
 
 }
 

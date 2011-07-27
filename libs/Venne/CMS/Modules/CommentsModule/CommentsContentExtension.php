@@ -22,23 +22,9 @@ class CommentsContentExtension extends BaseService implements \Venne\CMS\Develop
 	public function saveForm(\Nette\Forms\Container $container, $moduleName, $moduleItemId, $linkParams)
 	{
 		$values = $container->getValues();
-
-		$item = $this->container->comments->getRepository()->findOneBy(
-						array(
-							"moduleItemId" => $moduleItemId,
-							"moduleName" => $moduleName,
-						)
-		);
-		if(!$item && $values["use"]){
-			$entity = new Comments;
-			$entity->moduleName = $moduleName;
-			$entity->moduleItemId = $moduleItemId;
-			$this->container->entityManager->persist($entity);
-			$this->container->entityManager->flush();
-		}else if($item && !$values["use"]){
-			$this->container->entityManager->remove($item);
-			$this->container->entityManager->flush();
-		}
+		$model = $this->container->comments->model;
+		
+		$model->saveSetting($moduleItemId, $moduleName, $values["use"]);
 	}
 
 
@@ -50,14 +36,9 @@ class CommentsContentExtension extends BaseService implements \Venne\CMS\Develop
 
 	public function setValues(\Nette\Forms\Container $container, $moduleName, $moduleItemId, $linkParams)
 	{
-		$item = $this->container->comments->getRepository()->findOneBy(
-						array(
-							"moduleItemId" => $moduleItemId,
-							"moduleName" => $moduleName,
-						));
-		if($item){
-			$container["use"]->setValue(true);
-		}
+		$model = $this->container->comments->model;
+		
+		$container["use"]->setValue($model->getSetting($moduleItemId, $moduleName));
 	}
 
 }

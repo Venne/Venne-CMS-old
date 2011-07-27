@@ -20,6 +20,7 @@ use Venne;
  */
 class Presenter extends \Nette\Application\UI\Presenter {
 
+
 	/* robots */
 	CONST ROBOTS_INDEX = 1;
 	CONST ROBOTS_NOINDEX = 2;
@@ -40,7 +41,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public $robots;
 	public $author;
 	public $title;
-	
+
 	/* callbacks */
 	public $onStartup;
 	public $onRender;
@@ -81,6 +82,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		return $this->getContext()->website;
 	}
 
+
 	public function startup()
 	{
 		parent::startup();
@@ -94,26 +96,26 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$userPanel = new Venne\Panels\UserPanel($this->getContext());
 		$userPanel->setNameColumn("name");
 		\Nette\Diagnostics\Debugger::addPanel($userPanel);
-		
+
 		/*
 		 * Security
 		 */
-		if(!$this->isAllowed("this")){
+		if (!$this->isAllowed("this")) {
 			throw new \Exception("Low permission");
 		}
-		
+
 		/*
 		 * Add Callback modules
 		 */
-		if(!defined("VENNE_MODE_INSTALLATION")){
-			foreach($this->getContext()->moduleManager->getCallbackModules() as $module){
+		if (!defined("VENNE_MODE_INSTALLATION")) {
+			foreach ($this->getContext()->moduleManager->getCallbackModules() as $module) {
 				$this->onStartup[] = callback($this->getContext()->{$module}, "onStartup");
 				$this->onRender[] = callback($this->getContext()->{$module}, "onRender");
 			}
 		}
 
 
-		
+
 		/*
 		 * Macros
 		 */
@@ -135,7 +137,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 //		if(file_exists(WWW_DIR . "/templates/".$this->getContext()->cms->website->getTemplateName()."/".$this->getContext()->translator->getLang().".mo")){
 //			$this->getContext()->translator->addDictionary($this->getContext()->cms->website->getTemplateName().'Template', WWW_DIR . "/templates/".$this->getContext()->cms->website->getTemplateName());
 //		}
-		
+
 		$this->onStartup();
 	}
 
@@ -154,7 +156,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$this->template->venneVersionState = VENNE_VERSION_STATE;
 
 		$this->onRender();
-		
+
 		\Venne\Panels\Stopwatch::start();
 	}
 
@@ -215,7 +217,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function formatLayoutTemplateFiles()
 	{
-		$template = $this->getWebsite()->getCurrentWebsite($this->getHttpRequest())->template;
+		$template = $this->getWebsite()->current->template;
 		$name = $this->getName();
 		$presenter = substr($name, strrpos(':' . $name, ':'));
 		$layout = $this->layout ? $this->layout : 'layout';
@@ -236,68 +238,81 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	/**
 	 * @return string
 	 */
-	final public function getModuleName()
+	public function getModuleName()
 	{
 		return $this->moduleName;
 	}
-	
+
+
 	/**
-	 * @return string
+	 * @return mixed
 	 */
-	final public function getModule()
+	public function getModule()
 	{
 		return $this->getContext()->{$this->moduleName};
 	}
+
+
+	/**
+	 * @return mixed
+	 */
+	public function getModel()
+	{
+		return $this->getModule()->model;
+	}
+
 
 	/**
 	 * @param type $destination 
 	 */
 	public function isAllowed($destination)
 	{
-		if(defined("VENNE_MODE_INSTALLATION")) return true;
-		if($destination == "this"){
+		if (defined("VENNE_MODE_INSTALLATION"))
+			return true;
+		if ($destination == "this") {
 			$action = "action" . ucfirst($this->action);
 			$class = $this;
-		}else if(substr($destination, -1, 1) == "!"){
+		} else if (substr($destination, -1, 1) == "!") {
 			$action = "handle" . ucfirst(substr($destination, 0, -1));
 			$class = $this;
-		}else{
+		} else {
 			$destination = explode(":", $destination);
-			if(count($destination) == 1){
+			if (count($destination) == 1) {
 				$action = "action" . ucfirst($destination[count($destination) - 1]);
 				$class = $this;
-			}else{
+			} else {
 				$action = "action" . ucfirst($destination[count($destination) - 1]);
 				unset($destination[count($destination) - 1]);
 				$class = "\\";
-				foreach($destination as $key=>$item){
-					if($key>0){
+				foreach ($destination as $key => $item) {
+					if ($key > 0) {
 						$class .= "\\";
 					}
-					if($key == count($destination) - 1){
-						$class .= $item."Presenter";
-					}else{
-						$class .= $item."Module";
+					if ($key == count($destination) - 1) {
+						$class .= $item . "Presenter";
+					} else {
+						$class .= $item . "Module";
 					}
 				}
 			}
 		}
-	
+
 		$annot = $this->getContext()->authorizator->getClassResource($class);
-		if($annot){
-			if(!$this->getUser()->isAllowed($annot)){
+		if ($annot) {
+			if (!$this->getUser()->isAllowed($annot)) {
 				return false;
 			}
 		}
-		
+
 		$annot = $this->getContext()->authorizator->getMethodResource($class, $action);
-		if($annot){
-			if(!$this->getUser()->isAllowed($annot)){
+		if ($annot) {
+			if (!$this->getUser()->isAllowed($annot)) {
 				return false;
 			}
 		}
 		return true;
 	}
+
 
 	public function isCurrent($destination)
 	{
@@ -369,6 +384,16 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public function addJs($content)
 	{
 		$this->js[$content] = $content;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param string $url 
+	 */
+	public function addPath($name, $url)
+	{
+		$this->getContext()->navigation->model->addPath($name, $url);
 	}
 
 

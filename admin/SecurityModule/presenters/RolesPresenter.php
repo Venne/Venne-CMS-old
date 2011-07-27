@@ -25,7 +25,7 @@ class RolesPresenter extends BasePresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->getNavigation()->addPath("Roles", $this->link(":Security:Roles:"));
+		$this->addPath("Roles", $this->link(":Security:Roles:"));
 
 		$this->template->items = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->findBy(array("parent" => NULL));
 	}
@@ -36,7 +36,7 @@ class RolesPresenter extends BasePresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->getNavigation()->addPath("new item", $this->link(":Security:Roles:create"));
+		$this->addPath("new item", $this->link(":Security:Roles:create"));
 	}
 
 
@@ -45,7 +45,7 @@ class RolesPresenter extends BasePresenter {
 	 */
 	public function actionEdit()
 	{
-		$this->getNavigation()->addPath("edit" . " (" . $this->id . ")", $this->link(":Security:Roles:edit"));
+		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Security:Roles:edit"));
 	}
 
 

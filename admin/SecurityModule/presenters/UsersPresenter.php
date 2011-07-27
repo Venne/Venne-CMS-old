@@ -25,7 +25,7 @@ class UsersPresenter extends BasePresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->getNavigation()->addPath("Users", $this->link(":Security:Users:"));
+		$this->addPath("Users", $this->link(":Security:Users:"));
 		$this->template->table = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "User")->findAll();
 	}
 
@@ -35,7 +35,7 @@ class UsersPresenter extends BasePresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->getNavigation()->addPath("new item", $this->link(":Security:Users:create"));
+		$this->addPath("new item", $this->link(":Security:Users:create"));
 	}
 
 
@@ -44,7 +44,7 @@ class UsersPresenter extends BasePresenter {
 	 */
 	public function actionEdit()
 	{
-		$this->getNavigation()->addPath("edit" . " (" . $this->id . ")", $this->link(":Security:Users:edit"));
+		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Security:Users:edit"));
 	}
 
 

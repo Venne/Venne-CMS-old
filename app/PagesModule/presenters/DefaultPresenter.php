@@ -16,7 +16,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter
 	{
 		parent::startup();
 		
-		$this->template->entity = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findOneBy(array("url"=>$this->url, "website"=>$this->getWebsite()->getCurrentWebsite($this->getHttpRequest())->id));
+		$this->template->entity = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findOneBy(array("url"=>$this->url, "website"=>$this->getWebsite()->current->id));
 			
 		if(!$this->template->entity){
 			throw new \Nette\Application\BadRequestException;
