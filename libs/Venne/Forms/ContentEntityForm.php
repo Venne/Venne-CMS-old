@@ -36,6 +36,10 @@ class ContentEntityForm extends EntityForm {
 
 	public function onSubmitForm()
 	{
+		if(!$this->isValid()){
+			return ;
+		}
+
 		$this->save();
 		
 		foreach ($this->getPresenter()->getContext()->moduleManager->getContentExtensionModules() as $module) {

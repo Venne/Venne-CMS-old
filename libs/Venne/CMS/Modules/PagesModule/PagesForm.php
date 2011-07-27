@@ -13,7 +13,7 @@ namespace Venne\CMS\Modules;
 
 use Venne\ORM\Column;
 use Nette\Utils\Html;
-
+use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
@@ -23,8 +23,12 @@ class PagesForm extends \Venne\Forms\ContentEntityForm {
 	public function startup()
 	{
 		parent::startup();
+		
+		$pages = $this->getPresenter()->getContext()->pages;
+		
 		$this->addGroup();
-		$this->addText("title", "Title");
+		$this->addText("title", "Title")
+				->setRequired('Enter title');
 		$this->addText("keywords", "Keywords");
 		$this->addText("description", "Description");
 
@@ -34,8 +38,9 @@ class PagesForm extends \Venne\Forms\ContentEntityForm {
 
 		$this->addGroup("URL");
 		$this->addCheckbox("mainPage", "Main page");
-		$this->addText("url", "URL");
-
+		$this->addText("url", "URL")
+				->addRule(callback($pages, "isUrlAvailable"), "This URL is used.")
+				->setOption("description", "(example: 'contact')");
 		$this->addGroup("Text");
 		$this->addTextArea("text", "", Null, 20);
 	}

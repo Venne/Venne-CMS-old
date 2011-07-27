@@ -66,6 +66,16 @@ implements
 		return $sitemap->getXml();
 	}
 
+	public function isUrlAvailable(\Nette\Forms\IControl $control)
+	{
+		$url = $control->getValue();
+		$entity = $control->parent->getEntity();
+		$res = $this->getRepository()->findOneBy(array("url"=>$url));
+		if(!$res || ($res && $entity && $res->id == $entity->id)){
+			return true;
+		}
+		return false;
+	}
 	
 }
 

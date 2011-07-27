@@ -9,15 +9,14 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\CMS\Modules;
-
-use Venne;
+namespace Venne\CMS\Developer;
 
 /**
  * @author Josef Kříž
  */
-class PagesRepository extends BaseRepository {
+interface IModelModule{
+	
+	public function getModel();
 
-		
 }
 

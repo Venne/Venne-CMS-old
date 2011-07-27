@@ -25,10 +25,14 @@ class BaseRepository extends \Doctrine\ORM\EntityRepository {
 	 * @param string
 	 * @return array
 	 */
-	public function fetchPairs($key = NULL, $value = NULL)
+	public function fetchPairs($key = NULL, $value = NULL, $where = array())
 	{
-		$res = $this->createQueryBuilder('uni')->select("uni.$key, uni.$value")->getQuery()->getResult();
-
+		$res = $this->createQueryBuilder('uni')->select("uni.$key, uni.$value");
+		foreach($where as $key2=>$item){
+			$res->where("uni.$key2 = :$key2")->setParameter($key2, $item);
+		}
+		$res = $res->getQuery()->getResult();
+		
 		$arr = array();
 		foreach ($res as $row) {
 			$arr[$row[$key]] = $row[$value];

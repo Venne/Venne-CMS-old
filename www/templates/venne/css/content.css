@@ -23,14 +23,14 @@ div#content hr, .cke_show_borders hr {
 	border: 0;
 }
 
-div#content h2, .cke_show_borders h2 {
+div#content h1, .cke_show_borders h1 {
 	font: 28px "Times New Roman", Georgia, Serif;
 	color: #009600;
 }
-div#all-1 div#content h2, div#all-1 .cke_show_borders h2 {
+div#all-1 div#content h1, div#all-1 .cke_show_borders h1 {
 	color: #009600;
 }
-div#content h3, .cke_show_borders h3 {
+div#content h2, .cke_show_borders h2 {
 	font: 22px "Times New Roman", Georgia, Serif;
 	color: #333333;
 }

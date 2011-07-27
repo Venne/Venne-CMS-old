@@ -41,6 +41,11 @@ class EntityForm extends Form {
 			$this->setValuesFromEntity();
 		}
 	}
+	
+	public function getEntity()
+	{
+		return $this->entity;
+	}
 
 
 	public function setFlashMessage($value)
