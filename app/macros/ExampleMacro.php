@@ -9,26 +9,30 @@
  * the file license.txt that was distributed with this source code.
  */
 
+namespace Venne\Latte\Macros;
 
 /**
  * Description of ExampleMacro
  *
  * @author Josef Kříž
  */
-class ExampleMacro implements \Venne\Latte\IBaseMacro {
-	
-	public static function filter($content)
+class ExampleMacro extends \Nette\Latte\Macros\MacroSet {
+
+
+	public static function filter(\Nette\Latte\MacroNode $node, $writer)
 	{
-		return 	' echo "hello '.$content.'"; ';
+		return ('echo "' . $node->args . '"; ');
 	}
+
 
 	/**
 	 * Adds 
 	 */
-	public static function register()
+	public static function install(\Nette\Latte\Parser $parser)
 	{
-		\Venne\Latte\DefaultMacros::$defaultMacros['example'] = '<?php %ExampleMacro::filter%; ?>';
+		$me = new static($parser);
+		$me->addMacro('example', array($me, "filter"));
 	}
-	
+
 }
 
