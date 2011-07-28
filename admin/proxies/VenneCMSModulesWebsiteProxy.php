@@ -43,7 +43,7 @@ class VenneCMSModulesWebsiteProxy extends \Venne\CMS\Modules\Website implements 
 
     public function __sleep()
     {
-        return array('__isInitialized__', 'name', 'regex', 'routePrefix', 'template', 'langType', 'langValue', 'langDefault', 'id');
+        return array('__isInitialized__', 'name', 'regex', 'routePrefix', 'skin', 'langType', 'langValue', 'langDefault', 'id');
     }
 
     public function __clone()

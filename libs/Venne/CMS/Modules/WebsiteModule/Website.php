@@ -49,7 +49,7 @@ class Website extends \Venne\Models\BaseEntity {
 	/**
 	 * @Column(type="string",  length=300) 
 	 */
-	protected $template;
+	protected $skin;
 	
 	/**
 	 *  @Column(type="string", length=30)

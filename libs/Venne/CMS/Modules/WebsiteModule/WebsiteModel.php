@@ -29,7 +29,7 @@ class WebsiteModel extends Venne\CMS\Developer\Model {
 	 * @param string $routePrefix
 	 * @return Website 
 	 */
-	public function saveItem($entity, $name, $regex, $template, $langType, $langValue, $langDefault, $routePrefix)
+	public function saveItem($entity, $name, $regex, $skin, $langType, $langValue, $langDefault, $routePrefix)
 	{
 		if(!$entity){
 			$entity = new Website;
@@ -37,7 +37,7 @@ class WebsiteModel extends Venne\CMS\Developer\Model {
 		}
 		$entity->name = $name;
 		$entity->regex = $regex;
-		$entity->template = $template;
+		$entity->skin = $skin;
 		$entity->langType = $langType;
 		$entity->langValue = $langValue;
 		$entity->langDefault = $langDefault;

@@ -217,21 +217,37 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function formatLayoutTemplateFiles()
 	{
-		$template = $this->getWebsite()->current->template;
+		$skinName = $this->getWebsite()->current->skin;
+		$layout = $this->layout ? $this->layout : 'layout';
+		$list = array(
+			APP_DIR . "/skins/$skinName/layouts/@$layout.latte"
+		);
+		return $list;
+	}
+
+
+	/**
+	 * Formats view template file names.
+	 * @return array
+	 */
+	public function formatTemplateFiles()
+	{
+		$skinName = $this->getWebsite()->current->skin;
 		$name = $this->getName();
 		$presenter = substr($name, strrpos(':' . $name, ':'));
-		$layout = $this->layout ? $this->layout : 'layout';
 		$dir = dirname(dirname($this->getReflection()->getFileName()));
-		$list = array(
-			"$dir/templates/$presenter/@$layout.latte",
-			"$dir/templates/$presenter.@$layout.latte",
-			WWW_DIR . "/templates/$template/layouts/@$layout.latte",
+		$dirP = str_replace(realpath(APP_DIR) . "/", "", $dir);
+
+		return array(
+			APP_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
+			APP_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
+			APP_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
+			APP_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
+			APP_DIR . "/$dirP/templates/$presenter/$this->view.latte",
+			APP_DIR . "/$dirP/templates/$presenter.$this->view.latte",
+			APP_DIR . "/$dirP/templates/$presenter/$this->view.phtml",
+			APP_DIR . "/$dirP/templates/$presenter.$this->view.phtml",
 		);
-		do {
-			$list[] = "$dir/templates/@$layout.latte";
-			$dir = dirname($dir);
-		} while ($dir && ($name = substr($name, 0, strrpos($name, ':'))));
-		return $list;
 	}
 
 

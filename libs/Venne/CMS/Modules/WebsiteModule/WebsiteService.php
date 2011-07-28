@@ -46,7 +46,7 @@ class WebsiteService extends BaseService implements
 		} else {
 			$currentWebsite = new Website;
 			$currentWebsite->name = "installation";
-			$currentWebsite->template = "admin";
+			$currentWebsite->skin = "admin";
 		}
 		if (!$currentWebsite) {
 			throw new InvalidWebsiteException("Website does not exist");

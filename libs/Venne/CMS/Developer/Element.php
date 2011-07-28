@@ -61,10 +61,11 @@ class Element extends Venne\Application\UI\Control implements IElement {
 	public function formatTemplateFiles()
 	{
 		$dir = dirname($this->getReflection()->getFileName());
-		return array(
-			WWW_DIR . "/templates/" . $this->getContext()->website->current->template . "/templates/".  ucfirst($this->name) . "Element/template.latte",
+		$list = array(
+			APP_DIR . "/skins/" . $this->getContext()->website->current->skin . "/".  ucfirst($this->name) . "Element/template.latte",
 			$dir . "/template.latte"
 		);
+		return $list;
 	}
 
 

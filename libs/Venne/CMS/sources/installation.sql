@@ -311,7 +311,7 @@ CREATE TABLE IF NOT EXISTS `website` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(300) NOT NULL,
   `regex` varchar(300) NOT NULL,
-  `template` varchar(300) NOT NULL,
+  `skin` varchar(300) NOT NULL,
   `langType` varchar(30) NOT NULL,
   `langValue` varchar(30) NOT NULL,
   `langDefault` int(11) DEFAULT NULL,
@@ -324,7 +324,7 @@ CREATE TABLE IF NOT EXISTS `website` (
 -- Vypisuji data pro tabulku `website`
 --
 
-INSERT INTO `website` (`id`, `name`, `regex`, `template`, `langType`, `langValue`, `langDefault`, `routePrefix`) VALUES
+INSERT INTO `website` (`id`, `name`, `regex`, `skin`, `langType`, `langValue`, `langDefault`, `routePrefix`) VALUES
 (-1, 'admin', '*', 'admin', 'get', 'lang', 1, '');
 
 --

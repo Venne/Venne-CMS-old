@@ -29,9 +29,9 @@ class WebsiteForm extends \Venne\Forms\EntityForm{
 		$this->addText("name", "Website name")
 				->addRule(Form::FILLED, 'Enter website name')
 				->addRule(callback($model, "isNameAvailable"), "This name is used.");
-		$this->addText("template", "Template")
+		$this->addText("skin", "Skin")
 				->setDefaultValue("venne")
-				->addRule(Form::FILLED, 'Enter template');
+				->addRule(Form::FILLED, 'Enter skin');
 		$this->addText("regex", "Regex")
 				->setDefaultValue("*")
 				->addRule(Form::FILLED, 'Enter regex');
@@ -73,7 +73,7 @@ class WebsiteForm extends \Venne\Forms\EntityForm{
 		
 		
 		$this->entity = $model->saveItem(
-					$this->entity, $values["name"], $values["regex"], $values["template"],
+					$this->entity, $values["name"], $values["regex"], $values["skin"],
 					$values["langType"], $values["langValue"], $langEntity->id, $values["routePrefix"]
 				);
 		
