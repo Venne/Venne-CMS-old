@@ -33,8 +33,8 @@ class Configurator {
 	public function setAdminAccount($name, $password)
 	{
 		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . "/../config.neon");
-		$config["development"]["CMS"]["admin"]["name"] = $name;
-		$config["development"]["CMS"]["admin"]["password"] = $password;
+		$config["common"]["CMS"]["admin"]["name"] = $name;
+		$config["common"]["CMS"]["admin"]["password"] = $password;
 		$config = \Nette\Config\NeonAdapter::save($config, WWW_DIR . "/../config.neon");
 	}
 	
@@ -48,11 +48,11 @@ class Configurator {
 	public function setDatabase($driver, $host, $dbname, $user, $password)
 	{
 		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . "/../config.neon");
-		$config["development"]["database"]["driver"] = $driver;
-		$config["development"]["database"]["host"] = $host;
-		$config["development"]["database"]["dbname"] = $dbname;
-		$config["development"]["database"]["user"] = $user;
-		$config["development"]["database"]["password"] = $password;
+		$config["common"]["database"]["driver"] = $driver;
+		$config["common"]["database"]["host"] = $host;
+		$config["common"]["database"]["dbname"] = $dbname;
+		$config["common"]["database"]["user"] = $user;
+		$config["common"]["database"]["password"] = $password;
 		$config = \Nette\Config\NeonAdapter::save($config, WWW_DIR . "/../config.neon");
 	}
 	

@@ -23,7 +23,7 @@ Debugger::enable();
 
 // Load configuration from config.neon file
 $configurator = new Venne\Configurator;
-$configurator->loadConfig(__DIR__ . '/../config.neon');
+$configurator->loadConfig(__DIR__ . '/../config.neon', "common");
 
 
 // Configure application
