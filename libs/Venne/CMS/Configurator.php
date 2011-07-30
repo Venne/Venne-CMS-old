@@ -80,7 +80,7 @@ class Configurator {
 	 */
 	public function setInstallationDone()
 	{
-		$handle = \fopen(TEMP_DIR . "/installed", 'w');
+		$handle = \fopen(FLAGS_DIR . "/installed", 'w');
 		\fwrite($handle, "");
 		\fclose($handle);
 	}

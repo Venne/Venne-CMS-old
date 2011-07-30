@@ -40,7 +40,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 		/*
 		 * Writable
 		 */
-		$paths = array(WWW_DIR . "/../app/", WWW_DIR . "/public/", WWW_DIR . "/skins/", WWW_DIR . "/../config.neon");
+		$paths = array(WWW_DIR . "/../app/", WWW_DIR . "/public/", WWW_DIR . "/skins/", WWW_DIR . "/../config.neon", FLAGS_DIR);
 		foreach ($paths as $item) {
 			if (!is_writable($item)) {
 				$this->flashMessage("Path " . $item . " is not writable.", "warning");

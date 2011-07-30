@@ -21,7 +21,7 @@ define('ROOT_PATH', $path);
 
 if(strpos($_SERVER["REQUEST_URI"], $pathName."admin/installation") === false){
 	if(strpos($_SERVER["REQUEST_URI"], $pathName."admin") === false){
-		if(!file_exists(WWW_DIR . "/../temp/installed")){
+		if(!file_exists(WWW_DIR . "/../flags/installed")){
 			//die("Location: /" . $path . "/admin/installation");
 			header("Location: //" . $path . "/admin/installation");
 		}else{
@@ -42,6 +42,9 @@ define('LIBS_DIR', WWW_DIR . '/../libs');
 
 // absolute filesystem path to the temporary files
 define('TEMP_DIR', WWW_DIR . '/../temp');
+
+// absolute filesystem path to the flags dir
+define('FLAGS_DIR', WWW_DIR . '/../flags');
 
 // load bootstrap file
 require APP_DIR . '/bootstrap.php';
