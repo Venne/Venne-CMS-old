@@ -15,7 +15,8 @@
  * @param $langAlias
  *}
 
-{js /js/jquery-1.6.min.js}
+{extends "./../../@html5.latte"}
+
 {js /js/jquery-ui-1.8.12.custom.min.js}
 {js /js/netteForms.js}
 {js /js/jquery.nette.js}
@@ -25,7 +26,7 @@
 {css /skins/venne/css/content.css}
 {css /skins/venne/css/flash.css}
 
-{capture $body}
+{block #body}
 <body>
 	{element panel}
 	<div id="all-1">
@@ -90,6 +91,4 @@
 	</div>
 </body>
 </html>
-{/capture}
-{element header:html5}
-{!$body}
+{/block}
