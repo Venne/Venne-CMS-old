@@ -31,7 +31,7 @@ class Engine extends \Nette\Latte\Engine {
 		/*
 		 * Load macros
 		 */
-		foreach($container->params["CMS"]["macros"] as $item){
+		foreach($container->params["venne"]["macros"] as $item){
 			$class = "\Venne\Latte\Macros\\".ucfirst($item)."Macro";
 			$class::install($this->parser);
 		}

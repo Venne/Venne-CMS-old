@@ -56,14 +56,14 @@ class RoutingManager{
 		/*
 		 * Default route
 		 */
-		$router[] = new Route('', $this->container->params["CMS"]["defaultModule"].":Default:", Route::ONE_WAY);
-		$router[] = new Route($prefix, $this->container->params["CMS"]["defaultModule"].":Default:", Route::ONE_WAY);
+		$router[] = new Route('', $this->container->params["venne"]["defaultModule"].":Default:", Route::ONE_WAY);
+		$router[] = new Route($prefix, $this->container->params["venne"]["defaultModule"].":Default:", Route::ONE_WAY);
 		
 		/*
 		 * Routes for modules
 		 */
 		foreach($this->container->moduleManager->getRouteModules() as $module){
-			$this->container->{$module}->getRoute($router, $values, $prefix . $this->container->params["CMS"]["modules"][$module."Module"]["routePrefix"]);
+			$this->container->{$module}->getRoute($router, $values, $prefix . $this->container->params["venne"]["modules"][$module."Module"]["routePrefix"]);
 		}
 
 	}

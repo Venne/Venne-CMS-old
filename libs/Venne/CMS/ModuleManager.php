@@ -33,7 +33,7 @@ class ModuleManager {
 	public function getModules()
 	{
 		if(!$this->modules){
-			$modules = $this->container->params["CMS"]["modules"];
+			$modules = $this->container->params["venne"]["modules"];
 			foreach($modules as $key=>$item){
 				$this->modules[] = lcfirst(substr($key, 0, -6));
 			}

@@ -89,7 +89,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		/*
 		 * Add modules to DebugBar
 		 */
-		foreach ($this->getContext()->params["CMS"]["panels"] as $item) {
+		foreach ($this->getContext()->params["venne"]["panels"] as $item) {
 			$class = "\\Venne\\Panels\\" . ucfirst($item);
 			\Nette\Diagnostics\Debugger::addPanel(new $class($this->getContext()));
 		}
@@ -220,7 +220,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$skinName = $this->getWebsite()->current->skin;
 		$layout = $this->layout ? $this->layout : 'layout';
 		$list = array(
-			APP_DIR . "/skins/$skinName/layouts/@$layout.latte"
+			EXTENSIONS_DIR . "/skins/$skinName/layouts/@$layout.latte"
 		);
 		return $list;
 	}
@@ -239,10 +239,10 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$dirP = str_replace(realpath(APP_DIR) . "/", "", $dir);
 
 		return array(
-			APP_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
-			APP_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
-			APP_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
-			APP_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
+			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
+			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
+			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
+			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
 			APP_DIR . "/$dirP/templates/$presenter/$this->view.latte",
 			APP_DIR . "/$dirP/templates/$presenter.$this->view.latte",
 			APP_DIR . "/$dirP/templates/$presenter/$this->view.phtml",

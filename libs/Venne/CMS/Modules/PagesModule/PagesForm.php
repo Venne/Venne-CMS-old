@@ -17,7 +17,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class PagesForm extends \Venne\Forms\ContentEntityForm {
+class PagesForm extends \Venne\CMS\Developer\Form\ContentEntityForm {
 
 
 	public function startup()

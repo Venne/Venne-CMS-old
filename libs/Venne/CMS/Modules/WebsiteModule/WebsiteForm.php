@@ -18,7 +18,7 @@ use Nette\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class WebsiteForm extends \Venne\Forms\EntityForm{
+class WebsiteForm extends \Venne\CMS\Developer\Form\EntityForm{
 	
 	public function startup()
 	{

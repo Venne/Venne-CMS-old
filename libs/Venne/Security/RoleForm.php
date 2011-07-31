@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class RoleForm extends \Venne\Forms\EntityForm {
+class RoleForm extends \Venne\CMS\Developer\Form\EntityForm {
 
 
 	public function startup()

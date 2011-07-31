@@ -14,6 +14,7 @@ namespace Venne;
 use Nette,
 	Nette\Caching\Cache,
 	Nette\DI,
+	Nette\Diagnostics\Debugger,
 	Venne\CMS\Modules;
 
 /**
@@ -21,23 +22,36 @@ use Nette,
  */
 class Configurator extends \Nette\Configurator {
 
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Venne\Security\Authenticator
-	 */
-	public static function createServiceAuthenticator(\Nette\DI\IContainer $container)
+
+	public function __construct($containerClass = 'Nette\DI\Container')
 	{
-		return new Security\Authenticator($container);
+		parent::__construct($containerClass);
+		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . "/../config.neon");
+
+		/*
+		 * Set mode
+		 */
+		if ($config["global"]["mode"] == "production") {
+			$this->container->params['productionMode'] = true;
+		} else if ($config["global"]["mode"] == "development") {
+			$this->container->params['productionMode'] = false;
+		} else {
+			if ($this->container->params['productionMode']) {
+				if (count($config["global"]["developerIp"]) > 0) {
+					$remoteIp = $_SERVER['REMOTE_ADDR'];
+					foreach ($config["global"]["developerIp"] as $ip) {
+						if ($ip == $remoteIp) {
+							$this->container->params['productionMode'] = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+		Debugger::$strictMode = TRUE;
+		Debugger::enable($this->container->params['productionMode']);
 	}
-	
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Venne\Security\Authorizator
-	 */
-	public static function createServiceAuthorizator(\Nette\DI\IContainer $container)
-	{
-		return new Security\Authorizator($container);
-	}
+
 
 	/**
 	 * Loads configuration from file and process it.
@@ -46,7 +60,7 @@ class Configurator extends \Nette\Configurator {
 	public function loadConfig($file, $section = NULL)
 	{
 		parent::loadConfig($file, $section);
-		$container = $this->getContainer();
+		$container = $this->container;
 
 
 		/*
@@ -59,7 +73,26 @@ class Configurator extends \Nette\Configurator {
 						return new $serviceClass($container);
 					});
 		}
-		
+	}
+
+
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Venne\Security\Authenticator
+	 */
+	public static function createServiceAuthenticator(\Nette\DI\IContainer $container)
+	{
+		return new Security\Authenticator($container);
+	}
+
+
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Venne\Security\Authorizator
+	 */
+	public static function createServiceAuthorizator(\Nette\DI\IContainer $container)
+	{
+		return new Security\Authorizator($container);
 	}
 
 
@@ -70,16 +103,6 @@ class Configurator extends \Nette\Configurator {
 	public static function createServiceModuleManager(\Nette\DI\IContainer $container)
 	{
 		return new CMS\ModuleManager($container);
-	}
-
-
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Venne\CMS\Configurator
-	 */
-	public static function createServiceConfigurator(\Nette\DI\IContainer $container)
-	{
-		return new CMS\Configurator($container);
 	}
 
 
@@ -199,6 +222,28 @@ class Configurator extends \Nette\Configurator {
 		$password = $container->params['database']['password'];
 
 		return new Nette\Database\Connection("$driver:host=$host;dbname=$dbname", $user, $password);
+	}
+
+
+	/**
+	 * @return Nette\Loaders\RobotLoader
+	 */
+	public static function createServiceRobotLoader(DI\Container $container, array $options = NULL)
+	{
+		$loader = new Nette\Loaders\RobotLoader;
+		$loader->autoRebuild = isset($options['autoRebuild']) ? $options['autoRebuild'] : !$container->params['productionMode'];
+		$loader->setCacheStorage($container->cacheStorage);
+		if (isset($options['directory'])) {
+			$loader->addDirectory($options['directory']);
+		} else {
+			foreach (array('appDir', 'libsDir', 'extensionsDir') as $var) {
+				if (isset($container->params[$var])) {
+					$loader->addDirectory($container->params[$var]);
+				}
+			}
+		}
+		$loader->register();
+		return $loader;
 	}
 
 }
