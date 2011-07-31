@@ -9,14 +9,23 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace SecurityModule;
+namespace SystemModule;
 
 /**
  * @author Josef Kříž
- * @allowed(administration-security)
+ * @allowed(administration-system)
  */
 class DefaultPresenter extends BasePresenter
 {
+	
+	public function createComponentFormEdit($name)
+	{
+		$form = new \Venne\CMS\Modules\SystemForm($this, $name);
+		$form->setSuccessLink("default");
+		$form->setFlashMessage("Global settings has been updated");
+		$form->addSubmit("submit", "Update");
+		return $form;
+	}
 	
 	public function renderDefault()
 	{

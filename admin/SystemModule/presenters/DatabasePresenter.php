@@ -9,14 +9,29 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace SecurityModule;
+namespace SystemModule;
 
 /**
  * @author Josef Kříž
- * @allowed(administration-security)
+ * @allowed(administration-system)
  */
-class DefaultPresenter extends BasePresenter
+class DatabasePresenter extends BasePresenter
 {
+	
+	public function startup()
+	{
+		parent::startup();
+		$this->addPath("Database", $this->link(":System:Database:"));
+	}
+	
+	public function createComponentFormEdit($name)
+	{
+		$form = new \Venne\CMS\Modules\SystemDatabaseForm($this, $name, $this->mode);
+		$form->setSuccessLink("default");
+		$form->setFlashMessage("Database settings has been updated");
+		$form->addSubmit("submit", "Update");
+		return $form;
+	}
 	
 	public function renderDefault()
 	{

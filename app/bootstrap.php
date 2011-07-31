@@ -16,14 +16,9 @@ use Nette\Diagnostics\Debugger,
 require LIBS_DIR . '/Venne/loader.php';
 
 
-// Enable Nette\Debug for error visualisation & logging
-Debugger::$strictMode = TRUE;
-Debugger::enable();
-
-
 // Load configuration from config.neon file
-$configurator = new Venne\Configurator;
-$configurator->loadConfig(__DIR__ . '/../config.neon', "common");
+$configurator = new \Venne\Configurator;
+$configurator->loadConfig(__DIR__ . '/../config.neon');
 
 
 // Configure application

@@ -46,5 +46,8 @@ define('TEMP_DIR', WWW_DIR . '/../temp');
 // absolute filesystem path to the flags dir
 define('FLAGS_DIR', WWW_DIR . '/../flags');
 
+// absolute filesystem path to the flags dir
+define('EXTENSIONS_DIR', WWW_DIR . '/../extensions');
+
 // load bootstrap file
 require APP_DIR . '/bootstrap.php';
