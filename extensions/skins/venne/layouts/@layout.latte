@@ -27,68 +27,64 @@
 {css /skins/venne/css/flash.css}
 
 {block #body}
-<body>
-	{element panel}
-	<div id="all-1">
-		<div class="center-block">
+<div id="all-1">
+	<div class="center-block">
 
-			<div id="header-1-logo">
-				<a href="{$basePath}/">
-				{*element image logo*}
-				</a>
-			</div>
-
-			<div id="header-2-menu">
-				<div class="left"></div>
-				<div class="center">
-				{element navigation:main}
-				</div>
-				<div class="right"></div>
-			</div>
-
-			<div id="header-3-left">
-				{if isset($url)}
-					{var $p = str_replace('/','eee',str_replace('-','ooo',$url))}
-					{*element textarea "head".$p*}
-				{/if}
-			</div>
-
-			{*}<div id="header-4-right">
-
-			</div>
-			{*}
-
+		<div id="header-1-logo">
+			<a href="{$basePath}/">
+			{*element image logo*}
+			</a>
 		</div>
-	</div>
 
-	<div id="all-2">
-		<div class="center-block">
-			<div id="path">
-				{element navigation:path}
-				</div>
-			<div id="content" class="module-{*$website->module|lower*}">
-				{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
-				{*element area "content_top"*}
-				{include #content}
-				{element extensions}
-				{*element area "content_bottom"*}
-			</div>
-
-		</div>
-	</div>
-
-	<div id="all-3">
-		<div class="center-block">
-
+		<div id="header-2-menu">
+			<div class="left"></div>
+			<div class="center">
 			{element navigation:main}
-
-			<div id="footer-leaf">
-				<p><span><a href="{link element_panel-login!}">Administrace</a></span><span><a href="#">Mapa webu</a></span></p>
-				<p>Copyright &copy;<a href="#">Venne:STUDIO</a></p>
 			</div>
+			<div class="right"></div>
+		</div>
+
+		<div id="header-3-left">
+			{if isset($url)}
+				{var $p = str_replace('/','eee',str_replace('-','ooo',$url))}
+				{*element textarea "head".$p*}
+			{/if}
+		</div>
+
+		{*}<div id="header-4-right">
 
 		</div>
+		{*}
+
 	</div>
-</body>
-</html>
+</div>
+
+<div id="all-2">
+	<div class="center-block">
+		<div id="path">
+			{element navigation:path}
+			</div>
+		<div id="content" class="module-{*$website->module|lower*}">
+			{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
+			{*element area "content_top"*}
+			{include #content}
+			{element extensions}
+			{*element area "content_bottom"*}
+		</div>
+
+	</div>
+</div>
+
+<div id="all-3">
+	<div class="center-block">
+
+		{element navigation:main}
+
+		<div id="footer-leaf">
+			<p><span><a href="{link element_panel-login!}">Administrace</a></span><span><a href="#">Mapa webu</a></span></p>
+			<p>Copyright &copy;<a href="#">Venne:STUDIO</a></p>
+		</div>
+
+	</div>
+</div>
 {/block}

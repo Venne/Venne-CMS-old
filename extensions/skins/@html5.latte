@@ -14,11 +14,12 @@
  * @param $langName
  * @param $langAlias
  *}
-
-{js /js/jquery-1.6.min.js}
-
 {capture $body}
+{if !isset($installationMode)}{element panel}{/if}
 {include #body}
 {/capture}
 {element header:html5}
+<body>
 {!$body}
+</body>
+</html>

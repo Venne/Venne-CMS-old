@@ -9,6 +9,7 @@
 
 {extends "./../../@html5.latte"}
 
+{js /js/jquery-1.6.min.js}
 {js /js/jquery-ui-1.8.12.custom.min.js}
 {js /js/netteForms.js}
 {js /js/venne.js}
@@ -18,8 +19,6 @@
 {css /skins/admin/css/style.css}
 
 {block #body}
-<body>
-	{if !isset($installationMode)}{element panel}{/if}
 	<div id="page">
 		<div id="top">
 			{if !$venneModeInstallation}<a href="{link :Default:Default:}">{/if}
@@ -32,7 +31,7 @@
 					<li><a href="{plink :Webs:Default:}" {if $presenter->isCurrent("Webs:*")}class="active"{/if}>Správa webů</a></li>
 					<li><a href="{plink :Modules:Default:}" {if $presenter->isCurrent("Modules:*")}class="active"{/if}>Správa modulů</a></li>
 					<li><a href="{plink :Security:Default:}" {if $presenter->isCurrent("Security:*")}class="active"{/if}>Security settings</a></li>
-					<li><a href="{plink :Application:Default:}" {if $presenter->isCurrent("Application:*")}class="active"{/if}>Správa systému</a></li>
+					<li><a href="{plink :System:Default:}" {if $presenter->isCurrent("System:*")}class="active"{/if}>Správa systému</a></li>
 				</ul>
 				{/if}
 			</div>
@@ -56,6 +55,4 @@
 			<span>Copyright © 2011 Josef Kříž</span> | <span>version {$venneVersionId} {$venneVersionState}</span>{if !$venneModeInstallation} | <span><a href="{link :Default:About:}">about Venne:CMS</a></span>{/if}
 		</div>
 	</div>
-</body>
-</html>
 {/block}
