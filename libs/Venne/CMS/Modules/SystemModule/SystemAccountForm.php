@@ -14,81 +14,82 @@ namespace Venne\CMS\Modules;
 use Venne\ORM\Column;
 use Nette\Utils\Html;
 use Venne\Forms\Form;
+
 /**
  * @author Josef Kříž
  */
-class PagesForm extends \Venne\Forms\ContentEntityForm {
+class SystemAccountForm extends \Venne\CMS\Developer\Form\BaseForm {
 
+	protected $mode;
 
+	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $mode = "common")
+	{
+		$this->mode = $mode;
+		parent::__construct($parent, $name);
+	}	
+	
 	public function startup()
 	{
 		parent::startup();
-		
-		$model = $this->getPresenter()->getContext()->pages->model;
-		
+
 		$this->addGroup();
-		$this->addText("title", "Title")
-				->setRequired('Enter title');
-		$this->addText("keywords", "Keywords");
-		$this->addText("description", "Description");
-
-		$this->addGroup("Dates");
-		$this->addDateTime("created", "Created")->setDefaultValue(new \Nette\DateTime);
-		$this->addDateTime("updated", "Updated")->setDefaultValue(new \Nette\DateTime);
-
-		$this->addGroup("URL");
-		$this->addCheckbox("mainPage", "Main page");
-		$this->addText("url", "URL")
-				->addRule(callback($model, "isUrlAvailable"), "This URL is used.")
-				->setOption("description", "(example: 'contact')");
-		$this->addGroup("Text");
-		$this->addTextArea("text", "", Null, 20);
+		$this->addHidden("section")->setDefaultValue($this->mode);
+		if($this->mode != "common") $this->addCheckbox("use", "Use for this mode");
+		$this->addText("name", "Name");
+		$this->addPassword("password", "Password");
+		$this->addPassword("password_confirm", "Confirm password");
+		
+		if($this->mode != "common") {
+			$this["name"]
+					->addConditionOn($this["use"], self::EQUAL, 1)
+					->addRule(self::FILLED, 'Enter name');
+			$this["password"]
+					->setOption("description", "minimal length is 5 char")
+					->addConditionOn($this["use"], self::EQUAL, 1)
+					->addRule(self::FILLED, 'Enter password')
+					->addRule(self::MIN_LENGTH, 'Password is short', 5);
+			$this["password_confirm"]
+					->addConditionOn($this["use"], self::EQUAL, 1)
+					->addRule(self::EQUAL, 'Invalid re password', $this['password']);
+		}
 	}
 
 
-	public function setValuesFromEntity()
+	public function load()
 	{
-		parent::setValuesFromEntity();
-
-		$current = NULL;
-
-		$this["updated"]->setValue(new \Nette\DateTime);
-		$a = new \Nette\DateTime();
+		$model = $this->getPresenter()->getContext()->system->model;
+		
+		$config = $model->loadAccount($this->mode);
+				
+		$this->setDefaults($config);
+		
+		if($this->mode != "common"){
+			$config2 = $model->loadAccount("common");
+			$ok = true;
+			foreach($config as $key=>$item){
+				if($config[$key] != $config2[$key]){
+					$ok = false;
+					break;
+				}
+			}
+			if(!$ok){
+				$this["use"]->setDefaultValue(true);
+			}
+		}
 	}
-
 
 	public function save()
 	{
 		parent::save();
 		$values = $this->getValues();
-		$model = $this->getPresenter()->getContext()->pages->model;
+		$model = $this->getPresenter()->getContext()->system->model;
 
-		$this->entity = $model->saveItem(
-					$this->entity, $values["title"], $values["url"], $values["text"],
-					$values["mainPage"], $values["keywords"], $values["description"],
-					$values["created"], $values["updated"]
-				);		
-	}
-
-
-	protected function getLinkParams()
-	{
-		return array(
-			"module"=>"Pages",
-			"url"=>$this->entity->url
-			);
-	}
-
-
-	protected function getModuleName()
-	{
-		return "pages";
-	}
-
-
-	protected function getModuleItemId()
-	{
-		return $this->entity->id;
+		if ($values["section"] == "common" || $values["use"]) {
+			$model->saveAccount($values["name"], $values["password"], $values["section"]);
+		}else{
+			$config = $model->loadAccount("common");
+			$model->saveAccount($config ["name"], $config ["password"], $values["section"]);
+		}
 	}
 
 }

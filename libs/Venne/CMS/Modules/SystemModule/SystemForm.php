@@ -14,81 +14,42 @@ namespace Venne\CMS\Modules;
 use Venne\ORM\Column;
 use Nette\Utils\Html;
 use Venne\Forms\Form;
+
 /**
  * @author Josef Kříž
  */
-class PagesForm extends \Venne\Forms\ContentEntityForm {
+class SystemForm extends \Venne\CMS\Developer\Form\BaseForm {
 
 
 	public function startup()
 	{
 		parent::startup();
-		
-		$model = $this->getPresenter()->getContext()->pages->model;
-		
+
 		$this->addGroup();
-		$this->addText("title", "Title")
-				->setRequired('Enter title');
-		$this->addText("keywords", "Keywords");
-		$this->addText("description", "Description");
-
-		$this->addGroup("Dates");
-		$this->addDateTime("created", "Created")->setDefaultValue(new \Nette\DateTime);
-		$this->addDateTime("updated", "Updated")->setDefaultValue(new \Nette\DateTime);
-
-		$this->addGroup("URL");
-		$this->addCheckbox("mainPage", "Main page");
-		$this->addText("url", "URL")
-				->addRule(callback($model, "isUrlAvailable"), "This URL is used.")
-				->setOption("description", "(example: 'contact')");
-		$this->addGroup("Text");
-		$this->addTextArea("text", "", Null, 20);
+		$this->addSelect("mode", "Mode", array(
+				"production" => "production",
+				"development" => "development",
+				"console" => "console",
+				"detect" => "detect"
+			));
+		$this->addTag("developerIp", "Developer IP");
 	}
 
 
-	public function setValuesFromEntity()
+	public function load()
 	{
-		parent::setValuesFromEntity();
+		$model = $this->getPresenter()->getContext()->system->model;
 
-		$current = NULL;
-
-		$this["updated"]->setValue(new \Nette\DateTime);
-		$a = new \Nette\DateTime();
+		$this->setValues($model->loadGlobal());
 	}
-
 
 	public function save()
 	{
 		parent::save();
 		$values = $this->getValues();
-		$model = $this->getPresenter()->getContext()->pages->model;
+		$model = $this->getPresenter()->getContext()->system->model;
 
-		$this->entity = $model->saveItem(
-					$this->entity, $values["title"], $values["url"], $values["text"],
-					$values["mainPage"], $values["keywords"], $values["description"],
-					$values["created"], $values["updated"]
-				);		
-	}
-
-
-	protected function getLinkParams()
-	{
-		return array(
-			"module"=>"Pages",
-			"url"=>$this->entity->url
-			);
-	}
-
-
-	protected function getModuleName()
-	{
-		return "pages";
-	}
-
-
-	protected function getModuleItemId()
-	{
-		return $this->entity->id;
+		$model->saveGlobal($values["mode"], $values["developerIp"]);
 	}
 
 }
