@@ -510,6 +510,20 @@ table.table tbody tr:hover{
 	width: 102px;
 	height: 27px;
 }
+.toolbar li.form{
+	float: right;
+	width: auto;
+}
+.toolbar li.form span{
+	color: #ffffff;
+	text-shadow: #000000 0px -1px 0px;
+	margin: 0 5px 0 15px;
+	float: left;
+	padding: 3px 0 5px 0;
+}
+.toolbar li.form input, .toolbar li.form select{
+	height: 27px;
+}
 .toolbar li a{
 	padding: 3px 0 5px 0;
 	text-align: center;
