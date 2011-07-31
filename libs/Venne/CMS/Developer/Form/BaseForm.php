@@ -9,16 +9,17 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Forms;
+namespace Venne\CMS\Developer\Form;
 
 
 /**
  * @author     Josef Kříž
  */
-class Form extends \Venne\Application\UI\Form
+class BaseForm extends \Venne\Application\UI\Form
 {
 	
 	protected $successLink;
+	protected $flash;
 	
 	/**
 	 * Application form constructor.
@@ -28,12 +29,20 @@ class Form extends \Venne\Application\UI\Form
 		parent::__construct($parent, $name);
 		$this->startup();
 		$this->setCurrentGroup();
-		//$this->setTranslator($this->getPresenter()->getContext()->translator);
+		$this->onSuccess[] = callback($this, 'onSubmitForm');
+		if(!$this->isSubmitted()){
+			$this->load();
+		}
 	}	
 		
 	public function setSuccessLink($link)
 	{
 		$this->successLink = $link;
+	}
+	
+	public function setFlashMessage($value)
+	{
+		$this->flash = $value;
 	}
 
 
@@ -42,6 +51,34 @@ class Form extends \Venne\Application\UI\Form
 		
 	}
 	
+	public function onSubmitForm()
+	{
+		if(!$this->isValid()){
+			return ;
+		}
+		
+		if($this->save() === NULL){
+			if ($this->flash)
+				$this->getPresenter()->flashMessage($this->flash, "success");
+			if ($this->successLink)
+				$this->presenter->redirect($this->successLink);
+		}
+	}
+	
+	public function save()
+	{
+		
+	}
+	
+	public function load()
+	{
+		
+	}
+	
+	
+	
+	/* --------------- new controls ------------ */
+	
 	/**
 	 * Adds naming container to the form.
 	 * @param  string  name
@@ -49,7 +86,7 @@ class Form extends \Venne\Application\UI\Form
 	 */
 	public function addContainer($name)
 	{
-		$control = new Container($this->getPresenter()->getContext());
+		$control = new \Venne\Forms\Container($this->getPresenter()->getContext());
 		$control->currentGroup = $this->currentGroup;
 		return $this[$name] = $control;
 	}
