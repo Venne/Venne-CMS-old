@@ -12,13 +12,16 @@
 namespace Venne\Latte\Macros;
 
 /**
- * Description of ExampleMacro
- *
  * @author Josef Kříž
  */
 class ExampleMacro extends \Nette\Latte\Macros\MacroSet {
 
 
+	/**
+	 * @param \Nette\Latte\MacroNode $node
+	 * @param string $writer
+	 * @return string 
+	 */
 	public static function filter(\Nette\Latte\MacroNode $node, $writer)
 	{
 		return ('echo "' . $node->args . '"; ');
@@ -26,7 +29,7 @@ class ExampleMacro extends \Nette\Latte\Macros\MacroSet {
 
 
 	/**
-	 * Adds 
+	 * @param \Nette\Latte\Parser $parser 
 	 */
 	public static function install(\Nette\Latte\Parser $parser)
 	{
