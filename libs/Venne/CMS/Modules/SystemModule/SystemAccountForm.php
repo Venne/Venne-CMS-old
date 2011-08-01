@@ -36,7 +36,7 @@ class SystemAccountForm extends \Venne\CMS\Developer\Form\BaseForm {
 		$this->addHidden("section")->setDefaultValue($this->mode);
 		if($this->mode != "common") $this->addCheckbox("use", "Use for this mode");
 		$this->addText("name", "Name");
-		$this->addPassword("password", "Password");
+		$this->addPassword("password", "Password")->setOption("description", "minimal length is 5 char");
 		$this->addPassword("password_confirm", "Confirm password");
 		
 		if($this->mode != "common") {
@@ -44,12 +44,19 @@ class SystemAccountForm extends \Venne\CMS\Developer\Form\BaseForm {
 					->addConditionOn($this["use"], self::EQUAL, 1)
 					->addRule(self::FILLED, 'Enter name');
 			$this["password"]
-					->setOption("description", "minimal length is 5 char")
 					->addConditionOn($this["use"], self::EQUAL, 1)
 					->addRule(self::FILLED, 'Enter password')
 					->addRule(self::MIN_LENGTH, 'Password is short', 5);
 			$this["password_confirm"]
 					->addConditionOn($this["use"], self::EQUAL, 1)
+					->addRule(self::EQUAL, 'Invalid re password', $this['password']);
+		}else{
+			$this["name"]
+					->addRule(self::FILLED, 'Enter name');
+			$this["password"]
+					->addRule(self::FILLED, 'Enter password')
+					->addRule(self::MIN_LENGTH, 'Password is short', 5);
+			$this["password_confirm"]
 					->addRule(self::EQUAL, 'Invalid re password', $this['password']);
 		}
 	}

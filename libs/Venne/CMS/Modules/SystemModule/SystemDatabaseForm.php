@@ -61,6 +61,13 @@ class SystemDatabaseForm extends \Venne\CMS\Developer\Form\BaseForm {
 			$this["dbname"]
 				->addConditionOn($this["use"], self::EQUAL, 1)
 				->addRule(self::FILLED, 'Enter database name');
+		}else{
+			$this["host"]
+				->addRule(self::FILLED, 'Enter host');
+			$this["user"]
+				->addRule(self::FILLED, 'Enter user name');
+			$this["dbname"]
+				->addRule(self::FILLED, 'Enter database name');
 		}
 	}
 
