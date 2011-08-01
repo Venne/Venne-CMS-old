@@ -45,6 +45,9 @@ common:
 			password: pass
 			
 		modules:
+			ModulesModule:
+				run: true
+
 			systemModule:
 				run: true
 				

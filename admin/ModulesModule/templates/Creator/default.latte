@@ -4,6 +4,8 @@
 
 {include "../head.latte"}
 
+{include "./head.latte"}
+
 <table class="table">
 	<thead>
 		<tr>
@@ -28,9 +30,9 @@
 			<td class="actions">
 				<ul>
 					{if $presenter->isAllowed('edit')}
-					{*}<li><a href="{link build! id=>$name}">build</a></li>{*}
-					<li><a href="{link download! pkgname=>$name, pkgver=>$item["pkgver"]}">download</a></li>
-					<li><a n:confirm="really?" href="{link delete! pkgname=>$name, pkgver=>$item["pkgver"]}">smazat</a></li>
+					<li><a href="{link build! id=>$name}">build</a></li>
+					<li><a href="{link edit key=>$name}">editovat</a></li>
+					<li><a n:confirm="really?" href="{link delete! id=>$name}">smazat</a></li>
 					{/if}
 				</ul>
 			</td>
@@ -38,8 +40,5 @@
 		{/foreach}
 	</tbody>
 </table>
-
-{control formPackage}
-
 
 
