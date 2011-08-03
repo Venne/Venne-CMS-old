@@ -236,7 +236,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$name = $this->getName();
 		$presenter = substr($name, strrpos(':' . $name, ':'));
 		$dir = dirname(dirname($this->getReflection()->getFileName()));
-		$dirP = str_replace(preg_replace('/\w+\/\.\.\//', '', realpath(APP_DIR) . "/"), "", $dir);
+		$dirP = substr(str_replace(realpath(APP_DIR), "", $dir), 1);
 
 		return array(
 			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
