@@ -133,7 +133,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		}
 
 		/* in local repo */
-		foreach (\Nette\Utils\Finder::findFiles("*")->in(self::$packagesDir) as $file) {
+		foreach (\Nette\Utils\Finder::findFiles("*.zip")->in(self::$packagesDir) as $file) {
 			$name = $file->getFileName();
 			$pkgname = explode("-", $name, -1);
 			$pkgname = join("-", $pkgname);
