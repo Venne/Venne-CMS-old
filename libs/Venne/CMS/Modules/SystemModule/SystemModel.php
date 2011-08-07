@@ -45,41 +45,9 @@ class SystemModel extends Venne\CMS\Developer\Model {
 	 */
 	public function saveConfig($config)
 	{
-		//dump($config);
-		foreach ($this->modes as $mode) {
-			$config[$mode] = $this->optimize($config[$mode], $config["common"]);
-			$config[$mode . " < common"] = $config[$mode];
-			unset($config[$mode]);
-		}
-		//dump($config);
-		//die();
-		\Nette\Config\NeonAdapter::save($config, WWW_DIR . "/../config.neon");
+		\Venne\Config\NeonAdapter::save($config, WWW_DIR . "/../config.neon", "common", $this->modes);
 	}
 
-
-	/**
-	 * @param array $array1
-	 * @param array $array2
-	 * @return bool 
-	 */
-	public function optimize($array1, $array2)
-	{
-		foreach ($array1 as $key => $item) {
-			if (is_array($item)) {
-				$ret = $this->optimize($array1[$key], $array2[$key]);
-				if(count($ret) == 0){
-					unset($array1[$key]);
-				}else{
-					$array1[$key] = $ret;
-				}
-			} else {
-				if ($array1[$key] == $array2[$key]) {
-					unset($array1[$key]);
-				}
-			}
-		}
-		return $array1;
-	}
 
 	/**
 	 * @param string $name
