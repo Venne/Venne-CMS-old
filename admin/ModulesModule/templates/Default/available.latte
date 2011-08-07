@@ -10,17 +10,20 @@
 <table class="table">
 	<thead>
 		<tr>
-			<th style="width: 23%;">{_"Name"}</th>
-			<th style="width: 33%;">{_"Description"}</th>
-			<th style="width: 10%;">{_"Version"}</th>
-			<th style="width: 10%;">{_"Licence"}</th>
-			<th style="width: 24%;"></th>
+			<th style="width: 5%;"></th>
+			<th style="width: 20%;">{_"Name"}</th>
+			<th style="width: 30%;">{_"Description"}</th>
+			<th style="width: 15%;">{_"Version"}</th>
+			<th style="width: 30%;"></th>
 		</tr>
 	</thead>
 	<tbody>
 		{foreach $items as $name=>$item}
-		{var $ver => str_replace("-", "pp", str_replace(".", "p", $item["pkgver"]))}
 		<tr class="screens {if $iterator->getCounter()%2 == 0} even{/if}{if $iterator->isLast()} footer{/if}">
+			<td>
+				{var $ver=>str_replace(".","p",$item["pkgver"])}
+				{input "item_".$item["pkgname"]."_".$ver}
+			</td>
 			<td>
 				{$item["pkgname"]}
 			</td>
@@ -30,31 +33,23 @@
 			<td>
 				{$item["pkgver"]}
 			</td>
-			<td>
-				{$item["licence"]}
-			</td>
 			<td class="actions">
 				<ul>
 					{if $presenter->isAllowed('edit')}
-					{input "item_".$item["pkgname"]."_".$ver}<br>
 					{*}<li><a href="{link build! id=>$name}">build</a></li>{*}
-					{if file_exists(WWW_DIR . "/../packages/local/".$name."-".$item["pkgver"].".zip")}
 					<li><a href="{link download! pkgname=>$name, pkgver=>$item["pkgver"]}">download</a></li>
 					<li><a n:confirm="really?" href="{link delete! pkgname=>$name, pkgver=>$item["pkgver"]}">smazat</a></li>
-					{/if}
 					{/if}
 				</ul>
 			</td>
 		</tr>
 		{/foreach}
 	</tbody>
-	
-	<tfoot>
-		<tr>
-			<th style="width: 100%;" colspan="5">{input submit}</th>
-		</tr>
-	</thead>
 </table>
+{input action}{input submit}
 {/form}
 
 {control formPackage}
+
+
+

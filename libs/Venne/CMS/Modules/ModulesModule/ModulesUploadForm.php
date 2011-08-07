@@ -25,7 +25,7 @@ class ModulesUploadForm extends \Venne\CMS\Developer\Form\BaseForm {
 		parent::startup();
 		$model = $this->getPresenter()->getContext()->modules->model;
 		
-		$this->addGroup("Upload package");
+		$this->addGroup("Upload package to local repository");
 		$this->addUpload("file", "Package")
 			->addRule(self::FILLED, "Enter file")
 			->addRule(self::MIME_TYPE, 'Bad mime type', 'application/zip')

@@ -439,6 +439,34 @@ table.table thead td, table.table thead th{
 	padding: 10px 6px 10px 6px;
 	margin: 0;
 }
+table.table tfoot{
+	width: 100%;
+	border: 0;
+	margin: 1px;
+	font-weight: bold;
+	text-align: left;
+	padding: 0;
+	color: #000000;
+	text-shadow: #ffffff 0px 1px 0px;
+}
+table.table tfoot tr{
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	background-color: #eeeeee;
+	padding: 0px;
+	font-size: 15px;
+	font-weight: bold;
+	margin: 0;
+	width: 100%;
+}
+table.table tfoot td, table.table tfoot th{
+	border-top: 1px solid #ffffff;
+	padding: 10px 6px 10px 6px;
+	margin: 0;
+	text-align: right;
+}
 table.table tbody tr{
 	margin: 0;
 	padding: 0;

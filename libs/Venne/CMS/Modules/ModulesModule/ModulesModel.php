@@ -18,6 +18,33 @@ use Venne;
  */
 class ModulesModel extends Venne\CMS\Developer\Model {
 
+
+	const STATUS_INSTALLED = 1;
+	const STATUS_UNINSTALLED = 2;
+	const STATUS_FOR_UPGRADE = 3;
+
+	static $dir;
+	static $installedDir;
+	static $tempDir;
+	static $infoDir;
+	static $buildscriptDir;
+	static $packagesDir;
+	static $availableDir;
+
+
+	public function __construct(\Nette\DI\Container $container, $parent)
+	{
+		parent::__construct($container, $parent);
+		self::$dir = preg_replace('/\w+\/\.\.\//', '', WWW_DIR . "/../packages");
+		self::$installedDir = self::$dir . "/installed";
+		self::$tempDir = self::$dir . "/temp";
+		self::$infoDir = self::$dir . "/info";
+		self::$buildscriptDir = self::$dir . "/buildscripts";
+		self::$packagesDir = self::$dir . "/local";
+		self::$availableDir = self::$dir . "/available";
+	}
+
+
 	public function savePackageBuild($pkgname, $pkgver, $pkgdesc, $licence, $dependencies, $packager, $files)
 	{
 		$data = array();
@@ -28,125 +55,236 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		$data['dependencies'] = $dependencies;
 		$data['packager'] = $packager;
 		$data['files'] = $files;
-		
-		\Nette\Config\NeonAdapter::save($data, WWW_DIR . '/../packages/buildscripts/'.$pkgname.'.neon');
+
+		umask(0000);
+		@mkdir(self::$buildscriptDir . '/' . $pkgname . '/', "0777", true);
+		\Nette\Config\NeonAdapter::save($data, self::$buildscriptDir . '/' . $pkgname . '/info.neon');
 	}
-	
+
+
+	public function removePackageBuild($pkgname)
+	{
+		unlink(self::$buildscriptDir . '/' . $pkgname . '/info.neon');
+		rmdir(self::$buildscriptDir . '/' . $pkgname);
+	}
+
+
 	public function loadPackageBuild($pkgname)
 	{
-		return \Nette\Config\NeonAdapter::load(WWW_DIR . '/../packages/buildscripts/'.$pkgname.'.neon');
+		return \Nette\Config\NeonAdapter::load(self::$buildscriptDir . '/' . $pkgname . '/info.neon');
 	}
-	
+
+
 	public function getPackageBuilds()
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("*.neon")->in(WWW_DIR . '/../packages/buildscripts') as $file){
-			$name = str_replace(".neon", "", $file->getFileName());
+		foreach (\Nette\Utils\Finder::findDirectories("*")->in(self::$buildscriptDir) as $file) {
+			$name = $file->getFileName();
 			$data[$name] = $name;
 		}
 		return $data;
 	}
-	
+
+
 	public function buildPackage($pkgname)
 	{
 		$config = $this->loadPackageBuild($pkgname);
-		$path = preg_replace('/\w+\/\.\.\//', '', WWW_DIR . '/../');
-		$targetPath = preg_replace('/\w+\/\.\.\//', '', WWW_DIR . '/../packages/'.$pkgname);
-		
+		$targetPath = preg_replace('/\w+\/\.\.\//', '', self::$packagesDir . '/' . $pkgname);
+
 		/*
 		 * Copy files
 		 */
 		$zip = new \ZipArchive();
-		if($zip->open(WWW_DIR . "/../packages/".$pkgname."-".$config['pkgver'].".zip", \ZipArchive::CREATE) != true){
+		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $config['pkgver'] . ".zip", \ZipArchive::CREATE) != true) {
 			return false;
 		}
-		
-		$zip->addFile(WWW_DIR . '/../packages/buildscripts/'.$pkgname.'.neon', "info.neon");
-		
-		foreach($config["files"] as $file){
-			$dir = join("/", explode("/", $file, -1));
-			$mask = str_replace($dir . "/", "", $file);
 
-			foreach(\Nette\Utils\Finder::findFiles($mask)->from($path . "/" . $dir) as $item){
-				$filePath = str_replace($path, "", $item->getRealPath());
-				
-				$targetDir = join("/", explode("/", $targetPath . "/" . $filePath, -1));
-				//umask("0000");
-				//@mkdir($targetDir, 0777, true);
-				
-				$zip->addFile($path . $filePath, $filePath);
-				//copy($path . $filePath, $targetPath . "/" . $filePath);
-			}
+		$zip->addFile(self::$buildscriptDir . '/' . $pkgname . '/info.neon', "info.neon");
+
+		foreach ($config["files"] as $file) {
+			$zip->addFile(WWW_DIR . "/../" . $file, $file);
 		}
 		$zip->close();
 		return true;
 	}
-	
+
+
 	public function getPackages()
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("*.zip")->in(WWW_DIR . '/../packages/') as $file){
-			$name = str_replace(".zip", "", $file->getFileName());
-			$data[$name] = $name;
+
+		/* installed */
+		foreach (\Nette\Utils\Finder::findDirectories("*")->in(self::$installedDir) as $file) {
+			$name = $file->getFileName();
+			$pkgname = explode("-", $name, -1);
+			$pkgname = join("-", $pkgname);
+			$pkgver = str_replace($pkgname . "-", "", $name);
+			$data[$pkgname] = $this->getPackageInfo($pkgname, $pkgver);
 		}
+
+		/* in repos */
+		foreach (\Nette\Utils\Finder::findDirectories("*")->in(self::$availableDir) as $file2) {
+			$repo = $file2->getBaseName();
+			foreach (\Nette\Utils\Finder::findDirectories("*")->in(self::$availableDir . "/" . $repo) as $file) {
+				$name = $file->getBaseName();
+				$config = \Nette\Config\NeonAdapter::load(self::$availableDir . "/" . $repo . "/" . $name . "/info.neon");
+				$data[$name] = $config;
+			}
+		}
+
+		/* in local repo */
+		foreach (\Nette\Utils\Finder::findFiles("*")->in(self::$packagesDir) as $file) {
+			$name = $file->getFileName();
+			$pkgname = explode("-", $name, -1);
+			$pkgname = join("-", $pkgname);
+			$pkgver = substr(str_replace($pkgname . "-", "", $name), 0, -4);
+			$data[$pkgname] = $this->getPackageInfo($pkgname, $pkgver);
+		}
+
+		ksort($data);
 		return $data;
 	}
-	
-	public function getPackageInfo($pkgname, $pkgver)
+
+
+	public function syncPackages()
 	{
-		set_error_handler(array($this, 'handleError'));
-		$zip = new \ZipArchive();
-		if($zip->open(WWW_DIR . "/../packages/".$pkgname."-".$pkgver.".zip") != true){
-			return false;
-		}
-		
-		umask("0000");
-		@mkdir(WWW_DIR . "/../packages/".$pkgname."-".$pkgver, 0777);
-		
-		$zip->extractTo(WWW_DIR . "/../packages/".$pkgname."-".$pkgver);
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . "/../packages/".$pkgname."-".$pkgver.'/info.neon');
-		$zip->close();
-		
-		// Remove directory
-		$dirContent = \Nette\Utils\Finder::find('*')->from(WWW_DIR . "/../packages/".$pkgname."-".$pkgver)->childFirst();
+		$data = array();
+
+		/* delete old data */
+		$dirContent = \Nette\Utils\Finder::find('*')->from(self::$availableDir)->childFirst();
 		foreach ($dirContent as $file) {
 			if ($file->isDir())
 				@rmdir($file->getPathname());
 			else
 				@unlink($file->getPathname());
 		}
-		@rmdir(WWW_DIR . "/../packages/".$pkgname."-".$pkgver);
-		
+
+		foreach ($this->container->params["venne"]["repositories"] as $repo => $item) {
+			foreach ($item as $url) {
+				umask(0000);
+				@mkdir(self::$availableDir . "/" . $repo);
+
+				$file = file_get_contents($url . "repository.zip");
+				file_put_contents(self::$tempDir . "/repository.zip", $file);
+
+				$zip = new \ZipArchive();
+				if ($zip->open(self::$tempDir . "/repository.zip") != true) {
+					return false;
+				}
+				$zip->extractTo(self::$availableDir . "/" . $repo);
+				$zip->close();
+				
+				break;
+			}
+		}
+	}
+
+
+	public function getPackageStatus($pkgname, $pkgver)
+	{
+		if (!file_exists(self::$infoDir . "/installed.neon")) {
+			return self::STATUS_UNINSTALLED;
+		}
+
+		try {
+			$config = \Nette\Config\NeonAdapter::load(self::$infoDir . "/installed.neon");
+			if (!isset($config[$pkgname])) {
+				return self::STATUS_UNINSTALLED;
+			}
+		} catch (\Exception $ex) {
+			
+		}
+
+		if (version_compare($pkgver, $config[$pkgname]["pkgver"], ">")) {
+			return self::STATUS_FOR_UPGRADE;
+		}
+		return self::STATUS_INSTALLED;
+	}
+
+
+	public function getPackageInfo($pkgname, $pkgver)
+	{
+		/* in repo */
+		if (file_exists(self::$availableDir . "/" . $pkgname)) {
+			$config = \Nette\Config\NeonAdapter::load(self::$availableDir . "/" . $pkgname . "/info.neon");
+			if (isset($config[$pkgname]) && $config[$pkgname]["pkgver"] == $pkgver) {
+				return $config[$pkgname];
+			}
+		}
+
+		/* in local */
+		if (file_exists(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip")) {
+			return $this->getPackageInfoFromPackage($pkgname, $pkgver);
+		}
+
+		/* installed */
+		if (file_exists(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/info.neon")) {
+			return \Nette\Config\NeonAdapter::load(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/info.neon");
+		}
+		return false;
+	}
+
+
+	public function getPackageInfoFromPackage($pkgname, $pkgver)
+	{
+		set_error_handler(array($this, 'handleError'));
+		$zip = new \ZipArchive();
+		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip") != true) {
+			return false;
+		}
+
+		umask(0000);
+		@mkdir(self::$tempDir . "/" . $pkgname . "-" . $pkgver, 0777);
+
+		$zip->extractTo(self::$tempDir . "/" . $pkgname . "-" . $pkgver . "/");
+		$config = \Nette\Config\NeonAdapter::load(self::$tempDir . "/" . $pkgname . "-" . $pkgver . '/info.neon');
+		$zip->close();
+
+
+		// Remove directory
+		$dirContent = \Nette\Utils\Finder::find('*')->from(self::$tempDir . "/" . $pkgname . "-" . $pkgver)->childFirst();
+		foreach ($dirContent as $file) {
+			if ($file->isDir())
+				@rmdir($file->getPathname());
+			else
+				@unlink($file->getPathname());
+		}
+		@rmdir(self::$tempDir . "/" . $pkgname . "-" . $pkgver);
+
 		return $config;
 	}
-	
+
+
 	/**
 	 * @param string $pkgname
 	 * @param string $pkgver
 	 */
-	public function downloadPackage($pkgname, $pkgver)
+	public function sendPackage($pkgname, $pkgver)
 	{
-		$file = file_get_contents(WWW_DIR . '/../packages/'.$pkgname."-".$pkgver.".zip");
+		$file = file_get_contents(self::$packagesDir . '/' . $pkgname . "-" . $pkgver . ".zip");
 		$httpResponse = $this->container->httpResponse;
-		
+
 		$httpResponse->setHeader('Content-Transfer-Encoding', "binary");
 		$httpResponse->setHeader('Content-Description', "File Transfer");
-		$httpResponse->setHeader('Content-Disposition', 'attachment; filename="' . $pkgname."-".$pkgver . '.zip"');
+		$httpResponse->setHeader('Content-Disposition', 'attachment; filename="' . $pkgname . "-" . $pkgver . '.zip"');
 		$httpResponse->setContentType('application/zip', 'UTF-8');
 		print($file);
 		die();
 	}
-	
+
+
 	public function uploadPackage($file)
 	{
-		$file->move(WWW_DIR . '/../packages/'.$file->getName());
+		$file->move(self::$packagesDir . '/' . $file->getName());
 	}
-	
+
+
 	public function handleError()
 	{
 		
 	}
-	
+
+
 	/**
 	 * @param \Nette\Forms\IControl $control
 	 * @return bool 
@@ -157,13 +295,13 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		$pkgname = explode("-", str_replace(".zip", "", $file->getName()), -1);
 		$pkgname = join("-", $pkgname);
 		$pkgver = str_replace($pkgname . "-", "", str_replace(".zip", "", $file->getName()));
-		
-		
-		$file->move(WWW_DIR . '/../packages/'.$file->getName());
-		try{
+
+
+		$file->move(self::$packagesDir . '/' . $file->getName());
+		try {
 			$this->getPackageInfo($pkgname, $pkgver);
-		}catch(\Exception $ex){
-			@unlink(WWW_DIR . '/../packages/'.$file->getName());
+		} catch (\Exception $ex) {
+			@unlink(self::$packagesDir . '/' . $file->getName());
 			return false;
 		}
 		return true;
@@ -172,7 +310,127 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 
 	public function removePackage($pkgname, $pkgver)
 	{
-		@unlink(WWW_DIR . '/../packages/'.$pkgname."-".$pkgver.".zip");
+		@unlink(self::$packagesDir . '/' . $pkgname . "-" . $pkgver . ".zip");
 	}
-	
+
+
+	public function downloadPackage($pkgname, $pkgver)
+	{
+		set_error_handler(array($this, 'handleError'));
+		foreach ($this->container->params["venne"]["repositories"] as $repo => $item) {
+
+			if (file_exists(self::$availableDir . "/" . $repo . "/" . $pkgname)) {
+				
+				$config = \Nette\Config\NeonAdapter::load(self::$availableDir . "/" . $repo . "/" . $pkgname . "/info.neon");
+				if (!isset($config["pkgver"]) || $config["pkgver"] != $pkgver) {
+					continue;
+				}
+				
+				foreach ($item as $url) {
+					$fileName = $pkgname . "-" . $pkgver . ".zip";
+					$file = file_get_contents($url . $fileName);
+					if(!$file)						continue;
+					file_put_contents(self::$packagesDir . "/" . $fileName, $file);
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
+
+	public function installPackage($pkgname, $pkgver)
+	{
+		if (!file_exists(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip")) {
+			if(!$this->downloadPackage($pkgname, $pkgver)){
+				return false;
+			}
+		}
+
+		/* Extract */
+		$zip = new \ZipArchive();
+		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip") != true) {
+			return false;
+		}
+		umask(0000);
+		@mkdir(self::$installedDir . "/" . $pkgname . "-" . $pkgver, 0777);
+		$zip->extractTo(self::$installedDir . "/" . $pkgname . "-" . $pkgver);
+		$zip->close();
+
+		/* copy files */
+		$dirContent = \Nette\Utils\Finder::find('*')->from(self::$installedDir . "/" . $pkgname . "-" . $pkgver)->childFirst();
+		foreach ($dirContent as $file) {
+			if ($file->getBaseName() == "info.neon")
+				continue;
+			$name = str_replace(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/", "", $file->getPathName());
+			if ($file->isDir()) {
+				umask(0000);
+				@mkdir(WWW_DIR . "/../" . $name, 0777);
+				rmdir($file->getPathname());
+			} else {
+				copy($file->getPathName(), WWW_DIR . "/../" . $name);
+				unlink($file->getPathname());
+			}
+		}
+
+		/* config */
+		if (file_exists(WWW_DIR . "/../packages/info/installed.neon")) {
+			$config = \Nette\Config\NeonAdapter::load(self::$infoDir . "/installed.neon");
+		} else {
+			$config = array();
+		}
+		$info = $this->getPackageInfo($pkgname, $pkgver);
+		$config[$pkgname] = array();
+		$config[$pkgname]["pkgver"] = $info["pkgver"];
+		$config[$pkgname]["pkgdesc"] = $info["pkgdesc"];
+		$config[$pkgname]["licence"] = $info["licence"];
+		\Nette\Config\NeonAdapter::save($config, self::$infoDir . "/installed.neon");
+		return true;
+	}
+
+
+	public function uninstallPackage($pkgname, $pkgver)
+	{
+		$config = \Nette\Config\NeonAdapter::load(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/info.neon");
+		foreach ($config["files"] as $file) {
+			$dir = dirname(WWW_DIR . "/../" . $file);
+			unlink(WWW_DIR . "/../" . $file);
+		}
+
+		unlink(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/info.neon");
+		rmdir(self::$installedDir . "/" . $pkgname . "-" . $pkgver);
+
+		/* config */
+		$config = \Nette\Config\NeonAdapter::load(self::$infoDir . "/installed.neon");
+		unset($config[$pkgname]);
+		\Nette\Config\NeonAdapter::save($config, self::$infoDir . "/installed.neon");
+	}
+
+
+	public function upgradePackage($pkgname, $pkgver)
+	{
+		$this->installPackage($pkgname, $pkgver);
+	}
+
+//	public function uploadPackage($pkgname, $pkgver, $repository, $user = NULL, $pass = NULL)
+//	{
+//		$file = WWW_DIR . "/../packages/".$pkgname."-".$pkgver.".zip";
+// 
+//		$c = curl_init();
+//		curl_setopt($c, CURLOPT_URL, $repository . "index.php");
+//		curl_setopt($c, CURLOPT_USERPWD, "username:password");
+//		curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+//		curl_setopt($c, CURLOPT_PUT, true);
+//		curl_setopt($c, CURLOPT_INFILESIZE, filesize($file));
+//
+//		$fp = fopen($file, "r");
+//		curl_setopt($c, CURLOPT_INFILE, $fp);
+//
+//		curl_exec($c);
+//
+//		curl_close($c);
+//		fclose($fp); 
+//	}
 }

@@ -19,6 +19,11 @@ class DefaultPresenter extends BasePresenter
 	
 	public function actionDefault()
 	{
+		$this->template->items = $this->getModel()->getPackages();
+	}
+	
+	public function actionAvailable()
+	{
 		$this->template->items = array();
 		$items = $this->getModel()->getPackages();
 		foreach($items as $key=>$item){
@@ -29,6 +34,16 @@ class DefaultPresenter extends BasePresenter
 		}
 	}
 	
+	public function createComponentForm($name)
+	{
+		$form = new \Venne\CMS\Modules\ModulesInstalltionForm($this, $name);
+		$form->setSuccessLink("default");
+		$form->setFlashMessage("Changes has been saved");
+		$form->addSubmit("submit", "Apply");
+		return $form;
+	}
+
+
 	public function createComponentFormPackage($name)
 	{
 		$form = new \Venne\CMS\Modules\ModulesUploadForm($this, $name);
@@ -36,6 +51,13 @@ class DefaultPresenter extends BasePresenter
 		$form->setFlashMessage("Package has been uploaded");
 		$form->addSubmit("submit", "Upload");
 		return $form;
+	}
+	
+	public function handleSync()
+	{
+		$this->getModel()->syncPackages();
+		$this->flashMessage("Packages has been synced");
+		$this->redirect("this");
 	}
 
 	public function handleDelete($pkgname, $pkgver)
@@ -48,7 +70,7 @@ class DefaultPresenter extends BasePresenter
 
 	public function handleDownload($pkgname, $pkgver)
 	{
-		$this->getModel()->downloadPackage($pkgname, $pkgver);
+		$this->getModel()->sendPackage($pkgname, $pkgver);
 	}
 
 	public function renderDefault()

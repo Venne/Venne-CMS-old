@@ -37,6 +37,10 @@ common:
 		lang: cs
 		template: venne
 		defaultModule: pages
+
+		repositories:
+			core: null
+
 		panels:
 			- stopwatch
 			

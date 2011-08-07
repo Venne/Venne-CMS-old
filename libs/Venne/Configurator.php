@@ -50,6 +50,13 @@ class Configurator extends \Nette\Configurator {
 		}
 		Debugger::$strictMode = TRUE;
 		Debugger::enable($this->container->params['productionMode']);
+		
+		$this->getContainer()->params['flashes'] = array(
+			'success' => "success",
+			'error' => "error",
+			'info' => "info",
+			'warning' => "warning",
+		);
 	}
 
 
