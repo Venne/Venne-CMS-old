@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class NavigationService extends BaseService implements
-\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IModelModule {
+\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule {
 
 
 	/** @var string */
@@ -39,6 +39,19 @@ class NavigationService extends BaseService implements
 	public function createServiceModel()
 	{
 		return new NavigationModel($this->container, $this);
+	}
+	
+	public function getAdminMenu()
+	{
+		$nav = new Navigation;
+		$nav->name = "Navigation";
+		$nav->type = "link";
+		
+		$nav->keys["module"] = $key = new NavigationKey();
+		$key->key = "module";
+		$key->val = "Navigation";
+		
+		return $nav;
 	}
 
 }

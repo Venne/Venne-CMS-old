@@ -3,7 +3,13 @@
 <ul class="toolbar">
 	
 	<li n:if="$presenter->isAllowed('Modules:Default:default')">
-		<a href="{plink Default:}"{if $presenter->isCurrent("Modules:Default:*")} class="active"{/if}>Packages</a>
+		<a href="{plink Default:}"{if $presenter->isCurrent("Modules:Default:*")} class="active"{/if}>Modules</a>
+	</li>
+	<li n:if="$presenter->isAllowed('Modules:Packages:default')">
+		<a href="{plink Packages:}"{if $presenter->isCurrent("Modules:Packages:*")} class="active"{/if}>Packages</a>
+	</li>
+	<li n:if="$presenter->isAllowed('Modules:Repositories:default')">
+		<a href="{plink Repositories:}"{if $presenter->isCurrent("Modules:Repositories:*")} class="active"{/if}>Repositories</a>
 	</li>
 	<li n:if="$presenter->isAllowed('Modules:Creator:default')">
 		<a href="{plink Creator:}"{if $presenter->isCurrent("Modules:Creator:*")} class="active"{/if}>Builds</a>

@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class UserForm extends \Venne\CMS\Developer\Form\EntityForm {
+class UsersForm extends \Venne\CMS\Developer\Form\EntityForm {
 
 
 	public function startup()

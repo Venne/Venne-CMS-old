@@ -58,6 +58,14 @@ class AdminPresenter extends \Venne\Application\UI\Presenter {
 		parent::beforeRender();
 		$this->template->langEdit = $this->langEdit;
 		$this->template->webId = $this->webId;
+		
+		$this->template->adminMenu = array();
+		foreach($this->getContext()->moduleManager->getAdminModules() as $item){
+			$this->template->adminMenu[] = $this->getContext()->{$item}->getAdminMenu();
+		}
+//		dump($this->template->adminMenu[0]->childrens);
+//		dump($this->template->adminMenu[0]->keys);
+//		die(dump($this->template->adminMenu));
 	}
 
 }

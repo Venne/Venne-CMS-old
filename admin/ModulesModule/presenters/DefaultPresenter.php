@@ -16,61 +16,54 @@ namespace ModulesModule;
  */
 class DefaultPresenter extends BasePresenter
 {
+
+	/** @persistent */
+	public $key;
 	
 	public function actionDefault()
 	{
-		$this->template->items = $this->getModel()->getPackages();
-	}
-	
-	public function actionAvailable()
-	{
 		$this->template->items = array();
-		$items = $this->getModel()->getPackages();
-		foreach($items as $key=>$item){
-			$name = explode("-", $key, -1);
-			$name = join("-", $name);
-			$ver = str_replace($name."-", "", $key);
-			$this->template->items[$name] = $this->getModel()->getPackageInfo($name, $ver);
+		$items = $this->getContext()->moduleManager->getAvailableModules();
+		foreach($items as $item){
+			$this->template->items[$item] = $this->getContext()->moduleManager->getModuleInfo($item);
 		}
 	}
 	
 	public function createComponentForm($name)
 	{
-		$form = new \Venne\CMS\Modules\ModulesInstalltionForm($this, $name);
+		$form = new \Venne\CMS\Modules\ModulesEditForm($this, $name, $this->getParam("key"));
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Changes has been saved");
-		$form->addSubmit("submit", "Apply");
-		return $form;
-	}
-
-
-	public function createComponentFormPackage($name)
-	{
-		$form = new \Venne\CMS\Modules\ModulesUploadForm($this, $name);
-		$form->setSuccessLink("default");
-		$form->setFlashMessage("Package has been uploaded");
-		$form->addSubmit("submit", "Upload");
+		$form->addSubmit("submit", "Save");
 		return $form;
 	}
 	
-	public function handleSync()
+	public function handleActivate($key)
 	{
-		$this->getModel()->syncPackages();
-		$this->flashMessage("Packages has been synced");
+		$this->getContext()->moduleManager->activateModule($key);
+		$this->flashMessage("Module has been activated", "success");
 		$this->redirect("this");
 	}
-
-	public function handleDelete($pkgname, $pkgver)
+	
+	public function handleDeactivate($key)
 	{
-		$this->getModel()->removePackage($pkgname, $pkgver);
-		$this->flashMessage("Package has been deleted", "success");
+		$this->getContext()->moduleManager->deactivateModule($key);
+		$this->flashMessage("Module has been deactivated", "success");
 		$this->redirect("this");
 	}
-
-
-	public function handleDownload($pkgname, $pkgver)
+	
+	public function handleInstall($key)
 	{
-		$this->getModel()->sendPackage($pkgname, $pkgver);
+		$this->getContext()->moduleManager->installModule($key);
+		$this->flashMessage("Module has been installed", "success");
+		$this->redirect("this");
+	}
+	
+	public function handleUninstall($key)
+	{
+		$this->getContext()->moduleManager->uninstallModule($key);
+		$this->flashMessage("Module has been uninstalled", "success");
+		$this->redirect("this");
 	}
 
 	public function renderDefault()

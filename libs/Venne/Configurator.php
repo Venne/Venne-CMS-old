@@ -50,13 +50,15 @@ class Configurator extends \Nette\Configurator {
 		}
 		Debugger::$strictMode = TRUE;
 		Debugger::enable($this->container->params['productionMode']);
-		
+
 		$this->getContainer()->params['flashes'] = array(
 			'success' => "success",
 			'error' => "error",
 			'info' => "info",
 			'warning' => "warning",
 		);
+		
+		$this->getContainer()->params["extensionsDir"] = EXTENSIONS_DIR;
 	}
 
 
@@ -184,35 +186,6 @@ class Configurator extends \Nette\Configurator {
 	public static function createServiceTranslatorPanel(\Nette\DI\IContainer $container)
 	{
 		return new \Nella\Localization\Panel($container);
-	}
-
-//	/**
-//	 * @param \Nette\DI\IContainer
-//	 * @return \Venne\CMS\Modules\NavigationService
-//	 */
-//	public static function createServiceNavigation(\Nette\DI\IContainer $container)
-//	{
-//		return new CMS\Models\NavigationService($container);
-//	}
-
-
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Venne\CMS\Modules\WebsiteService
-	 */
-	public static function createServiceWebsite(\Nette\DI\IContainer $container)
-	{
-		return new CMS\Modules\WebsiteService($container);
-	}
-
-
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Venne\CMS\Modules\LanguageService
-	 */
-	public static function createServiceLanguage(\Nette\DI\IContainer $container)
-	{
-		return new CMS\Modules\LanguageService($container);
 	}
 
 

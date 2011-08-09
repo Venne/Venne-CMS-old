@@ -22,7 +22,7 @@ namespace Venne\CMS\Modules;
  * @property string $salt
  * @property array $roles
  */
-class User extends \Nette\Security\Identity {
+class Users extends \Nette\Security\Identity {
 
 	protected $roleNames;
 	

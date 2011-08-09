@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class PagesService extends BaseService implements
-Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\Developer\IModelModule {
+Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule {
 
 
 	protected $className = "pages";
@@ -74,6 +74,19 @@ Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\
 	public function createServiceModel()
 	{
 		return new PagesModel($this->container, $this);
+	}
+	
+	public function getAdminMenu()
+	{
+		$nav = new Navigation;
+		$nav->name = "Pages module";
+		$nav->type = "link";
+
+		$nav->keys["module"] = $key = new NavigationKey();
+		$key->key = "module";
+		$key->val = "Pages";
+
+		return $nav;
 	}
 
 }

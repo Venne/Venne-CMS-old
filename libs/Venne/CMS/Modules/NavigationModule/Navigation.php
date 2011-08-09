@@ -37,7 +37,8 @@ class Navigation extends \Venne\Models\BaseEntity {
 	public function __construct()
 	{
 		$this->active = true;
-		$this->keys = new \Doctrine\Common\Collections\ArrayCollection(); 
+		$this->keys = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->childrens = new \Doctrine\Common\Collections\ArrayCollection(); 
 	}
 
 	/**

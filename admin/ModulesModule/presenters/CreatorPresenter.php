@@ -26,6 +26,11 @@ class CreatorPresenter extends BasePresenter {
 		$this->addPath("Creator", $this->link(":Modules:Creator:"));
 	}
 	
+	public function actionCreate()
+	{
+		$this->addPath("new item", $this->link(":Modules:Creator:create"));
+	}
+	
 	public function actionDefault()
 	{
 		$this->template->items = $this->getModel()->getPackageBuilds();

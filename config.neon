@@ -37,10 +37,14 @@ common:
 		lang: cs
 		template: venne
 		defaultModule: pages
-
 		repositories:
-			core: null
-
+			core:
+				mirrors:
+					- http://repo.venne.cz/core/
+					
+				name: anonym
+				password: ""
+			
 		panels:
 			- stopwatch
 			
@@ -49,15 +53,15 @@ common:
 			password: pass
 			
 		modules:
-			ModulesModule:
+			modulesModule:
 				run: true
-
+				
 			systemModule:
 				run: true
 				
 			sitemapModule:
 				run: true
-				routePrefix: null
+				routePrefix: ""
 				
 			usersModule:
 				run: true
@@ -73,9 +77,14 @@ common:
 				
 			pagesModule:
 				run: true
-				routePrefix: null
+				routePrefix: ""
 				sitemapPriority: 0.45
 				
+			websiteModule:
+				run: true
+				
+			languageModule:
+				run: true
 			
 		macros:
 			- css
@@ -86,6 +95,6 @@ common:
 		helpers: null
 		
 	
-development < common: 
 production < common: 
+development < common: 
 console < common: 

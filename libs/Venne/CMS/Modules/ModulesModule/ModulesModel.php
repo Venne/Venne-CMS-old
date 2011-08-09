@@ -44,6 +44,54 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		self::$availableDir = self::$dir . "/available";
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getRepositories()
+	{
+		return $this->container->params["venne"]["repositories"];
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function getRepositoryInfo($name)
+	{
+		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		return $config["common"]["venne"]["repositories"][$name];
+	}
+	
+	public function removeRepository($name)
+	{
+		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		unset($config["common"]["venne"]["repositories"][$name]);
+		unset($config["development"]["venne"]["repositories"][$name]);
+		unset($config["production"]["venne"]["repositories"][$name]);
+		unset($config["console"]["venne"]["repositories"][$name]);
+		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+	}
+
+
+	public function saveRepository($name, $mirrors, $userName = NULL, $userPassword = NULL)
+	{
+		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config["common"]["venne"]["repositories"][$name]["mirrors"] = $mirrors;
+		if($userName){
+			$config["common"]["venne"]["repositories"][$name]["name"] = $userName;
+		}else{
+			if(isset($config["common"]["venne"]["repositories"][$name]["name"])){
+				unset($config["common"]["venne"]["repositories"][$name]["name"]);
+			}
+		}
+		if($userName){
+			$config["common"]["venne"]["repositories"][$name]["password"] = $userPassword;
+		}else{
+			if(isset($config["common"]["venne"]["repositories"][$name]["password"])){
+				unset($config["common"]["venne"]["repositories"][$name]["password"]);
+			}
+		}
+		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+	}
 
 	public function savePackageBuild($pkgname, $pkgver, $pkgdesc, $licence, $dependencies, $packager, $files)
 	{
@@ -95,7 +143,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		 * Copy files
 		 */
 		$zip = new \ZipArchive();
-		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $config['pkgver'] . ".zip", \ZipArchive::CREATE) != true) {
+		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $config['pkgver'] . ".pkg", \ZipArchive::CREATE) != true) {
 			return false;
 		}
 
@@ -133,7 +181,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		}
 
 		/* in local repo */
-		foreach (\Nette\Utils\Finder::findFiles("*.zip")->in(self::$packagesDir) as $file) {
+		foreach (\Nette\Utils\Finder::findFiles("*.pkg")->in(self::$packagesDir) as $file) {
 			$name = $file->getFileName();
 			$pkgname = explode("-", $name, -1);
 			$pkgname = join("-", $pkgname);
@@ -160,15 +208,15 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		}
 
 		foreach ($this->container->params["venne"]["repositories"] as $repo => $item) {
-			foreach ($item as $url) {
+			foreach ($item["mirrors"] as $url) {
 				umask(0000);
 				@mkdir(self::$availableDir . "/" . $repo);
 
-				$file = file_get_contents($url . "repository.zip");
-				file_put_contents(self::$tempDir . "/repository.zip", $file);
+				$file = file_get_contents($url . "repository.db");
+				file_put_contents(self::$tempDir . "/repository.db", $file);
 
 				$zip = new \ZipArchive();
-				if ($zip->open(self::$tempDir . "/repository.zip") != true) {
+				if ($zip->open(self::$tempDir . "/repository.db") != true) {
 					return false;
 				}
 				$zip->extractTo(self::$availableDir . "/" . $repo);
@@ -213,7 +261,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		}
 
 		/* in local */
-		if (file_exists(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip")) {
+		if (file_exists(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".pkg")) {
 			return $this->getPackageInfoFromPackage($pkgname, $pkgver);
 		}
 
@@ -229,7 +277,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	{
 		set_error_handler(array($this, 'handleError'));
 		$zip = new \ZipArchive();
-		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip") != true) {
+		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".pkg") != true) {
 			return false;
 		}
 
@@ -261,12 +309,12 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	 */
 	public function sendPackage($pkgname, $pkgver)
 	{
-		$file = file_get_contents(self::$packagesDir . '/' . $pkgname . "-" . $pkgver . ".zip");
+		$file = file_get_contents(self::$packagesDir . '/' . $pkgname . "-" . $pkgver . ".pkg");
 		$httpResponse = $this->container->httpResponse;
 
 		$httpResponse->setHeader('Content-Transfer-Encoding', "binary");
 		$httpResponse->setHeader('Content-Description', "File Transfer");
-		$httpResponse->setHeader('Content-Disposition', 'attachment; filename="' . $pkgname . "-" . $pkgver . '.zip"');
+		$httpResponse->setHeader('Content-Disposition', 'attachment; filename="' . $pkgname . "-" . $pkgver . '.pkg"');
 		$httpResponse->setContentType('application/zip', 'UTF-8');
 		print($file);
 		die();
@@ -292,9 +340,9 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	public function isUploadPackageValid(\Nette\Forms\IControl $control)
 	{
 		$file = $control->getValue();
-		$pkgname = explode("-", str_replace(".zip", "", $file->getName()), -1);
+		$pkgname = explode("-", str_replace(".pkg", "", $file->getName()), -1);
 		$pkgname = join("-", $pkgname);
-		$pkgver = str_replace($pkgname . "-", "", str_replace(".zip", "", $file->getName()));
+		$pkgver = str_replace($pkgname . "-", "", str_replace(".pkg", "", $file->getName()));
 
 
 		$file->move(self::$packagesDir . '/' . $file->getName());
@@ -310,7 +358,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 
 	public function removePackage($pkgname, $pkgver)
 	{
-		@unlink(self::$packagesDir . '/' . $pkgname . "-" . $pkgver . ".zip");
+		@unlink(self::$packagesDir . '/' . $pkgname . "-" . $pkgver . ".pkg");
 	}
 
 
@@ -327,7 +375,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 				}
 				
 				foreach ($item as $url) {
-					$fileName = $pkgname . "-" . $pkgver . ".zip";
+					$fileName = $pkgname . "-" . $pkgver . ".pkg";
 					$file = file_get_contents($url . $fileName);
 					if(!$file)						continue;
 					file_put_contents(self::$packagesDir . "/" . $fileName, $file);
@@ -343,7 +391,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 
 	public function installPackage($pkgname, $pkgver)
 	{
-		if (!file_exists(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip")) {
+		if (!file_exists(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".pkg")) {
 			if(!$this->downloadPackage($pkgname, $pkgver)){
 				return false;
 			}
@@ -351,7 +399,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 
 		/* Extract */
 		$zip = new \ZipArchive();
-		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".zip") != true) {
+		if ($zip->open(self::$packagesDir . "/" . $pkgname . "-" . $pkgver . ".pkg") != true) {
 			return false;
 		}
 		umask(0000);
@@ -413,7 +461,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	{
 		$this->installPackage($pkgname, $pkgver);
 	}
-
+	
 //	public function uploadPackage($pkgname, $pkgver, $repository, $user = NULL, $pass = NULL)
 //	{
 //		$file = WWW_DIR . "/../packages/".$pkgname."-".$pkgver.".zip";

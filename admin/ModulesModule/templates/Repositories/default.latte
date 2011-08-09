@@ -1,0 +1,33 @@
+{* This is temporary page, you can delete it *}
+
+{block content}
+
+{include "../head.latte"}
+
+{include "./head.latte"}
+
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width: 70%;">{_"Name"}</th>
+			<th style="width: 30%;"></th>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach $items as $name=>$item}
+		<tr class="screens {if $iterator->getCounter()%2 == 0} even{/if}{if $iterator->isLast()} footer{/if}">
+			<td>
+				{$name}
+			</td>
+			<td class="actions">
+				<ul>
+					{if $presenter->isAllowed('edit')}
+					<li><a href="{link edit key=>$name}">editovat</a></li>
+					<li><a n:confirm="really?" href="{link delete! id=>$name}">smazat</a></li>
+					{/if}
+				</ul>
+			</td>
+		</tr>
+		{/foreach}
+	</tbody>
+</table>
