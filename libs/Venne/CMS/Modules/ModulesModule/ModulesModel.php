@@ -446,6 +446,12 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		foreach ($config["files"] as $file) {
 			$dir = dirname(WWW_DIR . "/../" . $file);
 			unlink(WWW_DIR . "/../" . $file);
+			
+			while(!($files = @scandir($dir)) || !(count($files) > 2)) {
+				dump($dir);
+				rmdir($dir);
+				$dir = dirname($dir);
+			}
 		}
 
 		unlink(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/info.neon");
