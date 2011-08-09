@@ -24,7 +24,7 @@ Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\IModelModule, Venne\CMS\De
 	
 	public function getRoute(\Nette\Application\Routers\RouteList $router, $values = array(), $prefix = "")
 	{
-		$router[] = new \Nette\Application\Routers\Route($prefix . '<repository>/<package>', $values + array(
+		$router[] = new \Nette\Application\Routers\Route($prefix . '[<repository>[/<package>]]', $values + array(
 					'module' => 'Repository',
 					'presenter' => 'Default',
 					'action' => 'default',
