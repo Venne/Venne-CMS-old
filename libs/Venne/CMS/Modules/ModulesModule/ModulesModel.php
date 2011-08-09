@@ -404,7 +404,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 			return false;
 		}
 		umask(0000);
-		@mkdir(self::$installedDir . "/" . $pkgname . "-" . $pkgver, 0777);
+		@mkdir(self::$installedDir . "/" . $pkgname . "-" . $pkgver, 0777, true);
 		$zip->extractTo(self::$installedDir . "/" . $pkgname . "-" . $pkgver);
 		$zip->close();
 
@@ -416,9 +416,11 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 			$name = str_replace(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/", "", $file->getPathName());
 			if ($file->isDir()) {
 				umask(0000);
-				@mkdir(WWW_DIR . "/../" . $name, 0777);
+				@mkdir(WWW_DIR . "/../" . $name, 0777, true);
 				rmdir($file->getPathname());
 			} else {
+				umask(0000);
+				@mkdir(dirname(WWW_DIR . "/../" . $name), 0777, true);
 				copy($file->getPathName(), WWW_DIR . "/../" . $name);
 				unlink($file->getPathname());
 			}
