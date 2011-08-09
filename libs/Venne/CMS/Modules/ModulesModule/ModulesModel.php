@@ -374,8 +374,9 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 					continue;
 				}
 				
-				foreach ($item as $url) {
+				foreach ($item["mirrors"] as $url) {
 					$fileName = $pkgname . "-" . $pkgver . ".pkg";
+					dump($url . $fileName);
 					$file = file_get_contents($url . $fileName);
 					if(!$file)						continue;
 					file_put_contents(self::$packagesDir . "/" . $fileName, $file);
@@ -384,7 +385,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 				}
 			}
 		}
-		
+		die();
 		return false;
 	}
 
