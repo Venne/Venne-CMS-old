@@ -38,7 +38,7 @@
 					{if $presenter->isAllowed('edit')}
 					{input "item_".$item["pkgname"]."_".$ver}<br>
 					{*}<li><a href="{link build! id=>$name}">build</a></li>{*}
-					{if file_exists(WWW_DIR . "/../packages/local/".$name."-".$item["pkgver"].".zip")}
+					{if file_exists(WWW_DIR . "/../packages/local/".$name."-".$item["pkgver"].".pkg")}
 					<li><a href="{link download! pkgname=>$name, pkgver=>$item["pkgver"]}">download</a></li>
 					<li><a n:confirm="really?" href="{link delete! pkgname=>$name, pkgver=>$item["pkgver"]}">smazat</a></li>
 					{/if}
