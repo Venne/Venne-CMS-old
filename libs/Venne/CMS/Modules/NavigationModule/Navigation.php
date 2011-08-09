@@ -42,6 +42,11 @@ class Navigation extends \Venne\Models\BaseEntity {
 	}
 
 	/**
+	 * @Column(type="integer", name="`order`")
+	 */
+	protected $order;
+	
+	/**
 	 *  @Column(type="boolean")
 	 */
 	protected $active;

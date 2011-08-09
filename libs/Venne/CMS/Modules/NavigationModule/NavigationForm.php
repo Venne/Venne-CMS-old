@@ -119,6 +119,11 @@ class NavigationForm extends \Venne\CMS\Developer\Form\EntityForm{
 		$this->entity->parent = $service->getRepository()->find($values["navigation_id"]);
 		$this->entity->active = true;
 		$this->entity->website = $presenter->getContext()->website->currentFront;
+		
+		if(!$this->entity->order){
+			$this->entity->order = $service->model->getOrderValue($this->entity->website->id, $this->entity->parent->id ? $this->entity->parent->id : NULL);
+		}
+		
 		$em->flush();
 	}
 

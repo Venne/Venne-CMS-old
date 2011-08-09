@@ -6,6 +6,7 @@ use Nette\Utils\Html;
 
 /**
  * @allowed(administration-navigation)
+ * @method \Venne\CMS\Modules\NavigationModel getModel()
  */
 class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
@@ -17,7 +18,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-
+		
 		$this->addPath("Navigation", $this->link(":Navigation:Default:"));
 		$this->template->menu = $this->getNavigation()->model->getFrontRootItems();
 		$this->template->dep = Null;
@@ -77,7 +78,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	{
 		foreach ($menu as $key => $item) {
 			if ($form["delete_" . $item->id]->isSubmittedBy()) {
-				$this->getNavigation()->remove($this->getNavigation()->getRepository()->find($item->id));
+				$this->getNavigation()->model->removeItem($this->getNavigation()->getRepository()->find($item->id));
 				$this->flashMessage("Menu item has been deleted", "success");
 				$this->redirect("this");
 			}
