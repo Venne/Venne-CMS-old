@@ -34,7 +34,9 @@ class AliasService extends BaseService implements
 	{
 		$url = str_replace($this->container->httpRequest->url->getBasePath(), "", $this->container->httpRequest->url->getPath());
 		$moduleName = $this->container->application->presenter->getModuleName();
-		$url = substr($url, strlen($this->container->params["venne"]["modules"][$moduleName."Module"]["routePrefix"]));
+		if(isset($this->container->params["venne"]["modules"][$moduleName."Module"]["routePrefix"])){
+			$url = substr($url, strlen($this->container->params["venne"]["modules"][$moduleName."Module"]["routePrefix"]));
+		}
 		$alias = $this->getRepository()->findOneBy(array("moduleName" => $moduleName, "url" => $url));
 		if ($alias) {
 			$arr = array(
