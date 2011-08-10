@@ -72,7 +72,7 @@ Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\
 
 
 	/**
-	 * @return NavigationModel 
+	 * @return PagesModel 
 	 */
 	public function createServiceModel()
 	{

@@ -336,6 +336,12 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	{
 		$url2 = $this->getContext()->httpRequest->getUrl()->getPath();
 		$link = explode("?", $url);
+		$basePath = $this->getContext()->httpRequest->getUrl()->getBasePath();
+		
+		if($url2 == $basePath && $link[0] == $basePath){
+			return true;
+		}
+		
 		if (strpos($url2, $link[0]) === 0 && $link[0] != $this->getContext()->httpRequest->getUrl()->getBasePath()) {
 			return true;
 		} else {
