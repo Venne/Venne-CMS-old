@@ -67,6 +67,17 @@ class ModuleManager {
 		return $arr;
 	}
 	
+	public function getStartupModules()
+	{
+		$arr = array();
+		foreach($this->getModules() as $module){
+			if($this->container->{$module} instanceof \Venne\CMS\Developer\IStartupModule){
+				$arr[] = $module;
+			}
+		}
+		return $arr;
+	}
+	
 	public function getAdminModules()
 	{
 		$arr = array();
@@ -105,6 +116,17 @@ class ModuleManager {
 		$arr = array();
 		foreach($this->getModules() as $module){
 			if($this->container->{$module} instanceof \Venne\CMS\Developer\ICallbackModule){
+				$arr[] = $module;
+			}
+		}
+		return $arr;
+	}
+	
+	public function getCallbackSenderModules()
+	{
+		$arr = array();
+		foreach($this->getModules() as $module){
+			if($this->container->{$module} instanceof \Venne\CMS\Developer\ICallbackSenderModule){
 				$arr[] = $module;
 			}
 		}

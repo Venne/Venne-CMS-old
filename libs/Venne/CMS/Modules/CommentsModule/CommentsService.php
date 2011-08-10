@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class CommentsService extends BaseService implements
-\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IRenderableContentExtensionModule, \Venne\CMS\Developer\IModelModule {
+\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IRenderableContentExtensionModule, \Venne\CMS\Developer\IModelModule, \Venne\CMS\Developer\ICallbackModule {
 
 
 	/** @var string */
@@ -42,6 +42,11 @@ class CommentsService extends BaseService implements
 	public function createServiceModel()
 	{
 		return new CommentsModel($this->container, $this);
+	}
+	
+	public function slotOnRemoveItem($moduleName, $moduleItemId)
+	{
+		$this->model->removeItemByModuleName($moduleName, $moduleItemId);
 	}
 
 }

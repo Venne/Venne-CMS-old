@@ -15,6 +15,7 @@ use Venne;
 
 /**
  * @author Josef Kříž
+ * @property PagesService $parent
  */
 class PagesModel extends Venne\CMS\Developer\Model {
 
@@ -61,6 +62,20 @@ class PagesModel extends Venne\CMS\Developer\Model {
 		$this->getEntityManager()->flush();
 		return $entity;
 	}
+
+
+	/**
+	 * @param integer $id 
+	 */
+	public function removeItem($id)
+	{
+		$item = $this->getRepository()->find($id);
+		$this->getEntityManager()->remove($item);
+		$this->getEntityManager()->flush();
+		
+		$this->parent->onRemoveItem("pages", $id);
+	}
+
 
 	/**
 	 * @param \Nette\Forms\IControl $control

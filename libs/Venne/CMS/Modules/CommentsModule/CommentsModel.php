@@ -58,4 +58,15 @@ class CommentsModel extends Venne\CMS\Developer\Model {
 		return (bool)$item;
 	}
 	
+	/**
+	 * @param string $moduleName
+	 * @param string $moduleItemId 
+	 */
+	public function removeItemByModuleName($moduleName, $moduleItemId)
+	{
+		$item = $this->getRepository()->findOneBy(array("moduleName"=>$moduleName, "moduleItemId"=>$moduleItemId));
+		$this->getEntityManager()->remove($item);
+		$this->getEntityManager()->flush();
+	}
+	
 }

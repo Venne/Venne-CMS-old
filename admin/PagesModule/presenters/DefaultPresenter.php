@@ -72,9 +72,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function handleDelete($id)
 	{
-		$item = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->find($id);
-		$this->getEntityManager()->remove($item);
-		$this->getEntityManager()->flush();
+		$this->getModel()->removeItem($id);
 		$this->flashMessage("Page has been deleted", "success");
 		$this->redirect("this", array("id" => NULL));
 	}

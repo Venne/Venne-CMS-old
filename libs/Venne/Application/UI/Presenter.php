@@ -105,18 +105,6 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		}
 
 		/*
-		 * Add Callback modules
-		 */
-		if (!defined("VENNE_MODE_INSTALLATION")) {
-			foreach ($this->getContext()->moduleManager->getCallbackModules() as $module) {
-				$this->onStartup[] = callback($this->getContext()->{$module}, "onStartup");
-				$this->onRender[] = callback($this->getContext()->{$module}, "onRender");
-			}
-		}
-
-
-
-		/*
 		 * Macros
 		 */
 		//\Venne\CMS\Macros\NConfirmMacro::register();
@@ -125,6 +113,13 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		 * Module
 		 */
 		$this->moduleName = lcfirst(substr($this->name, 0, strpos($this->name, ":")));
+		
+		/*
+		 * Add Callback modules
+		 */
+		if (!defined("VENNE_MODE_INSTALLATION")) {
+			$this->getContext()->callback->callbackListenerOnPresenterStartup();
+		}
 
 
 		/*

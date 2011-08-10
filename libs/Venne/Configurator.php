@@ -57,7 +57,7 @@ class Configurator extends \Nette\Configurator {
 			'info' => "info",
 			'warning' => "warning",
 		);
-		
+
 		$this->getContainer()->params["extensionsDir"] = EXTENSIONS_DIR;
 	}
 
@@ -81,6 +81,10 @@ class Configurator extends \Nette\Configurator {
 			$container->addService($item, function() use ($container, $serviceClass) {
 						return new $serviceClass($container);
 					});
+		}
+		
+		foreach ($this->getContainer()->moduleManager->getStartupModules() as $item) {
+				$container->$item->startup();
 		}
 	}
 

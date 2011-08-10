@@ -44,7 +44,7 @@ common:
 					
 				name: anonym
 				password: ""
-			
+				
 		panels:
 			- stopwatch
 			
@@ -53,6 +53,9 @@ common:
 			password: pass
 			
 		modules:
+			callbackModule:
+				run: true
+
 			modulesModule:
 				run: true
 				
@@ -85,7 +88,7 @@ common:
 				
 			languageModule:
 				run: true
-			
+				
 		macros:
 			- css
 			- js

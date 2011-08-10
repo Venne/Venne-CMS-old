@@ -14,7 +14,9 @@ namespace Venne\CMS\Developer;
 /**
  * @author Josef Kříž
  */
-interface ICallbackModule{
+interface IStartupModule {
+
+	public function startup();
 	
 }
 

@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class NavigationService extends BaseService implements
-\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule {
+\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, \Venne\CMS\Developer\ICallbackModule {
 
 
 	/** @var string */
@@ -52,6 +52,11 @@ class NavigationService extends BaseService implements
 		$key->val = "Navigation";
 		
 		return $nav;
+	}
+	
+	public function slotOnRemoveItem($moduleName, $moduleItemId)
+	{
+		$this->model->removeItemByModuleName($moduleName, $moduleItemId);
 	}
 
 }

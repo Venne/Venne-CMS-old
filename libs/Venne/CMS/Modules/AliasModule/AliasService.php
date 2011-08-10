@@ -16,16 +16,13 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class AliasService
-extends BaseService
-implements
-	\Venne\CMS\Developer\IContentExtensionModule,
-	\Venne\CMS\Developer\ICallbackModule,
-	\Venne\CMS\Developer\IModelModule
-{
+class AliasService extends BaseService implements
+\Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\ICallbackModule, \Venne\CMS\Developer\IModelModule {
+
 
 	/** @var string */
 	protected $className = "alias";
+
 
 	public function createServiceContentExtension()
 	{
@@ -33,30 +30,26 @@ implements
 	}
 
 
-	public function onRender()
-	{
-		
-	}
-
-
-	public function onStartup()
+	public function slotOnPresenterStartup()
 	{
 		$url = str_replace($this->container->httpRequest->url->getBasePath(), "", $this->container->httpRequest->url->getPath());
 		$moduleName = $this->container->application->presenter->getModuleName();
-		$alias = $this->getRepository()->findOneBy(array("moduleName"=>$moduleName, "url"=>$url));
-		if($alias){
+		$url = substr($url, strlen($this->container->params["venne"]["modules"][$moduleName."Module"]["routePrefix"]));
+		$alias = $this->getRepository()->findOneBy(array("moduleName" => $moduleName, "url" => $url));
+		if ($alias) {
 			$arr = array(
 				"module" => "Default",
 				"presenter" => "Default",
 				"action" => "Default"
 			);
-			foreach($alias->keys as $item){
+			foreach ($alias->keys as $item) {
 				$arr[$item->key] = $item->val;
 			}
-			
-			$this->container->application->presenter->redirect(":".$arr["module"].":".$arr["presenter"].":".$arr["action"], $arr);
+
+			$this->container->application->presenter->redirect(":" . $arr["module"] . ":" . $arr["presenter"] . ":" . $arr["action"], $arr);
 		}
 	}
+
 
 	/**
 	 * @return AliasModel 
@@ -64,6 +57,11 @@ implements
 	public function createServiceModel()
 	{
 		return new AliasModel($this->container, $this);
+	}
+	
+	public function slotOnRemoveItem($moduleName, $moduleItemId)
+	{
+		$this->model->removeItemByModuleName($moduleName, $moduleItemId);
 	}
 
 }
