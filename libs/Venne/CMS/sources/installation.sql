@@ -3,8 +3,8 @@
 -- http://www.phpmyadmin.net
 --
 -- Počítač: localhost
--- Vygenerováno: Úte 05. čec 2011, 17:13
--- Verze MySQL: 5.5.13
+-- Vygenerováno: Čtv 11. srp 2011, 16:14
+-- Verze MySQL: 5.5.15
 -- Verze PHP: 5.3.6
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `alias` (
   `moduleItemId` int(11) NOT NULL,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `aliasKey` (
   `val` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `alias_id` (`alias_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
 
 -- --------------------------------------------------------
 
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `moduleName` varchar(255) NOT NULL,
   `moduleItemId` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `commentsItem` (
   `author` varchar(255) NOT NULL,
   `text` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `language` (
   `alias` varchar(30) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Vypisuji data pro tabulku `language`
@@ -96,6 +96,38 @@ CREATE TABLE IF NOT EXISTS `language` (
 INSERT INTO `language` (`id`, `website_id`, `lang`, `name`, `alias`) VALUES
 (1, -1, 'cs', 'čeština', 'cs'),
 (2, -1, 'en', 'english', 'en');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabulky `layout`
+--
+
+CREATE TABLE IF NOT EXISTS `layout` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `regex` varchar(255) NOT NULL,
+  `moduleName` varchar(255) DEFAULT NULL,
+  `moduleItemId` varchar(255) DEFAULT NULL,
+  `layout` varchar(255) NOT NULL,
+  `website_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `website_id` (`website_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabulky `layoutKey`
+--
+
+CREATE TABLE IF NOT EXISTS `layoutKey` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `layout_id` int(11) NOT NULL,
+  `key` varchar(255) NOT NULL,
+  `val` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `layout_id` (`layout_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
 
 -- --------------------------------------------------------
 
@@ -116,14 +148,14 @@ CREATE TABLE IF NOT EXISTS `navigation` (
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`,`navigation_id`),
   KEY `navigation_id` (`navigation_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=28 ;
 
 --
 -- Vypisuji data pro tabulku `navigation`
 --
 
 INSERT INTO `navigation` (`id`, `website_id`, `navigation_id`, `active`, `name`, `type`, `order`, `moduleName`, `moduleItemId`) VALUES
-(1, -1, NULL, 1, 'Navigation', 'link', 1, NULL, NULL),
+(1, -1, NULL, 1, 'Navigation', 'link', 5, NULL, NULL),
 (3, -1, NULL, 1, 'Pages', 'link', 0, NULL, NULL);
 
 -- --------------------------------------------------------
@@ -139,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `navigationKey` (
   `val` varchar(300) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `navigation_id` (`navigation_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=88 ;
 
 --
 -- Vypisuji data pro tabulku `navigationKey`
@@ -169,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `mainPage` smallint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
 
 -- --------------------------------------------------------
 
@@ -186,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `permission` (
   PRIMARY KEY (`id`),
   KEY `role_id` (`role_id`),
   KEY `resource_id` (`resource_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=41 ;
 
 --
 -- Vypisuji data pro tabulku `permission`
@@ -208,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `privilege` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `resource_id` (`resource_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -262,7 +294,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   `role_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `role_id` (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Vypisuji data pro tabulku `role`
@@ -286,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `salt` varchar(30) NOT NULL,
   `email` varchar(300) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -318,7 +350,7 @@ CREATE TABLE IF NOT EXISTS `website` (
   `routePrefix` varchar(300) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `langDefault` (`langDefault`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Vypisuji data pro tabulku `website`
@@ -342,6 +374,18 @@ ALTER TABLE `aliasKey`
 --
 ALTER TABLE `language`
   ADD CONSTRAINT `language_ibfk_1` FOREIGN KEY (`website_id`) REFERENCES `website` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Omezení pro tabulku `layout`
+--
+ALTER TABLE `layout`
+  ADD CONSTRAINT `layout_ibfk_1` FOREIGN KEY (`website_id`) REFERENCES `website` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Omezení pro tabulku `layoutKey`
+--
+ALTER TABLE `layoutKey`
+  ADD CONSTRAINT `layoutKey_ibfk_1` FOREIGN KEY (`layout_id`) REFERENCES `layout` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Omezení pro tabulku `navigation`

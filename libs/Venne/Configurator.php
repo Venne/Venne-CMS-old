@@ -19,6 +19,8 @@ use Nette,
 
 /**
  * @author     Josef Kříž
+ * 
+ * @property \Nette\Application\Application $application
  */
 class Configurator extends \Nette\Configurator {
 

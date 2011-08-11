@@ -159,8 +159,10 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 	public function removeItemByModuleName($moduleName, $moduleItemId)
 	{
 		$item = $this->getRepository()->findOneBy(array("moduleName"=>$moduleName, "moduleItemId"=>$moduleItemId));
-		$this->getEntityManager()->remove($item);
-		$this->getEntityManager()->flush();
+		if($item){
+			$this->getEntityManager()->remove($item);
+			$this->getEntityManager()->flush();
+		}
 	}
 
 

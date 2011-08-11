@@ -18,13 +18,10 @@ use Venne\ORM\Column;
  * @Entity
  * @Table(name="layout")
  * 
- * @property /Venne/CMS/Models/NavigationKey $keys
- * @property /Venne/CMS/Models/Navigation $childrens
- * @property /Venne/CMS/Models/Navigation $parent
- * @property bool $active
+ * @property /Venne/CMS/Models/LayoutKey $keys
  * @property /Venne/CMS/Models/Website $website
- * @property string $type
- * @property string $name
+ * @property string $regex
+ * @property string $layout
  * @property string $moduleName
  * @property integer $moduleItemId
  */
@@ -48,5 +45,10 @@ class Layout extends \Venne\Models\BaseEntity {
 	 * @JoinColumn(name="website_id", referencedColumnName="id")
 	 */
 	protected $website;
+	
+	/**
+	 * @OneToMany(targetEntity="layoutKey", mappedBy="layout", indexBy="key", cascade={"persist", "remove", "detach"})
+	 */
+	protected $keys;
 
 }

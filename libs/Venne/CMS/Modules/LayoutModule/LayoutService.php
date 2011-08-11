@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class LayoutService extends BaseService implements
-\Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule {
+\Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, \Venne\CMS\Developer\IContentExtensionModule, \Venne\CMS\Developer\ICallbackModule {
 
 
 	/** @var string */
@@ -42,6 +42,22 @@ class LayoutService extends BaseService implements
 		$key->val = "Layout";
 		
 		return $nav;
+	}
+	
+	public function createServiceContentExtension()
+	{
+		return new LayoutContentExtension($this->container);
+	}
+
+
+	public function getContentExtensionElementName()
+	{
+		return "layout";
+	}
+	
+	public function slotOnRemoveItem($moduleName, $moduleItemId)
+	{
+		$this->model->removeItemByModuleName($moduleName, $moduleItemId);
 	}
 
 }

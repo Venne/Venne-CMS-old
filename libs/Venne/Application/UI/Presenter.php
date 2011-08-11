@@ -213,7 +213,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public function formatLayoutTemplateFiles()
 	{
 		$skinName = $this->getWebsite()->current->skin;
-		$layout = $this->layout ? $this->layout : 'layout';
+		$layout = $this->getContext()->layout->model->detectLayout();
 		$list = array(
 			EXTENSIONS_DIR . "/skins/$skinName/layouts/@$layout.latte"
 		);
