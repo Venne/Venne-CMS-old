@@ -23,7 +23,7 @@ class DefaultPresenter extends BasePresenter
 		$form = new \Venne\CMS\Modules\SystemForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Global settings has been updated");
-		$form->addSubmit("submit", "Update");
+		$form->setSubmitLabel("Update");
 		return $form;
 	}
 	

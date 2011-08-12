@@ -32,7 +32,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form = new \Venne\CMS\Modules\RepositoryForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Repository has been saved");
-		$form->addSubmit("submit", "Create");
+		$form->setSubmitLabel("Create");
 		return $form;
 	}
 	
@@ -41,7 +41,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form = new \Venne\CMS\Modules\RepositoryForm($this, $name, $this->getParam("id"));
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Repository has been updated");
-		$form->addSubmit("submit", "Update");
+		$form->setSubmitLabel("Update");
 		return $form;
 	}
 

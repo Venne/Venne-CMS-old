@@ -31,7 +31,7 @@ class BasePresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter
 		$form = new \Venne\Application\UI\Form($this, $name);
 		$form->addGroup();
 		$form->addSelect("mode", "Mode", array("common"=>"common", "development"=>"development", "production"=>"production", "console"=>"console"))->setDefaultValue($this->mode);
-		$form->addSubmit("submit", "Select");
+		$form->setSubmitLabel("Select");
 		$form->onSuccess[] = callback($this, "handleSelect");
 		return $form;
 	}

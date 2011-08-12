@@ -53,7 +53,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form = new \Venne\CMS\Modules\WebsiteForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Website has been created");
-		$form->addSubmit("submit", " Create");
+		$form->setSubmitLabel(" Create");
 		return $form;
 	}
 
@@ -64,7 +64,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form->setEntity($this->getWebsite()->getRepository()->find($this->id));
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Website has been updated");
-		$form->addSubmit("submit", " Update");
+		$form->setSubmitLabel(" Update");
 		return $form;
 	}
 

@@ -60,8 +60,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	{
 		$form = new \Venne\CMS\Modules\SystemAccountForm($this, $name, "common");
 		$form->setSuccessLink("database");
-		//$form->setFlashMessage("Database settings has been updated");
-		$form->addSubmit("submit", "Next");
+		$form->setSubmitLabel("Next");
 		return $form;
 	}
 	
@@ -70,7 +69,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 		$form = new \Venne\CMS\Modules\SystemDatabaseForm($this, $name, "common", false, true);
 		$form->setSuccessLink("website");
 		//$form->setFlashMessage("Database settings has been updated");
-		$form->addSubmit("submit", "Install");
+		$form->setSubmitLabel("Install");
 		return $form;
 	}
 	
@@ -78,7 +77,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	{
 		$form = new \Venne\CMS\Modules\WebsiteForm($this, $name);
 		$form->setSuccessLink("finish");
-		$form->addSubmit("submit"," Install");
+		$form->setSubmitLabel("Install");
 		return $form;
 	}
 	

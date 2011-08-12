@@ -34,7 +34,7 @@ class PackagesPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 		$form = new \Venne\CMS\Modules\RepositoryUploadForm($this, $name, $this->getParam("repository"));
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Package has been uploaded");
-		$form->addSubmit("submit", "Upload");
+		$form->setSubmitLabel("Upload");
 		return $form;
 	}
 	

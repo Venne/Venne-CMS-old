@@ -138,7 +138,7 @@ class RolesPresenter extends BasePresenter {
 		$form = new \Venne\CMS\Modules\RoleForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Role has been saved");
-		$form->addSubmit("submit", "Create");
+		$form->setSubmitLabel("Create");
 		$form["role_id"]->setItems($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->getList());
 		$form["role_id"]->setPrompt("root");
 		return $form;
@@ -151,7 +151,7 @@ class RolesPresenter extends BasePresenter {
 		$form->setEntity($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->find($this->getParam("id")));
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Role has been updated");
-		$form->addSubmit("submit", "Update");
+		$form->setSubmitLabel("Update");
 		$form["role_id"]->setItems($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->getList());
 		$form["role_id"]->setPrompt("root");
 		return $form;

@@ -44,7 +44,7 @@ class CreatorPresenter extends BasePresenter {
 		$form = new \Venne\CMS\Modules\ModulesCreatorForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Script has been saved");
-		$form->addSubmit("submit", "Create");
+		$form->setSubmitLabel("Create");
 		return $form;
 	}
 	
@@ -53,7 +53,7 @@ class CreatorPresenter extends BasePresenter {
 		$form = new \Venne\CMS\Modules\ModulesCreatorForm($this, $name, $this->getParam("key"));
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Script has been updated");
-		$form->addSubmit("submit", "Update");
+		$form->setSubmitLabel("Update");
 		return $form;
 	}
 	

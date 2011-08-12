@@ -41,7 +41,7 @@ class RepositoriesPresenter extends BasePresenter
 		$form = new \Venne\CMS\Modules\ModulesRepositoriesForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Repository has been added");
-		$form->addSubmit("submit", "Add");
+		$form->setSubmitLabel("Add");
 		return $form;
 	}
 	
@@ -50,7 +50,7 @@ class RepositoriesPresenter extends BasePresenter
 		$form = new \Venne\CMS\Modules\ModulesRepositoriesForm($this, $name, $this->getParam("key"));
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Repository has been updated");
-		$form->addSubmit("submit", "Update");
+		$form->setSubmitLabel("Update");
 		return $form;
 	}
 	

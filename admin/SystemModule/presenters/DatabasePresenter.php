@@ -29,7 +29,7 @@ class DatabasePresenter extends BasePresenter
 		$form = new \Venne\CMS\Modules\SystemDatabaseForm($this, $name, $this->mode);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Database settings has been updated");
-		$form->addSubmit("submit", "Update");
+		$form->setSubmitLabel("Update");
 		return $form;
 	}
 	

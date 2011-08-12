@@ -1,6 +1,6 @@
 <?php
 
-namespace PagesModule;
+namespace NewsModule;
 
 use Nette\Forms\Form;
 use Nette\Web\Html;
@@ -17,7 +17,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Pages", $this->link(":Pages:Default:"));
+		$this->addPath("News", $this->link(":News:Default:"));
 	}
 
 	/**
@@ -25,7 +25,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Navigation:Default:create"));
+		$this->addPath("new item", $this->link(":News:Default:create"));
 	}
 
 	/**
@@ -39,9 +39,9 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 	public function createComponentForm($name)
 	{
-		$form = new \Venne\CMS\Modules\PagesForm($this, $name, "\Venne\CMS\Modules\Pages");
+		$form = new \Venne\CMS\Modules\NewsForm($this, $name);
 		$form->setSuccessLink("default");
-		$form->setFlashMessage("Page has been created");
+		$form->setFlashMessage("News has been created");
 		$form->setSubmitLabel("Create");
 		return $form;
 	}
@@ -49,10 +49,9 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 	public function createComponentFormEdit($name)
 	{
-		$form = new \Venne\CMS\Modules\PagesForm($this, $name, "\Venne\CMS\Modules\Pages");
+		$form = new \Venne\CMS\Modules\NewsForm($this, $name, $this->getParam("id"));
 		$form->setSuccessLink("this");
-		$form->setEntity($this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->find($this->id));
-		$form->setFlashMessage("Page has been updated");
+		$form->setFlashMessage("News has been updated");
 		$form->setSubmitLabel("Update");
 		return $form;
 	}
@@ -73,14 +72,14 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	public function handleDelete($id)
 	{
 		$this->getModel()->removeItem($id);
-		$this->flashMessage("Page has been deleted", "success");
+		$this->flashMessage("News has been deleted", "success");
 		$this->redirect("this", array("id" => NULL));
 	}
 
 
 	public function renderDefault()
 	{
-		$this->template->table = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findByWebsite($this->getWebsite()->currentFront->id);
+		$this->template->table = $this->getModel()->getItems();
 	}
 
 }

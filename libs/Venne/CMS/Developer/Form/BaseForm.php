@@ -38,6 +38,10 @@ class BaseForm extends \Venne\Application\UI\Form {
 		$this->flashStatus = $this->getPresenter()->getContext()->params['flashes']['success'];
 	}
 
+	public function setSubmitLabel($label)
+	{
+		$this["_submit"]->caption = $label;
+	}
 
 	public function setSuccessLink($link)
 	{

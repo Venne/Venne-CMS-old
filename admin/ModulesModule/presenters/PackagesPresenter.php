@@ -45,7 +45,7 @@ class PackagesPresenter extends BasePresenter
 		$form = new \Venne\CMS\Modules\ModulesInstalltionForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Changes has been saved");
-		$form->addSubmit("submit", "Apply");
+		$form->setSubmitLabel("Apply");
 		return $form;
 	}
 
@@ -55,7 +55,7 @@ class PackagesPresenter extends BasePresenter
 		$form = new \Venne\CMS\Modules\ModulesUploadForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Package has been uploaded");
-		$form->addSubmit("submit", "Upload");
+		$form->setSubmitLabel("Upload");
 		return $form;
 	}
 	
