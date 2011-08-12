@@ -75,7 +75,7 @@ class RoutingManager{
 		
 		$router[] = new Route('admin/index.php', 'Homepage:default', Route::ONE_WAY);
 		$router[] = new Route('admin/scripts/<module>/<presenter>', 'Scripts:Thumb');
-		
+				
 		
 		$router[] = new Route('admin/<module>/<presenter>/<action>[/<id>]?lang=<lang>&langEdit=<langEdit>&webId=<webId>', array(
 				'module' => 'Default',

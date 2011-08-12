@@ -11,17 +11,17 @@
 
 namespace Venne\CMS\Developer\Form;
 
-
 /**
  * @author     Josef Kříž
  */
-class BaseForm extends \Venne\Application\UI\Form
-{
-	
+class BaseForm extends \Venne\Application\UI\Form {
+
+
 	protected $successLink;
 	protected $flash;
 	protected $flashStatus;
-	
+
+
 	/**
 	 * Application form constructor.
 	 */
@@ -30,22 +30,24 @@ class BaseForm extends \Venne\Application\UI\Form
 		parent::__construct($parent, $name);
 		$this->startup();
 		$this->setCurrentGroup();
-		$this->onSuccess[] = callback($this, 'onSubmitForm');
-		if(!$this->isSubmitted()){
+		$this->addSubmit("_submit", "Submit")->onClick[] = callback($this, 'onSubmitForm');
+		if (!$this["_submit"]->isSubmittedBy()) {
 			$this->load();
 		}
-		
+
 		$this->flashStatus = $this->getPresenter()->getContext()->params['flashes']['success'];
-	}	
-		
+	}
+
+
 	public function setSuccessLink($link)
 	{
 		$this->successLink = $link;
 	}
-	
+
+
 	public function setFlashMessage($value, $status = NULL)
 	{
-		if($status){
+		if ($status) {
 			$this->flashStatus = $status;
 		}
 		$this->flash = $value;
@@ -56,35 +58,37 @@ class BaseForm extends \Venne\Application\UI\Form
 	{
 		
 	}
-	
+
+
 	public function onSubmitForm()
 	{
-		if(!$this->isValid()){
-			return ;
+		if (!$this->isValid()) {
+			return;
 		}
-		
-		if($this->save() === NULL){
+
+		if ($this->save() === NULL) {
 			if ($this->flash)
 				$this->getPresenter()->flashMessage($this->flash, $this->flashStatus);
 			if ($this->successLink)
 				$this->presenter->redirect($this->successLink);
 		}
 	}
-	
+
+
 	public function save()
 	{
 		
 	}
-	
+
+
 	public function load()
 	{
 		
 	}
-	
-	
-	
+
 	/* --------------- new controls ------------ */
-	
+
+
 	/**
 	 * Adds naming container to the form.
 	 * @param  string  name
@@ -96,7 +100,8 @@ class BaseForm extends \Venne\Application\UI\Form
 		$control->currentGroup = $this->currentGroup;
 		return $this[$name] = $control;
 	}
-	
+
+
 	/**
 	 * @param string $name
 	 * @param string $label
@@ -107,72 +112,91 @@ class BaseForm extends \Venne\Application\UI\Form
 	{
 		$this[$name] = new \Venne\Forms\Controls\TagInput($label);
 		$this[$name]->setRenderName('tagInputSuggest' . ucfirst($name));
-		
+
 		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/tagInput.js");
 		$this->getPresenter()->addCss("/css/Forms/Controls/tagInput.css");
-		
+
 		return $this[$name];
 	}
-	
+
+
 	/**
-    * @param string $label label
-    * @param int $cols šířka elementu input
-    * @param int $maxLength parametr maximální počet znaků
-    * @return \Venne\Forms\Controls\DateInput
-    */
+	 * @param string $label label
+	 * @param int $cols šířka elementu input
+	 * @param int $maxLength parametr maximální počet znaků
+	 * @return \Venne\Forms\Controls\DateInput
+	 */
 	public function addDateTime($name, $label = NULL)
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_DATETIME);
-		
+
 		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
 		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
 		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
-		
+
 		return $this[$name];
 	}
-	
+
+
 	/**
-    * @param string $label label
-    * @param int $cols šířka elementu input
-    * @param int $maxLength parametr maximální počet znaků
-    * @return \Venne\Forms\Controls\DateInput
-    */
+	 * @param string $label label
+	 * @param int $cols šířka elementu input
+	 * @param int $maxLength parametr maximální počet znaků
+	 * @return \Venne\Forms\Controls\DateInput
+	 */
 	public function addDate($name, $label = NULL)
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_DATE);
-		
+
 		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
 		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
 		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
-		
+
+		return $this[$name];
+	}
+
+
+	/**
+	 * @param string $label label
+	 * @param int $cols šířka elementu input
+	 * @param int $maxLength parametr maximální počet znaků
+	 * @return \Venne\Forms\Controls\DateInput
+	 */
+	public function addTime($name, $label = NULL)
+	{
+		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_TIME);
+
+		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
+		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
+		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
+		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
+		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
+		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
+
 		return $this[$name];
 	}
 	
 	/**
-    * @param string $label label
-    * @param int $cols šířka elementu input
-    * @param int $maxLength parametr maximální počet znaků
-    * @return \Venne\Forms\Controls\DateInput
-    */
-	public function addTime($name, $label = NULL)
+	 * @param string $label label
+	 * @param int $cols šířka elementu input
+	 * @param int $maxLength parametr maximální počet znaků
+	 * @return \Venne\Forms\Controls\DateInput
+	 */
+	public function addDependentSelectBox($name, $label, $parents, $dataCallback)
 	{
-		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_TIME);
-		
+		$this[$name] = new \DependentSelectBox\DependentSelectBox($label, $parents, $dataCallback);
+
 		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
-		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
-		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
-		
+		$this->getPresenter()->addJs("/js/Forms/Controls/jquery.nette.dependentselectbox.js");
+			
 		return $this[$name];
 	}
-	
+
 }

@@ -154,7 +154,7 @@ class Template extends Nette\Object implements ITemplate
 		$code = $this->getSource();
 		foreach ($this->filters as $filter) {
 			$code = self::extractPhp($code, $blocks);
-			$code = $filter($code);
+			$code = $filter/*5.2*->invoke*/($code);
 			$code = strtr($code, $blocks); // put PHP code back
 		}
 
@@ -241,7 +241,7 @@ class Template extends Nette\Object implements ITemplate
 		$lname = strtolower($name);
 		if (!isset($this->helpers[$lname])) {
 			foreach ($this->helperLoaders as $loader) {
-				$helper = $loader($lname);
+				$helper = $loader/*5.2*->invoke*/($lname);
 				if ($helper) {
 					$this->registerHelper($lname, $helper);
 					return $this->helpers[$lname]->invokeArgs($args);

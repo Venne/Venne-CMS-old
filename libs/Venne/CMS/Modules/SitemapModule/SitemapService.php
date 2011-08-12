@@ -16,7 +16,7 @@ use Venne;
 /**
  * @author Josef Kříž
  */
-class SitemapService extends BaseService implements Venne\CMS\Developer\IRouteModule {
+class SitemapService extends BaseService implements Venne\CMS\Developer\IFrontModule {
 
 	public function getRoute(\Nette\Application\Routers\RouteList $router, $values = array(), $prefix = "") {
 		$router[] = new \Nette\Application\Routers\Route($prefix. "sitemap-<sitemap>.xml", $values + array(

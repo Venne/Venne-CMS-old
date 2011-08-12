@@ -72,7 +72,7 @@ class Container extends Nette\FreezableObject implements IContainer
 			}
 		}
 
-		if (is_string($service) && strpos($service, ':') === FALSE) { // class name
+		if (is_string($service) && strpos($service, ':') === FALSE/*5.2* && $service[0] !== "\0"*/) { // class name
 			if (!isset($tags[self::TAG_TYPEHINT][0])) {
 				$tags[self::TAG_TYPEHINT][0] = $service;
 			}
@@ -134,7 +134,7 @@ class Container extends Nette\FreezableObject implements IContainer
 
 			$this->creating[$name] = TRUE;
 			try {
-				$service = $factory($this);
+				$service = $factory/*5.2*->invoke*/($this);
 			} catch (\Exception $e) {}
 
 		} elseif (method_exists($this, $factory = 'createService' . ucfirst($name))) { // static method

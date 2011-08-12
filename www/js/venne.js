@@ -6,6 +6,22 @@ $(function() {
 			return event.result !== false;
 		}
 	});
+	
+	$("a.ajax").live("click", function (event) {
+		event.preventDefault();
+		$.get(this.href);
+	});
+	
+	$("form.ajax").submit(function () {
+		$(this).ajaxSubmit();
+		return false;
+	});
+
+	// odeslání pomocí tlačítek
+	$("form.ajax :submit").click(function () {
+		$(this).ajaxSubmit();
+		return false;
+	});
 
 	$('a[data-confirm], button[data-confirm], input[data-confirm]').live('click', function (e) {
 		var el = $(this);

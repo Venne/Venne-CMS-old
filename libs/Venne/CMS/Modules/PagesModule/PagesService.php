@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class PagesService extends BaseService implements
-Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, Venne\CMS\Developer\ICallbackSenderModule {
+Venne\CMS\Developer\IFrontModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, Venne\CMS\Developer\ICallbackSenderModule {
 
 	/** @var array */
 	public $onRemoveItem;

@@ -14,7 +14,7 @@ namespace Venne\CMS\Developer;
 /**
  * @author Josef Kříž
  */
-interface IRouteModule{
+interface IFrontModule{
 	
 	/**
 	 * @param array of Nette\Application\Routers\RouteList

@@ -428,11 +428,11 @@ class Form extends Container
 		}
 
 		if ($this->onSuccess) { // back compatibility
-			$this->onSuccess($this);
-		} elseif ($this->onSuccess) {
-			trigger_error(__CLASS__ . '->onSuccess changed its behavior; use onSuccess instead.', E_USER_WARNING);
+			$this->onSubmit($this);
+		} elseif ($this->onSubmit) {
+			trigger_error(__CLASS__ . '->onSubmit changed its behavior; use onSuccess instead.', E_USER_WARNING);
 			if (isset($valid) || $this->isValid()) {
-				$this->onSuccess($this);
+				$this->onSubmit($this);
 			}
 		}
 	}

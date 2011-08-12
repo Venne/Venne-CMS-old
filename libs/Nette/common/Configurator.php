@@ -134,7 +134,8 @@ class Configurator extends Object
 				}
 			}
 			$builder = new DI\ContainerBuilder;
-			$code .= $builder->generateCode($config['services']);
+			/**/$code .= $builder->generateCode($config['services']);/**/
+			/*5.2* $code .= '$builder = new '.get_class($builder).'; $builder->addDefinitions($container, '.var_export($config['services'], TRUE).');';*/
 			unset($config['services']);
 		}
 

@@ -22,8 +22,7 @@ define('ROOT_PATH', $path);
 if(strpos($_SERVER["REQUEST_URI"], $pathName."admin/installation") === false){
 	if(strpos($_SERVER["REQUEST_URI"], $pathName."admin") === false){
 		if(!file_exists(WWW_DIR . "/../flags/installed")){
-			//die("Location: /" . $path . "/admin/installation");
-			header("Location: //" . $path . "/admin/installation");
+			header("Location: /" . $_SERVER['REQUEST_URI'] . "admin/installation");
 		}else{
 			define('APP_DIR', APP_DIR_FRONT);
 			define('VENNE_MODE_FRONT', 1);

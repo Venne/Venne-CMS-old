@@ -20,7 +20,7 @@ class UsersService extends BaseService{
 
 
 	/** @var string */
-	protected $className = "user";
+	protected $className = "users";
 	
 
 }

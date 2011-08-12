@@ -7,6 +7,7 @@
 
 		function setVisibility(){
 			if($("#frmformMenu-type").val() == "dir"){
+				$("#par0").hide();
 				$("#par1").hide();
 				$("#par3").hide();
 				$("#par2").hide();
@@ -14,6 +15,7 @@
 				$("#linkto").hide();
 				$("#frmformMenu-url").parent().parent().hide();
 			}else if($("#frmformMenu-type").val() == "link"){
+				$("#par0").show();
 				$("#par1").show();
 				$("#par3").show();
 				$("#par2").show();
@@ -22,6 +24,7 @@
 				$("#frmformMenu-url").parent().parent().hide();
 			}else{
 				$("#frmformMenu-url").parent().parent().show();
+				$("#par0").hide();
 				$("#par1").hide();
 				$("#par3").hide();
 				$("#par2").hide();
@@ -30,7 +33,7 @@
 			}
 		}
 
-		$("#frmformMenu-type").change(function(){
+		$("#frmformMenu-type").live("change", function(){
 			setVisibility();
 		})
 		setVisibility();
@@ -38,4 +41,8 @@
     });
 </script>
 
+{snippet form}
+
 {control formMenu}
+
+{/snippet}

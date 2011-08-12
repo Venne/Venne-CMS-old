@@ -31,9 +31,6 @@ use Nette,
  * @property      string $layout
  * @property-read mixed $payload
  * @property      Nette\DI\IContainer $context
- * @property-read Nette\Http\Request $httpRequest
- * @property-read Nette\Http\Response $httpResponse
- * @property-read Nette\Http\Context $httpContext
  * @property-read Nette\Application\Application $application
  * @property-read Nette\Http\Session $session
  * @property-read Nette\Http\User $user
@@ -844,7 +841,7 @@ abstract class Presenter extends Control implements Application\IPresenter
 			try {
 				$presenterClass = $presenterFactory->getPresenterClass($presenter);
 			} catch (Application\InvalidPresenterException $e) {
-				throw new InvalidLinkException($e->getMessage(), NULL, $e);
+				throw new InvalidLinkException($e->getMessage()/**/, NULL, $e/**/);
 			}
 		}
 
@@ -893,9 +890,11 @@ abstract class Presenter extends Control implements Application\IPresenter
 			$reflection = new PresenterComponentReflection($presenterClass);
 			if ($args || $destination === 'this') {
 				// counterpart of run() & tryCall()
-				$method = $presenterClass::formatActionMethod($action);
+				/**/$method = $presenterClass::formatActionMethod($action);/**/
+				/*5.2* $method = call_user_func(array($presenterClass, 'formatActionMethod'), $action);*/
 				if (!$reflection->hasCallableMethod($method)) {
-					$method = $presenterClass::formatRenderMethod($action);
+					/**/$method = $presenterClass::formatRenderMethod($action);/**/
+					/*5.2* $method = call_user_func(array($presenterClass, 'formatRenderMethod'), $action);*/
 					if (!$reflection->hasCallableMethod($method)) {
 						$method = NULL;
 					}
@@ -1062,7 +1061,8 @@ abstract class Presenter extends Control implements Application\IPresenter
 	 */
 	public static function getPersistentComponents()
 	{
-		return (array) Reflection\ClassType::from(get_called_class())
+		/*5.2*$arg = func_get_arg(0);*/
+		return (array) Reflection\ClassType::from(/*5.2*$arg*//**/get_called_class()/**/)
 			->getAnnotation('persistent');
 	}
 
@@ -1167,7 +1167,9 @@ abstract class Presenter extends Control implements Application\IPresenter
 
 		$params = $this->request->getParams();
 		if ($this->isAjax()) {
-			$params = $this->request->getPost() + $params;
+			$postParams = $this->request->getPost();
+			unset($postParams["action"]);
+			$params = $postParams = $this->request->getPost() + $params;
 		}
 
 		foreach ($params as $key => $value) {

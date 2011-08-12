@@ -40,7 +40,8 @@ class WebsiteService extends BaseService implements
 					continue;
 				$reg = "/^" . str_replace("*", ".*", str_replace("/", "\/", $item->regex)) . "$/";
 				if (preg_match($reg, $this->container->httpRequest->getUrl()->getBaseUrl())) {
-					return $item;
+					$currentWebsite = $item;
+					break;
 				}
 			}
 		} else {
@@ -48,7 +49,7 @@ class WebsiteService extends BaseService implements
 			$currentWebsite->name = "installation";
 			$currentWebsite->skin = "admin";
 		}
-		if (!$currentWebsite) {
+		if (!isset($currentWebsite) || !$currentWebsite) {
 			throw new InvalidWebsiteException("Website does not exist");
 		}
 		return $currentWebsite;
@@ -72,7 +73,7 @@ class WebsiteService extends BaseService implements
 			}
 		}
 		$currentFrontWebsite = $repo->find($webId);
-		if (!$currentFrontWebsite) {
+		if (!isset($currentFrontWebsite) || !$currentFrontWebsite) {
 			throw new InvalidWebsiteException("Website does not exist");
 		}
 		return $currentFrontWebsite;

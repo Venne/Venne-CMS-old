@@ -6,22 +6,25 @@
     jQuery(document).ready(function() {
 
 		function setVisibility(){
-			if($("#frmformMenuEdit-type").val() == "dir"){
+			if($("#frmformMenu-type").val() == "dir"){
+				$("#par0").hide();
 				$("#par1").hide();
 				$("#par3").hide();
 				$("#par2").hide();
 				$("#par4").hide();
 				$("#linkto").hide();
-				$("#frmformMenuEdit-uri").parent().parent().hide();
-			}else if($("#frmformMenuEdit-type").val() == "link"){
+				$("#frmformMenu-url").parent().parent().hide();
+			}else if($("#frmformMenu-type").val() == "link"){
+				$("#par0").show();
 				$("#par1").show();
 				$("#par3").show();
 				$("#par2").show();
 				$("#par4").show();
 				$("#linkto").show();
-				$("#frmformMenuEdit-url").parent().parent().hide();
+				$("#frmformMenu-url").parent().parent().hide();
 			}else{
-				$("#frmformMenuEdit-url").parent().parent().show();
+				$("#frmformMenu-url").parent().parent().show();
+				$("#par0").hide();
 				$("#par1").hide();
 				$("#par3").hide();
 				$("#par2").hide();
@@ -30,7 +33,7 @@
 			}
 		}
 
-		$("#frmformMenuEdit-type").change(function(){
+		$("#frmformMenu-type").live("change", function(){
 			setVisibility();
 		})
 		setVisibility();
@@ -38,4 +41,8 @@
     });
 </script>
 
-{control formMenuEdit}
+{snippet form}
+
+{control formMenu}
+
+{/snippet}

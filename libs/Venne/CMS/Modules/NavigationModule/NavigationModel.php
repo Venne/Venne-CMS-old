@@ -21,8 +21,10 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 
 	/** @var array() */
 	protected $path = array();
+
 	/** @var \Venne\CMS\Modules\Navigation */
 	protected $rootItems;
+
 	/** @var \Venne\CMS\Modules\Navigation */
 	protected $frontRootItems;
 
@@ -58,6 +60,7 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 		return $this->frontRootItems;
 	}
 
+
 	/**
 	 * @param integer $website_id
 	 * @param integer $parent_id 
@@ -65,13 +68,14 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 	 */
 	public function getOrderValue($website_id, $parent_id = NULL)
 	{
-		if($parent_id){
+		if ($parent_id) {
 			$query = $this->getEntityManager()->createQuery('SELECT MAX(u.order) FROM \Venne\CMS\Modules\Navigation u WHERE u.website = ?1 AND u.parent = ?2')->setParameter(1, $website_id)->setParameter(2, $parent_id);
-		}else{
+		} else {
 			$query = $this->getEntityManager()->createQuery('SELECT MAX(u.order) FROM \Venne\CMS\Modules\Navigation u WHERE u.website = ?1 AND u.parent is NULL')->setParameter(1, $website_id);
 		}
-		return $query->getSingleScalarResult()+1;
+		return $query->getSingleScalarResult() + 1;
 	}
+
 
 	public function addModuleItem($moduleName, $moduleItemId, $name, $parent_id, $paramsArray, $website_id, $withoutFlush = false)
 	{
@@ -129,37 +133,44 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 	public function removeModuleItem(\Venne\CMS\Modules\Navigation $menuEntity)
 	{
 		$query = $this->getEntityManager()->createQuery('SELECT u FROM \Venne\CMS\Modules\Navigation u WHERE u.website = ?1 AND u.parent = ?2 AND u.order > ?3')->setParameter(1, $menuEntity->website->id)->setParameter(2, $menuEntity->parent->id)->setParameter(3, $menuEntity->order);
-		foreach($query->getResult() as $item){
+		foreach ($query->getResult() as $item) {
 			$item->order = $item->order - 1;
 		}
-		
+
 		$this->getEntityManager()->remove($menuEntity);
 
 		if (!$withoutFlush) {
 			$this->getEntityManager()->flush();
 		}
 	}
-	
+
+
 	public function removeItem(\Venne\CMS\Modules\Navigation $menuEntity)
 	{
-		$query = $this->getEntityManager()->createQuery('SELECT u FROM \Venne\CMS\Modules\Navigation u WHERE u.website = ?1 AND u.parent = ?2 AND u.order > ?3')->setParameter(1, $menuEntity->website->id)->setParameter(2, $menuEntity->parent->id)->setParameter(3, $menuEntity->order);
-		foreach($query->getResult() as $item){
+		if (isset($menuEntity->parent->id)) {
+			$query = $this->getEntityManager()->createQuery('SELECT u FROM \Venne\CMS\Modules\Navigation u WHERE u.website = ?1 AND u.parent = ?2 AND u.order > ?3')->setParameter(1, $menuEntity->website->id)->setParameter(2, $menuEntity->parent->id)->setParameter(3, $menuEntity->order);
+		} else {
+			$query = $this->getEntityManager()->createQuery('SELECT u FROM \Venne\CMS\Modules\Navigation u WHERE u.website = ?1 AND u.parent IS NULL AND u.order > ?2')->setParameter(1, $menuEntity->website->id)->setParameter(2, $menuEntity->order);
+		}
+
+		foreach ($query->getResult() as $item) {
 			$item->order = $item->order - 1;
 		}
-		
+
 		$this->getEntityManager()->remove($menuEntity);
 
 		$this->getEntityManager()->flush();
 	}
-	
+
+
 	/**
 	 * @param string $moduleName
 	 * @param string $moduleItemId 
 	 */
 	public function removeItemByModuleName($moduleName, $moduleItemId)
 	{
-		$item = $this->getRepository()->findOneBy(array("moduleName"=>$moduleName, "moduleItemId"=>$moduleItemId));
-		if($item){
+		$item = $this->getRepository()->findOneBy(array("moduleName" => $moduleName, "moduleItemId" => $moduleItemId));
+		if ($item) {
 			$this->getEntityManager()->remove($item);
 			$this->getEntityManager()->flush();
 		}

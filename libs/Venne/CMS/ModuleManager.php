@@ -47,7 +47,7 @@ class ModuleManager {
 	{
 		$arr = array();
 		foreach($this->getModules() as $module){
-			if($this->container->{$module} instanceof \Venne\CMS\Developer\IRouteModule){
+			if($this->container->{$module} instanceof \Venne\CMS\Developer\IFrontModule){
 				$arr[$module] = count(explode("/", $this->container->params["venne"]["modules"][$module."Module"]["routePrefix"]));
 			}
 		}
@@ -190,7 +190,7 @@ class ModuleManager {
 		if($service instanceof Developer\IInstallableModule){
 			$service->installModule();
 		}
-		if($service  instanceof Developer\IRouteModule){
+		if($service  instanceof Developer\IFrontModule){
 			$config["common"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $name."/";
 			$config["development"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $name."/";
 			$config["production"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $name."/";
@@ -232,6 +232,41 @@ class ModuleManager {
 		$config["production"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $prefix;
 		$config["console"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $prefix;
 		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+	}
+	
+	public function getPresenters($module)
+	{
+		$data = array();
+		foreach(\Nette\Utils\Finder::findFiles("*Presenter.php")->from(APP_DIR_FRONT . "/".ucfirst($module)."Module") as $file)
+		{
+			$data[] = substr($file->getBaseName(), 0, -13);
+		}
+		return $data;
+	}
+	
+	public function getActions($module, $presenter)
+	{
+		$data = array();
+		foreach(\Nette\Utils\Finder::findFiles("*")->from(APP_DIR_FRONT . "/".ucfirst($module)."Module/templates/".  ucfirst($presenter)) as $file)
+		{
+			$data[] = substr($file->getBaseName(), 0, -6);
+		}
+		return $data;
+	}
+	
+	public function getParams($module, $presenter)
+	{
+		$data = array();
+		include_once APP_DIR_FRONT . '/'.  ucfirst($module)."Module/presenters/".  ucfirst($presenter) . "Presenter.php";
+		$ref = new \Nette\Reflection\ClassType("\\".  ucfirst($module)."Module\\".  ucfirst($presenter) . "Presenter");
+		foreach($ref->getProperties() as $item){
+			if($item->hasAnnotation("persistent")){
+				$name = explode("::", $item->__toString());
+				$name = substr($name[1], 1);
+				$data[] = $name;
+			}
+		}
+		return $data;
 	}
 	
 }

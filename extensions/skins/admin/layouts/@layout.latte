@@ -9,16 +9,14 @@
 
 {extends "./../../@html5.latte"}
 
-{js /js/jquery-1.6.min.js}
+{block #body}
+
 {js /js/jquery-ui-1.8.12.custom.min.js}
-{js /js/netteForms.js}
-{js /js/venne.js}
 {js /skins/admin/js/admin.js}
 
-{css /css/jquery-ui-1.8.12.custom.min.js}
+{css /css/jquery-ui-1.8.12.custom.min.css}
 {css /skins/admin/css/style.css}
 
-{block #body}
 	<div id="page">
 		<div id="top">
 			{if !$venneModeInstallation}<a href="{link :Default:Default:}">{/if}

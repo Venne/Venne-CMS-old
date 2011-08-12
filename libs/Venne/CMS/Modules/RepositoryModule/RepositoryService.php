@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class RepositoryService extends BaseService implements
-Venne\CMS\Developer\IRouteModule, Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, \Venne\CMS\Developer\IInstallableModule {
+Venne\CMS\Developer\IFrontModule, Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, \Venne\CMS\Developer\IInstallableModule {
 
 
 	protected $className = "repository";

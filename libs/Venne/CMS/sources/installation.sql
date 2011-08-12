@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `alias` (
   `moduleItemId` int(11) NOT NULL,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `aliasKey` (
   `val` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `alias_id` (`alias_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `moduleName` varchar(255) NOT NULL,
   `moduleItemId` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `commentsItem` (
   `author` varchar(255) NOT NULL,
   `text` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `language` (
   `alias` varchar(30) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `language`
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `layout` (
   `website_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `layoutKey` (
   `val` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `layout_id` (`layout_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `navigation` (
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`,`navigation_id`),
   KEY `navigation_id` (`navigation_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=28 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `navigation`
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `navigationKey` (
   `val` varchar(300) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `navigation_id` (`navigation_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=88 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `navigationKey`
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `mainPage` smallint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `website_id` (`website_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `permission` (
   PRIMARY KEY (`id`),
   KEY `role_id` (`role_id`),
   KEY `resource_id` (`resource_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=41 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `permission`
@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `privilege` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `resource_id` (`resource_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `resource` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `resource_id` (`resource_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `resource`
@@ -294,7 +294,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   `role_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `role_id` (`role_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `role`
@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `salt` varchar(30) NOT NULL,
   `email` varchar(300) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -350,7 +350,7 @@ CREATE TABLE IF NOT EXISTS `website` (
   `routePrefix` varchar(300) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `langDefault` (`langDefault`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
 -- Vypisuji data pro tabulku `website`
