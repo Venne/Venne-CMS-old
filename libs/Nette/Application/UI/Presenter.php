@@ -1169,7 +1169,7 @@ abstract class Presenter extends Control implements Application\IPresenter
 		if ($this->isAjax()) {
 			$postParams = $this->request->getPost();
 			unset($postParams["action"]);
-			$params = $postParams = $this->request->getPost() + $params;
+			$params = $postParams + $params;
 		}
 
 		foreach ($params as $key => $value) {

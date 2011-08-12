@@ -20,6 +20,16 @@ use Nette\Utils\Html;
 class NavigationForm extends \Venne\CMS\Developer\Form\EntityForm {
 
 
+	protected $id;
+
+
+	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $id = NULL)
+	{
+		$this->id = $id;
+		parent::__construct($parent, $name);
+	}
+
+
 	public function startup()
 	{
 		parent::startup();
@@ -37,26 +47,22 @@ class NavigationForm extends \Venne\CMS\Developer\Form\EntityForm {
 		$this->addSelect("navigation_id", "Parent")->setPrompt("root");
 
 		$this->addText("url", "URL");
-
 		$this->addGroup("Link")->setOption('container', Html::el('fieldset')->id("linkto"));
-		//$this->addText("module","Module");
+
+		\DependentSelectBox\DependentSelectBox::$disableChilds = false;
 		$this->addSelect("module", "Module", $modules)->setDefaultValue("Pages");
-		//$this->addText("presenter","Presenter")->setDefaultValue("Default");
-		//$this->addText("action","Action")->setDefaultValue("default");
+		$this->addDependentSelectBox("presenter", "Presenter", $this["module"], array($this, "getValuesPresenter"))->setDefaultValue("Default");
+		$this->addDependentSelectBox("action", "Action", $this["presenter"], array($this, "getValuesAction"))->setDefaultValue("default");
 
-
-		$this->addDependentSelectBox("presenter", "Presenter", $this["module"], array($this, "getValuesPresenter"));
-		$this->addDependentSelectBox("action", "Action", $this["presenter"], array($this, "getValuesAction"));
-		
 		for ($i = 0; $i < 4; $i++) {
-			$this->addGroup("Param ".($i+1))->setOption('container', Html::el('fieldset')
+			$this->addGroup("Param " . ($i + 1))->setOption('container', Html::el('fieldset')
 							->id("par$i")
 							->class('collapsible'));
 			$this->addDependentSelectBox("param_$i", "Parameter", $this["presenter"], array($this, "getValuesParams"));
 			$this->addText("value_$i", "Value");
 		}
-		
-		if($this->getPresenter()->isAjax()){
+
+		if ($this->getPresenter()->isAjax()) {
 			$this["presenter"]->addOnSubmitCallback(array($this->getPresenter(), "invalidateControl"), "form");
 			$this["action"]->addOnSubmitCallback(array($this->getPresenter(), "invalidateControl"), "form");
 		}
@@ -66,7 +72,7 @@ class NavigationForm extends \Venne\CMS\Developer\Form\EntityForm {
 	public function getValuesPresenter($form, $dependentSelectBoxName)
 	{
 		$module = $form["module"]->getValue();
-
+		
 		$presenters = array();
 		$data = $this->getPresenter()->getContext()->moduleManager->getPresenters($module);
 		foreach ($data as $item) {
@@ -97,40 +103,46 @@ class NavigationForm extends \Venne\CMS\Developer\Form\EntityForm {
 		$module = $form["module"]->getValue();
 		$presenter = $form["presenter"]->getValue();
 
+		if(!$presenter){
+			return array();
+		}
+		
 		$params = array();
 		$data = $this->getPresenter()->getContext()->moduleManager->getParams($module, $presenter);
 		foreach ($data as $item) {
 			$params[$item] = $item;
 		}
 
-		return $params;
+		return array(""=>"")+$params;
 	}
 
 
-	public function setValuesFromEntity()
+	public function load()
 	{
-		parent::setValuesFromEntity();
-		if ($this->entity->type == "url") {
-			$this["url"]->setValue($this->entity->keys["url"]->val);
-		}
-		if ($this->entity->type == "link") {
-			if (isset($this->entity->keys["module"]))
-				$this["module"]->setValue($this->entity->keys["module"]->val);
-			if (isset($this->entity->keys["presenter"]))
-				$this["presenter"]->setValue($this->entity->keys["presenter"]->val);
-			if (isset($this->entity->keys["action"]))
-				$this["action"]->setValue($this->entity->keys["action"]->val);
-			$i = 0;
-			foreach ($this->entity->keys as $item) {
-				if ($item->key == "presenter" || $item->key == "module" || $item->key == "action")
-					continue;
-				$this["param_$i"]->setValue($item->key);
-				$this["value_$i"]->setValue($item->val);
-				$i++;
+		if ($this->id) {
+			$entity = $this->getPresenter()->getContext()->navigation->getRepository()->find($this->id);
+			if ($entity->type == "url") {
+				$this["url"]->setValue($entity->keys["url"]->val);
 			}
+			if ($entity->type == "link") {
+				if (isset($entity->keys["module"]))
+					$this["module"]->setValue($entity->keys["module"]->val);
+				if (isset($entity->keys["presenter"]))
+					$this["presenter"]->setDefaultValue($entity->keys["presenter"]->val);
+				if (isset($entity->keys["action"]))
+					$this["action"]->setDefaultValue($entity->keys["action"]->val);
+				$i = 0;
+				foreach ($entity->keys as $item) {
+					if ($item->key == "presenter" || $item->key == "module" || $item->key == "action")
+						continue;
+					$this["param_$i"]->setValue($item->key);
+					$this["value_$i"]->setValue($item->val);
+					$i++;
+				}
+			}
+			if ($entity->parent)
+				$this["navigation_id"]->setValue($entity->parent->id);
 		}
-		if ($this->entity->parent)
-			$this["navigation_id"]->setValue($this->entity->parent->id);
 	}
 
 

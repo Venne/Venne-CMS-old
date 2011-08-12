@@ -257,14 +257,12 @@ class ModuleManager {
 	public function getParams($module, $presenter)
 	{
 		$data = array();
-		include_once APP_DIR_FRONT . '/'.  ucfirst($module)."Module/presenters/".  ucfirst($presenter) . "Presenter.php";
-		$ref = new \Nette\Reflection\ClassType("\\".  ucfirst($module)."Module\\".  ucfirst($presenter) . "Presenter");
-		foreach($ref->getProperties() as $item){
-			if($item->hasAnnotation("persistent")){
-				$name = explode("::", $item->__toString());
-				$name = substr($name[1], 1);
-				$data[] = $name;
-			}
+		
+		$text = file_get_contents(APP_DIR_FRONT . '/'.  ucfirst($module)."Module/presenters/".  ucfirst($presenter) . "Presenter.php");
+		preg_match_all('/@persistent(.*?)\\n(.*?)public(.*?)\$(.*?)[;= ]/', $text, $matches);
+		
+		foreach($matches[4] as $item){
+			$data[] = $item;
 		}
 		return $data;
 	}

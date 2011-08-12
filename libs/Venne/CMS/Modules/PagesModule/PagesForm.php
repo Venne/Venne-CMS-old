@@ -75,6 +75,8 @@ class PagesForm extends \Venne\CMS\Developer\Form\ContentEntityForm {
 	{
 		return array(
 			"module"=>"Pages",
+			"presenter"=>"Default",
+			"action"=>"default",
 			"url"=>$this->entity->url
 			);
 	}
