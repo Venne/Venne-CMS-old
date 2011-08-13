@@ -47,7 +47,7 @@ class PermissionsPresenter extends BasePresenter {
 		$form = new \Venne\Application\UI\Form($this, $name);
 		$form->addGroup("Role");
 		$form->addSelect("role", "Role", $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->fetchPairs("name", "name"));
-		$form->setSubmitLabel("Select");
+		$form->addSubmit("submit", "Select");
 		$form->onSuccess[] = array($this, "handleSaveRole");
 		return $form;
 	}
