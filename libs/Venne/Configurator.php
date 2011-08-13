@@ -47,7 +47,7 @@ class Configurator extends \Nette\Configurator {
 		$this->container->params["venneModeInstallation"] = false;
 		$this->container->params["venneModeAdmin"] = false;
 		$this->container->params["venneModeFront"] = false;
-		
+
 		/*
 		 * detect appDir
 		 */
@@ -59,17 +59,17 @@ class Configurator extends \Nette\Configurator {
 		if (substr($url, 0, 19) == "admin/installation/" || $url == "admin/installation") {
 			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/installation';
 			$this->container->params["venneModeInstallation"] = true;
-		} else if(substr($url, 0, 6) == "admin/" || $url == "admin") {
+		} else if (substr($url, 0, 6) == "admin/" || $url == "admin") {
 			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/admin';
 			$this->container->params["venneModeAdmin"] = true;
-		}else{
+		} else {
 			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/app';
 			$this->container->params["venneModeFront"] = true;
 		}
-		
+
 		if (!file_exists($this->container->params["flagsDir"] . '/installed') && !$this->container->params["venneModeInstallation"]) {
 			header("Location: {$baseUrl}admin/installation", TRUE, 301);
-			die('Please continue <a href="'.$baseUrl.'admin/installation">here</a>.');
+			die('Please continue <a href="' . $baseUrl . 'admin/installation">here</a>.');
 		}
 
 
