@@ -36,7 +36,7 @@ class SystemModel extends Venne\CMS\Developer\Model {
 	 */
 	public function loadConfig()
 	{
-		return \Nette\Config\NeonAdapter::load(WWW_DIR . "/../config.neon");
+		return \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . "/../config.neon");
 	}
 
 
@@ -45,7 +45,7 @@ class SystemModel extends Venne\CMS\Developer\Model {
 	 */
 	public function saveConfig($config)
 	{
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . "/../config.neon", "common", $this->modes);
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . "/../config.neon", "common", $this->modes);
 	}
 
 
@@ -156,7 +156,7 @@ class SystemModel extends Venne\CMS\Developer\Model {
 	 */
 	public function createDatabaseStructure(\Nette\Database\Connection $database)
 	{
-		$database->loadFile(VENNE_DIR . "/CMS/sources/installation.sql");
+		$database->loadFile($this->container->params["venneDir"] . "/CMS/sources/installation.sql");
 	}
 
 
@@ -165,7 +165,7 @@ class SystemModel extends Venne\CMS\Developer\Model {
 	 */
 	public function setInstallationDone()
 	{
-		$handle = \fopen(FLAGS_DIR . "/installed", 'w');
+		$handle = \fopen($this->container->params["flagsDir"] . "/installed", 'w');
 		\fwrite($handle, "");
 		\fclose($handle);
 	}

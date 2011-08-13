@@ -31,7 +31,7 @@ class LanguageService extends BaseService implements
 			$repo = $this->getRepository();
 			$website = $this->getContainer()->website->current;
 
-			if (defined("VENNE_MODE_INSTALLATION")) {
+			if ($this->container->params['venneModeInstallation']) {
 				$this->currentLang = new Language;
 				$this->currentLang->name = "en";
 				$this->currentLang->alias = "en";

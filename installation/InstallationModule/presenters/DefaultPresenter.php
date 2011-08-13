@@ -23,7 +23,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	{
 		
 		parent::startup();
-		if(file_exists(WWW_DIR . "/../temp/installed") && $this->getAction() != "finish" && $this->getAction() != "installed"){
+		if(file_exists($this->getContext()->params["flagsDir"] . "/installed") && $this->getAction() != "finish" && $this->getAction() != "installed"){
 			$this->redirect("installed");
 		}
 		
@@ -40,7 +40,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 		/*
 		 * Writable
 		 */
-		$paths = array(EXTENSIONS_DIR, WWW_DIR . "/public/", WWW_DIR . "/skins/", WWW_DIR . "/../config.neon", FLAGS_DIR);
+		$paths = array($this->getContext()->params["extensionsDir"], $this->getContext()->params["wwwDir"] . "/public/", $this->getContext()->params["wwwDir"] . "/skins/", $this->getContext()->params["rootDir"] . "/config.neon", $this->getContext()->params["flagsDir"]);
 		foreach ($paths as $item) {
 			if (!is_writable($item)) {
 				$this->flashMessage("Path " . $item . " is not writable.", "warning");

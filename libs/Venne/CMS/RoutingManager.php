@@ -30,11 +30,25 @@ class RoutingManager{
 		$this->container = $container;
 	}
 
+	/**
+	 * @return array of Nette\Application\Route
+	 */
+	public function setRoutes($router)
+	{
+		if($this->container->params["venneModeFront"]){
+			$this->setFrontRoutes($router);
+		}else if($this->container->params["venneModeAdmin"]){
+			$this->setAdminRoutes($router);
+		}else{
+			$this->setInstallationRoutes($router);
+		}
+	}
 
 	/**
 	 * @return array of Nette\Application\Route
 	 */
-	public function setFrontRoutes($router){
+	public function setFrontRoutes($router)
+	{
 				
 		$prefix = $this->container->website->current->routePrefix;
 		

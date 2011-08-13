@@ -25,14 +25,59 @@ use Nette,
 class Configurator extends \Nette\Configurator {
 
 
-	public function __construct($containerClass = 'Nette\DI\Container')
+	public function __construct($params, $containerClass = 'Nette\DI\Container')
 	{
 		parent::__construct($containerClass);
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . "/../config.neon");
+
+		/*
+		 * Params
+		 */
+		$this->container->params += (array) $params;
+		$this->container->params["rootDir"] = $this->container->params["wwwDir"] . '/..';
+		$this->container->params["extensionsDir"] = $this->container->params["rootDir"] . '/extensions';
+		$this->container->params['flashes'] = array(
+			'success' => "success",
+			'error' => "error",
+			'info' => "info",
+			'warning' => "warning",
+		);
+		$this->container->params["venneDir"] = $this->container->params["libsDir"] . '/Venne';
+		$this->container->params["frontDir"] = $this->container->params["rootDir"] . '/app';
+		$this->container->params["flagsDir"] = $this->container->params["rootDir"] . '/flags';
+		$this->container->params["venneModeInstallation"] = false;
+		$this->container->params["venneModeAdmin"] = false;
+		$this->container->params["venneModeFront"] = false;
+		
+		/*
+		 * detect appDir
+		 */
+		$httpRequest = $this->container->httpRequest;
+		$url = $httpRequest->url->__toString();
+		$baseUrl = $httpRequest->url->baseUrl;
+		$url = str_replace($baseUrl, "", $url);
+
+		if (substr($url, 0, 19) == "admin/installation/" || $url == "admin/installation") {
+			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/installation';
+			$this->container->params["venneModeInstallation"] = true;
+		} else if(substr($url, 0, 6) == "admin/" || $url == "admin") {
+			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/admin';
+			$this->container->params["venneModeAdmin"] = true;
+		}else{
+			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/app';
+			$this->container->params["venneModeFront"] = true;
+		}
+		
+		if (!file_exists($this->container->params["flagsDir"] . '/installed') && !$this->container->params["venneModeInstallation"]) {
+			header("Location: {$baseUrl}admin/installation", TRUE, 301);
+			die('Please continue <a href="'.$baseUrl.'admin/installation">here</a>.');
+		}
+
+
 
 		/*
 		 * Set mode
 		 */
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . "/../config.neon");
 		if ($config["global"]["mode"] == "production") {
 			$this->container->params['productionMode'] = true;
 		} else if ($config["global"]["mode"] == "development") {
@@ -52,42 +97,34 @@ class Configurator extends \Nette\Configurator {
 		}
 		Debugger::$strictMode = TRUE;
 		Debugger::enable($this->container->params['productionMode']);
-
-		$this->getContainer()->params['flashes'] = array(
-			'success' => "success",
-			'error' => "error",
-			'info' => "info",
-			'warning' => "warning",
-		);
-
-		$this->getContainer()->params["extensionsDir"] = EXTENSIONS_DIR;
 	}
 
 
 	/**
 	 * Loads configuration from file and process it.
-	 * @return void
+	 * @return DI\Container
 	 */
 	public function loadConfig($file, $section = NULL)
 	{
-		parent::loadConfig($file, $section);
-		$container = $this->container;
+		$container = parent::loadConfig($file, $section);
 
 
 		/*
 		 * Load Modules
 		 */
-		foreach ($this->getContainer()->moduleManager->getModules() as $item) {
+		foreach ($container->moduleManager->getModules() as $item) {
 			$serviceClass = VENNE_MODULES_NAMESPACE . ucfirst($item) . "Service";
 
 			$container->addService($item, function() use ($container, $serviceClass) {
 						return new $serviceClass($container);
 					});
 		}
-		
-		foreach ($this->getContainer()->moduleManager->getStartupModules() as $item) {
-				$container->$item->startup();
+
+		foreach ($container->moduleManager->getStartupModules() as $item) {
+			$container->$item->startup();
 		}
+
+		return $container;
 	}
 
 
@@ -146,10 +183,10 @@ class Configurator extends \Nette\Configurator {
 
 		$config = new \Doctrine\ORM\Configuration();
 		$config->setMetadataCacheImpl($cache);
-		$driverImpl = $config->newDefaultAnnotationDriver(array(APP_DIR, VENNE_DIR));
+		$driverImpl = $config->newDefaultAnnotationDriver(array($container->params["appDir"], $container->params["venneDir"]));
 		$config->setMetadataDriverImpl($driverImpl);
 		$config->setQueryCacheImpl($cache);
-		$config->setProxyDir(APP_DIR . '/proxies');
+		$config->setProxyDir($container->params["appDir"] . '/proxies');
 		$config->setProxyNamespace('App\Proxies');
 
 		//if ($applicationMode == "development") {
@@ -180,7 +217,7 @@ class Configurator extends \Nette\Configurator {
 	{
 		$translator = new \Nella\Localization\Translator();
 		$translator->setLang($container->language->getCurrentLang($container->httpRequest)->name);
-		$translator->addDictionary('Venne', WWW_DIR . "/templates/" . $container->params['CMS']["template"]);
+		$translator->addDictionary('Venne', $container->params["wwwDir"] . "/templates/" . $container->params['CMS']["template"]);
 		return $translator;
 	}
 

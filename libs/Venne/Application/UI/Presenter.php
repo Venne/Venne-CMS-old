@@ -117,7 +117,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		/*
 		 * Add Callback modules
 		 */
-		if (!defined("VENNE_MODE_INSTALLATION")) {
+		if (!$this->getContext()->params['venneModeInstallation']) {
 			$this->getContext()->callback->callbackListenerOnPresenterStartup();
 		}
 
@@ -144,9 +144,9 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$this->template->langAlias = $this->getLanguage()->getCurrentLang($this->getHttpRequest())->alias;
 		$this->template->langName = $this->getLanguage()->getCurrentLang($this->getHttpRequest())->name;
 
-		$this->template->venneModeAdmin = defined('VENNE_MODE_ADMIN');
-		$this->template->venneModeFront = defined('VENNE_MODE_FRONT');
-		$this->template->venneModeInstallation = defined('VENNE_MODE_INSTALLATION');
+		$this->template->venneModeAdmin = $this->getContext()->params['venneModeAdmin'];
+		$this->template->venneModeFront = $this->getContext()->params['venneModeFront'];
+		$this->template->venneModeInstallation = $this->getContext()->params['venneModeInstallation'];
 		$this->template->venneVersionId = VENNE_VERSION_ID;
 		$this->template->venneVersionState = VENNE_VERSION_STATE;
 
@@ -213,13 +213,13 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public function formatLayoutTemplateFiles()
 	{
 		$skinName = $this->getWebsite()->current->skin;
-		if(defined('VENNE_MODE_FRONT')){
+		if($this->getContext()->params["appDir"]){
 			$layout = $this->getContext()->layout->model->detectLayout();
 		}else{
 			$layout = "layout";
 		}
 		$list = array(
-			EXTENSIONS_DIR . "/skins/$skinName/layouts/@$layout.latte"
+			$this->getContext()->params["extensionsDir"]. "/skins/$skinName/layouts/@$layout.latte"
 		);
 		return $list;
 	}
@@ -235,17 +235,17 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$name = $this->getName();
 		$presenter = substr($name, strrpos(':' . $name, ':'));
 		$dir = dirname(dirname($this->getReflection()->getFileName()));
-		$dirP = substr(str_replace(realpath(APP_DIR), "", $dir), 1);
+		$dirP = substr(str_replace(realpath($this->getContext()->params["appDir"]), "", $dir), 1);
 
 		return array(
-			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
-			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
-			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
-			EXTENSIONS_DIR . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
-			APP_DIR . "/$dirP/templates/$presenter/$this->view.latte",
-			APP_DIR . "/$dirP/templates/$presenter.$this->view.latte",
-			APP_DIR . "/$dirP/templates/$presenter/$this->view.phtml",
-			APP_DIR . "/$dirP/templates/$presenter.$this->view.phtml",
+			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
+			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
+			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
+			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
+			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.latte",
+			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter.$this->view.latte",
+			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.phtml",
+			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter.$this->view.phtml",
 		);
 	}
 
@@ -282,7 +282,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function isAllowed($destination)
 	{
-		if (defined("VENNE_MODE_INSTALLATION"))
+		if ($this->getContext()->params['venneModeInstallation'])
 			return true;
 		if ($destination == "this") {
 			$action = "action" . ucfirst($this->action);

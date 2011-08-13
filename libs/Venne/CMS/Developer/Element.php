@@ -62,7 +62,7 @@ class Element extends Venne\Application\UI\Control implements IElement {
 	{
 		$dir = dirname($this->getReflection()->getFileName());
 		$list = array(
-			APP_DIR . "/skins/" . $this->getContext()->website->current->skin . "/".  ucfirst($this->name) . "Element/template.latte",
+			$this->getContext()->params["appDir"] . "/skins/" . $this->getContext()->website->current->skin . "/".  ucfirst($this->name) . "Element/template.latte",
 			$dir . "/template.latte"
 		);
 		return $list;
@@ -105,9 +105,9 @@ class Element extends Venne\Application\UI\Control implements IElement {
 		if(isset($this->presenter->webId)) $this->template->webId = $this->presenter->webId;
 		if(!file_exists($this->template->getFile())) throw new \Nette\FileNotFoundException("Template for element not found. Missing template '".$this->template->getFile()."'.");
 		
-		$this->template->venneModeAdmin = defined('VENNE_MODE_ADMIN');
-		$this->template->venneModeFront = defined('VENNE_MODE_FRONT');
-		$this->template->venneModeInstallation = defined('VENNE_MODE_INSTALLATION');
+		$this->template->venneModeAdmin = $this->getContext()->params['venneModeAdmin'];
+		$this->template->venneModeFront = $this->getContext()->params['venneModeFront'];
+		$this->template->venneModeInstallation = $this->getContext()->params['venneModeInstallation'];
 		
 		$this->template->render();
 	}

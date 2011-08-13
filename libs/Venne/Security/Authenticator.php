@@ -48,7 +48,7 @@ class Authenticator extends \Nette\Object implements \Nette\Security\IAuthentica
 		/*
 		 * Login from config file
 		 */
-		$cfg = \Nette\Config\NeonAdapter::load(WWW_DIR . "/../config.neon");
+		$cfg = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . "/../config.neon");
 		if (
 				$this->container->params["venne"]["admin"]["name"] == $username &&
 				$this->container->params["venne"]["admin"]["password"] == $password

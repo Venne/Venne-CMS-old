@@ -31,9 +31,9 @@ class WebsiteService extends BaseService implements
 	{
 		$repo = $this->getRepository();
 
-		if (defined('VENNE_MODE_ADMIN')) {
+		if ($this->container->params['venneModeAdmin']) {
 			return $repo->findOneBy(array("name" => "admin"));
-		} else if (defined('VENNE_MODE_FRONT')) {
+		} else if ($this->container->params['venneModeFront']) {
 			$websites = $repo->findAll();
 			foreach ($websites as $item) {
 				if ($item->name == "admin")

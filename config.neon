@@ -37,6 +37,7 @@ common:
 		lang: cs
 		template: venne
 		defaultModule: pages
+		defaultErrorModule: error
 		repositories:
 			core:
 				mirrors:
@@ -44,7 +45,8 @@ common:
 					
 				name: anonym
 				password: ""
-					
+				
+			
 		panels:
 			- stopwatch
 			
@@ -102,6 +104,6 @@ common:
 		helpers: null
 		
 	
-production < common: 
 development < common: 
+production < common: 
 console < common: 

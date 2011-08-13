@@ -35,7 +35,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	public function __construct(\Nette\DI\Container $container, $parent)
 	{
 		parent::__construct($container, $parent);
-		self::$dir = preg_replace('/\w+\/\.\.\//', '', WWW_DIR . "/../packages");
+		self::$dir = preg_replace('/\w+\/\.\.\//', '', $this->container->params["wwwDir"] . "/../packages");
 		self::$installedDir = self::$dir . "/installed";
 		self::$tempDir = self::$dir . "/temp";
 		self::$infoDir = self::$dir . "/info";
@@ -57,24 +57,24 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	 */
 	public function getRepositoryInfo($name)
 	{
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		return $config["common"]["venne"]["repositories"][$name];
 	}
 	
 	public function removeRepository($name)
 	{
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		unset($config["common"]["venne"]["repositories"][$name]);
 		unset($config["development"]["venne"]["repositories"][$name]);
 		unset($config["production"]["venne"]["repositories"][$name]);
 		unset($config["console"]["venne"]["repositories"][$name]);
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 
 
 	public function saveRepository($name, $mirrors, $userName = NULL, $userPassword = NULL)
 	{
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		$config["common"]["venne"]["repositories"][$name]["mirrors"] = $mirrors;
 		if($userName){
 			$config["common"]["venne"]["repositories"][$name]["name"] = $userName;
@@ -90,7 +90,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 				unset($config["common"]["venne"]["repositories"][$name]["password"]);
 			}
 		}
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 
 	public function savePackageBuild($pkgname, $pkgver, $pkgdesc, $licence, $dependencies, $packager, $files)
@@ -150,7 +150,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 		$zip->addFile(self::$buildscriptDir . '/' . $pkgname . '/info.neon', "info.neon");
 
 		foreach ($config["files"] as $file) {
-			$zip->addFile(WWW_DIR . "/../" . $file, $file);
+			$zip->addFile($this->container->params["wwwDir"] . "/../" . $file, $file);
 		}
 		$zip->close();
 		return true;
@@ -416,18 +416,18 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 			$name = str_replace(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/", "", $file->getPathName());
 			if ($file->isDir()) {
 				umask(0000);
-				@mkdir(WWW_DIR . "/../" . $name, 0777, true);
+				@mkdir($this->container->params["wwwDir"] . "/../" . $name, 0777, true);
 				rmdir($file->getPathname());
 			} else {
 				umask(0000);
-				@mkdir(dirname(WWW_DIR . "/../" . $name), 0777, true);
-				copy($file->getPathName(), WWW_DIR . "/../" . $name);
+				@mkdir(dirname($this->container->params["wwwDir"] . "/../" . $name), 0777, true);
+				copy($file->getPathName(), $this->container->params["wwwDir"] . "/../" . $name);
 				unlink($file->getPathname());
 			}
 		}
 
 		/* config */
-		if (file_exists(WWW_DIR . "/../packages/info/installed.neon")) {
+		if (file_exists($this->container->params["wwwDir"] . "/../packages/info/installed.neon")) {
 			$config = \Nette\Config\NeonAdapter::load(self::$infoDir . "/installed.neon");
 		} else {
 			$config = array();
@@ -446,8 +446,8 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	{
 		$config = \Nette\Config\NeonAdapter::load(self::$installedDir . "/" . $pkgname . "-" . $pkgver . "/info.neon");
 		foreach ($config["files"] as $file) {
-			$dir = dirname(WWW_DIR . "/../" . $file);
-			unlink(WWW_DIR . "/../" . $file);
+			$dir = dirname($this->container->params["wwwDir"] . "/../" . $file);
+			unlink($this->container->params["wwwDir"] . "/../" . $file);
 			
 			while(!($files = @scandir($dir)) || !(count($files) > 2)) {
 				dump($dir);
@@ -473,7 +473,7 @@ class ModulesModel extends Venne\CMS\Developer\Model {
 	
 //	public function uploadPackage($pkgname, $pkgver, $repository, $user = NULL, $pass = NULL)
 //	{
-//		$file = WWW_DIR . "/../packages/".$pkgname."-".$pkgver.".zip";
+//		$file = $this->container->params["wwwDir"] . "/../packages/".$pkgname."-".$pkgver.".zip";
 // 
 //		$c = curl_init();
 //		curl_setopt($c, CURLOPT_URL, $repository . "index.php");

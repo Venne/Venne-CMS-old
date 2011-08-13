@@ -145,11 +145,11 @@ class ModuleManager {
 	public function getAvailableModules()
 	{
 		$arr = array();
-		foreach(\Nette\Utils\Finder::findDirectories("*")->in(EXTENSIONS_DIR . "/modules/") as $file)
+		foreach(\Nette\Utils\Finder::findDirectories("*")->in($this->container->params["extensionsDir"] . "/modules/") as $file)
 		{
 			$arr[] = lcfirst(substr($file->getBaseName(), 0, -6));
 		}
-		foreach(\Nette\Utils\Finder::findDirectories("*")->in(VENNE_DIR . "/CMS/Modules/") as $file)
+		foreach(\Nette\Utils\Finder::findDirectories("*")->in($this->container->params["venneDir"] . "/CMS/Modules/") as $file)
 		{
 			$arr[] = lcfirst(substr($file->getBaseName(), 0, -6));
 		}
@@ -158,27 +158,27 @@ class ModuleManager {
 	
 	public function activateModule($name)
 	{
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		$config["common"]["venne"]["modules"][$name . "Module"]["run"] = true;
 		$config["development"]["venne"]["modules"][$name . "Module"]["run"] = true;
 		$config["production"]["venne"]["modules"][$name . "Module"]["run"] = true;
 		$config["console"]["venne"]["modules"][$name . "Module"]["run"] = true;
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 	
 	public function deactivateModule($name)
 	{
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		$config["common"]["venne"]["modules"][$name . "Module"]["run"] = false;
 		$config["development"]["venne"]["modules"][$name . "Module"]["run"] = false;
 		$config["production"]["venne"]["modules"][$name . "Module"]["run"] = false;
 		$config["console"]["venne"]["modules"][$name . "Module"]["run"] = false;
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 	
 	public function installModule($name)
 	{
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		$config["common"]["venne"]["modules"][$name . "Module"]["run"] = true;
 		$config["development"]["venne"]["modules"][$name . "Module"]["run"] = true;
 		$config["production"]["venne"]["modules"][$name . "Module"]["run"] = true;
@@ -197,7 +197,7 @@ class ModuleManager {
 			$config["console"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $name."/";
 		}
 		
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 	
 	public function uninstallModule($name)
@@ -209,12 +209,12 @@ class ModuleManager {
 			$service->uninstallModule();
 		}
 		
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		unset($config["common"]["venne"]["modules"][$name . "Module"]);
 		unset($config["development"]["venne"]["modules"][$name . "Module"]);
 		unset($config["production"]["venne"]["modules"][$name . "Module"]);
 		unset($config["console"]["venne"]["modules"][$name . "Module"]);
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 	
 	public function saveModuleRoutePrefix($name, $prefix)
@@ -226,18 +226,18 @@ class ModuleManager {
 			$prefix = substr($prefix, 1);
 		} 
 		
-		$config = \Nette\Config\NeonAdapter::load(WWW_DIR . '/../config.neon');
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
 		$config["common"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $prefix;
 		$config["development"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $prefix;
 		$config["production"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $prefix;
 		$config["console"]["venne"]["modules"][$name . "Module"]["routePrefix"] = $prefix;
-		\Venne\Config\NeonAdapter::save($config, WWW_DIR . '/../config.neon', "common", array("production", "development", "console"));
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 	
 	public function getPresenters($module)
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("*Presenter.php")->from(APP_DIR_FRONT . "/".ucfirst($module)."Module") as $file)
+		foreach(\Nette\Utils\Finder::findFiles("*Presenter.php")->from($this->container->params["frontDir"] . "/".ucfirst($module)."Module") as $file)
 		{
 			$data[] = substr($file->getBaseName(), 0, -13);
 		}
@@ -247,7 +247,7 @@ class ModuleManager {
 	public function getActions($module, $presenter)
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("*")->from(APP_DIR_FRONT . "/".ucfirst($module)."Module/templates/".  ucfirst($presenter)) as $file)
+		foreach(\Nette\Utils\Finder::findFiles("*")->from($this->container->params["frontDir"] . "/".ucfirst($module)."Module/templates/".  ucfirst($presenter)) as $file)
 		{
 			$data[] = substr($file->getBaseName(), 0, -6);
 		}
@@ -258,7 +258,7 @@ class ModuleManager {
 	{
 		$data = array();
 		
-		$text = file_get_contents(APP_DIR_FRONT . '/'.  ucfirst($module)."Module/presenters/".  ucfirst($presenter) . "Presenter.php");
+		$text = file_get_contents($this->container->params["frontDir"] . '/'.  ucfirst($module)."Module/presenters/".  ucfirst($presenter) . "Presenter.php");
 		preg_match_all('/@persistent(.*?)\\n(.*?)public(.*?)\$(.*?)[;= ]/', $text, $matches);
 		
 		foreach($matches[4] as $item){
