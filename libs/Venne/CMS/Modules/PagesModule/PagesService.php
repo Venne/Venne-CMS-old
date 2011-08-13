@@ -58,7 +58,7 @@ Venne\CMS\Developer\IFrontModule, Venne\CMS\Developer\ISitemapModule, Venne\CMS\
 	{
 		$sitemap = new \Venne\CMS\Sitemap\Sitemap;
 
-		$pages = $this->getRepository()->findByWebsite($this->container->navigation->current($this->container->httpRequest)->id);
+		$pages = $this->getRepository()->findByWebsite($this->container->website->current->id);
 
 		$url = $this->container->httpRequest->getUrl();
 		$prefix = $url->getScheme() . "://" . $url->getHost() . $url->getBasePath() . $this->container->params["venne"]["modules"]["pagesModule"]["routePrefix"];

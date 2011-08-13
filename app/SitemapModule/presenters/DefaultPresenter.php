@@ -18,7 +18,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter
 	
 	public function renderSitemap()
 	{
-		$this->template->xml = $this->getContext()->{$this->getParam("sitemap")}->getSitemap($this->getContext()->params['CMS']["modules"][$this->getParam("sitemap") . "Module"]["sitemapPriority"]);
+		$this->template->xml = $this->getContext()->{$this->getParam("sitemap")}->getSitemap($this->getContext()->params['venne']["modules"][$this->getParam("sitemap") . "Module"]["sitemapPriority"]);
 	}
 
 	
