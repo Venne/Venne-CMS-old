@@ -44,8 +44,8 @@ class CommentsElement extends Venne\CMS\Developer\Element\ContentExtensionElemen
 	public function createComponentForm($name)
 	{
 		$form = new Venne\Application\UI\Form($this, $name);
-		$form->addText("author", "Name");
-		$form->addTextArea("text", "Comment");
+		$form->addText("author", "Name")->addRule(Venne\Application\UI\Form::FILLED, "Enter name");
+		$form->addTextArea("text", "Comment")->addRule(Venne\Application\UI\Form::FILLED, "Enter comment");
 		$form->addSubmit("submit", "Send");
 		$form->onSuccess[] = array($this, "handleSave");
 		return $form;
