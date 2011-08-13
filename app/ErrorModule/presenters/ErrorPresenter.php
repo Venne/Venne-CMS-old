@@ -19,12 +19,19 @@ class ErrorPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter {
 
 		} elseif ($exception instanceof \Nette\Application\BadRequestException) {
 			$code = $exception->getCode();
-			//$this->setView(in_array($code, array(403, 404, 405, 410, 500)) ? $code : '4xx'); // load template 403.latte or 404.latte or ... 4xx.latte
-
+			
 		} else {
-			//$this->setView('500'); // load template 500.latte
+			$code = 500;
 			Debugger::log($exception, Debugger::ERROR); // and log exception
 		}
+		
+		$this->template->error = $this->getContext()->error->model->getError($code);
+		$this->template->code = $code;
+		if($this->template->error){
+			$this->setView("error");
+		}
+		
+		
 	}
 
 }

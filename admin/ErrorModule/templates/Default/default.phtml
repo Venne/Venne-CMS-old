@@ -23,7 +23,7 @@
 			<td class="actions">
 				<ul>
 					<li n:if="$presenter->isAllowed('edit')"><a href="{link edit id=>$item->code}">editovat</a></li>
-					<li n:if="$presenter->isAllowed('delete!')"><a n:confirm="really?" href="{link delete! id=>$item->code}">smazat</a></li>
+					<li n:if="$presenter->isAllowed('delete!')"><a n:confirm="really?" href="{link delete! id=>$item->id}">smazat</a></li>
 				</ul>
 			</td>
 		</tr>
