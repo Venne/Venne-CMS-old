@@ -83,9 +83,11 @@ class PagesModel extends Venne\CMS\Developer\Model {
 	 */
 	public function isUrlAvailable(\Nette\Forms\IControl $control)
 	{
+		$websiteEntity = $this->container->website->currentFront;
+		
 		$url = $control->getValue();
 		$entity = $control->parent->getEntity();
-		$res = $this->getRepository()->findOneBy(array("url" => $url));
+		$res = $this->getRepository()->findOneBy(array("url" => $url, "website"=>$websiteEntity->id));
 		if (!$res || ($res && $entity && $res->id == $entity->id)) {
 			return true;
 		}
