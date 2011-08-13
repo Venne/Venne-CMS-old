@@ -1,13 +1,10 @@
 <?php
 
-namespace PagesModule;
+namespace ErrorModule;
 
 use Nette\Forms\Form;
 use Nette\Web\Html;
 
-/**
- * @allowed("administration-pages")
- */
 class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 
@@ -17,7 +14,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Pages", $this->link(":Pages:Default:"));
+		$this->addPath("Error", $this->link(":Error:Default:"));
 	}
 
 	/**
@@ -25,7 +22,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Pages:Default:create"));
+		$this->addPath("new item", $this->link(":Error:Default:create"));
 	}
 
 	/**
@@ -33,15 +30,15 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function actionEdit()
 	{
-		$this->addPath("Edit ({$this->id})", $this->link(":Pages:Default:edit"));
+		$this->addPath("Edit ({$this->id})", $this->link(":Error:Default:edit"));
 	}
 
 
 	public function createComponentForm($name)
 	{
-		$form = new \Venne\CMS\Modules\PagesForm($this, $name, "\Venne\CMS\Modules\Pages");
+		$form = new \Venne\CMS\Modules\ErrorForm($this, $name);
 		$form->setSuccessLink("default");
-		$form->setFlashMessage("Page has been created");
+		$form->setFlashMessage("Error has been created");
 		$form->setSubmitLabel("Create");
 		return $form;
 	}
@@ -49,10 +46,9 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 	public function createComponentFormEdit($name)
 	{
-		$form = new \Venne\CMS\Modules\PagesForm($this, $name, "\Venne\CMS\Modules\Pages");
+		$form = new \Venne\CMS\Modules\ErrorForm($this, $name, $this->getParam("id"));
 		$form->setSuccessLink("this");
-		$form->setEntity($this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->find($this->id));
-		$form->setFlashMessage("Page has been updated");
+		$form->setFlashMessage("Error has been updated");
 		$form->setSubmitLabel("Update");
 		return $form;
 	}
@@ -72,7 +68,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 	 */
 	public function handleDelete($id)
 	{
-		$this->getModel()->removeItem($id);
+		$this->getModel()->removeError($id);
 		$this->flashMessage("Page has been deleted", "success");
 		$this->redirect("this", array("id" => NULL));
 	}
@@ -80,7 +76,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\AdminPresenter {
 
 	public function renderDefault()
 	{
-		$this->template->table = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findByWebsite($this->getWebsite()->currentFront->id);
+		$this->template->table = $this->getModel()->getErrors();
 	}
 
 }

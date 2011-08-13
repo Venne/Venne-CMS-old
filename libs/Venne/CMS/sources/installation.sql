@@ -358,7 +358,19 @@ CREATE TABLE IF NOT EXISTS `website` (
 
 INSERT INTO `website` (`id`, `name`, `regex`, `skin`, `langType`, `langValue`, `langDefault`, `routePrefix`) VALUES
 (-1, 'admin', '*', 'admin', 'get', 'lang', 1, '');
+-- --------------------------------------------------------
 
+--
+-- Struktura tabulky `error`
+--
+
+CREATE TABLE IF NOT EXISTS `error` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `website_id` int(11) NOT NULL,
+  `code` int(11) NOT NULL,
+  `text` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 --
 -- Omezení pro exportované tabulky
 --

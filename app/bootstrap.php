@@ -30,5 +30,5 @@ $routingManager->setRoutes($container->application->router);
 // Configure and run the application!
 $application = $container->application;
 $application->catchExceptions = (bool) Debugger::$productionMode;
-$application->errorPresenter = $container->params['venne']['defaultErrorModule'];
+$application->errorPresenter = ucfirst($container->params['venne']['defaultErrorModule']).":Error";
 $application->run();
