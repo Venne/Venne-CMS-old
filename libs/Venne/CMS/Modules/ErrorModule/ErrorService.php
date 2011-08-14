@@ -17,7 +17,7 @@ use Venne;
  * @author Josef Kříž
  */
 class ErrorService extends BaseService implements
-Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule{
+Venne\CMS\Developer\IModelModule, Venne\CMS\Developer\IAdminModule, Venne\CMS\Developer\IErrorModule{
 
 	protected $className = "error";
 

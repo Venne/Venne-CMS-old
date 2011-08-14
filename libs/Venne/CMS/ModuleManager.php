@@ -67,6 +67,17 @@ class ModuleManager {
 		return $arr;
 	}
 	
+	public function getErrorModules()
+	{
+		$arr = array();
+		foreach($this->getModules() as $module){
+			if($this->container->{$module} instanceof \Venne\CMS\Developer\IErrorModule){
+				$arr[] = $module;
+			}
+		}
+		return $arr;
+	}
+	
 	public function getStartupModules()
 	{
 		$arr = array();

@@ -76,7 +76,7 @@ class RoutingManager{
 		/*
 		 * Routes for modules
 		 */
-		foreach($this->container->moduleManager->getRouteModules() as $module){
+		foreach($this->container->moduleManager->getFrontModules() as $module){
 			$this->container->{$module}->getRoute($router, $values, $prefix . $this->container->params["venne"]["modules"][$module."Module"]["routePrefix"]);
 		}
 
