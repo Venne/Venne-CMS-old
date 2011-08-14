@@ -29,7 +29,7 @@ class WebsiteForm extends \Venne\CMS\Developer\Form\EntityForm{
 		$this->addText("name", "Website name")
 				->addRule(Form::FILLED, 'Enter website name')
 				->addRule(callback($model, "isNameAvailable"), "This name is used.");
-		$this->addText("skin", "Skin")
+		$this->addSelect("skin", "Skin", $this->getPresenter()->getContext()->moduleManager->getSkins())
 				->setDefaultValue("venne")
 				->addRule(Form::FILLED, 'Enter skin');
 		$this->addText("regex", "Regex")
