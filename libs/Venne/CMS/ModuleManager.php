@@ -277,4 +277,16 @@ class ModuleManager {
 		return $data;
 	}
 	
+	public function getLayouts()
+	{
+		$website = $this->container->website->currentFront;
+		
+		$data = array();
+		foreach(\Nette\Utils\Finder::findFiles("@*.latte")->in($this->container->params["extensionsDir"] . "/skins/" . $website->skin . "/layouts/") as $file)
+		{
+			$data[substr($file->getBaseName(), 1, -6)] = substr($file->getBaseName(), 1, -6);
+		}
+		return $data;
+	}
+	
 }

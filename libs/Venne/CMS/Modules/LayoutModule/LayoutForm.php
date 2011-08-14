@@ -30,24 +30,84 @@ class LayoutForm extends \Venne\CMS\Developer\Form\EntityForm{
 	public function startup()
 	{
 		parent::startup();
+		
+		$modules = array();
+		$data = $this->getPresenter()->getContext()->moduleManager->getRouteModules();
+		foreach ($data as $item) {
+			$modules[ucfirst($item)] = ucfirst($item);
+		}
+		
 		$this->addGroup("Layout");
 		
-		$this->addText("layout", "Layout")->addRule(self::FILLED, "Enter layout");
+		$this->addSelect("layout", "Layout", $this->getPresenter()->getContext()->moduleManager->getLayouts())->addRule(self::FILLED, "Enter layout");
 		
 		$this->addGroup("Position");
 		
-		$this->addText("module", "Module");
-		$this->addText("presenter", "Presenter");
-		$this->addText("action", "Action");
+		\DependentSelectBox\DependentSelectBox::$disableChilds = false;
+		$this->addSelect("module", "Module", $modules)->setDefaultValue("Pages");
+		$this->addDependentSelectBox("presenter", "Presenter", $this["module"], array($this, "getValuesPresenter"))->setDefaultValue("Default");
+		$this->addDependentSelectBox("action", "Action", $this["presenter"], array($this, "getValuesAction"))->setDefaultValue("default");
 		
 		for ($i = 0; $i < 4; $i++) {
-			$this->addGroup("Param ".($i+1))->setOption('container', Html::el('fieldset')
+			$this->addGroup("Param " . ($i + 1))->setOption('container', Html::el('fieldset')
 							->id("par$i")
 							->class('collapsible'));
-			$this->addText("param_$i", "Parameter");
+			$this->addDependentSelectBox("param_$i", "Parameter", $this["presenter"], array($this, "getValuesParams"));
 			$this->addText("value_$i", "Value");
 		}
+
+		if ($this->getPresenter()->isAjax()) {
+			$this["presenter"]->addOnSubmitCallback(array($this->getPresenter(), "invalidateControl"), "form");
+			$this["action"]->addOnSubmitCallback(array($this->getPresenter(), "invalidateControl"), "form");
+		}
 		
+	}
+	
+	public function getValuesPresenter($form, $dependentSelectBoxName)
+	{
+		$module = $form["module"]->getValue();
+		
+		$presenters = array();
+		$data = $this->getPresenter()->getContext()->moduleManager->getPresenters($module);
+		foreach ($data as $item) {
+			$presenters[ucfirst($item)] = ucfirst($item);
+		}
+
+		return $presenters;
+	}
+
+
+	public function getValuesAction($form, $dependentSelectBoxName)
+	{
+		$module = $form["module"]->getValue();
+		$presenter = $form["presenter"]->getValue();
+
+		$actions = array();
+		$data = $this->getPresenter()->getContext()->moduleManager->getActions($module, $presenter);
+		foreach ($data as $item) {
+			$actions[$item] = $item;
+		}
+
+		return $actions;
+	}
+
+
+	public function getValuesParams($form, $dependentSelectBoxName)
+	{
+		$module = $form["module"]->getValue();
+		$presenter = $form["presenter"]->getValue();
+
+		if(!$presenter){
+			return array();
+		}
+		
+		$params = array();
+		$data = $this->getPresenter()->getContext()->moduleManager->getParams($module, $presenter);
+		foreach ($data as $item) {
+			$params[$item] = $item;
+		}
+
+		return array(""=>"")+$params;
 	}
 	
 	public function load()
@@ -58,11 +118,11 @@ class LayoutForm extends \Venne\CMS\Developer\Form\EntityForm{
 			$values = $model->getLayout($this->id);
 			$regex = explode(":",$values->regex);
 			
-			$this["module"]->setValue($regex[0]);
-			$this["presenter"]->setValue($regex[1]);
-			$this["action"]->setValue($regex[2]);
+			$this["module"]->setDefaultValue($regex[0]);
+			$this["presenter"]->setDefaultValue($regex[1]);
+			$this["action"]->setDefaultValue($regex[2]);
 			
-			$this["layout"]->setValue($values->layout);
+			$this["layout"]->setDefaultValue($values->layout);
 			
 			$i = 0;
 			foreach($values->keys as $key){
