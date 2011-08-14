@@ -18,7 +18,15 @@ use Venne;
  */
 class FrontPresenter extends \Venne\Application\UI\Presenter {
 
+	const MODE_NORMAL = 0;
+	const MODE_MODULE = 1;
+	const MODE_LAYOUT = 2;
+	const MODE_ELEMENTS = 3;
+	
 	public $contentExtensionsKey;
+	
+	/** @persistent */
+	public $mode = 0;
 
 	public function startup()
 	{
@@ -30,6 +38,26 @@ class FrontPresenter extends \Venne\Application\UI\Presenter {
 		if (!$this->lang) {
 			$this->lang = $this->getLanguage()->getCurrentLang($this->getHttpRequest())->id;
 		}
+	}
+	
+	public function isModeNormal()
+	{
+		return ($this->mode == self::MODE_NORMAL);
+	}
+
+	public function isModeLayout()
+	{
+		return ($this->mode == self::MODE_LAYOUT);
+	}
+
+	public function isModeModule()
+	{
+		return ($this->mode == self::MODE_MODULE);
+	}
+
+	public function isModeElements()
+	{
+		return ($this->mode == self::MODE_ELEMENTS);
 	}
 
 }

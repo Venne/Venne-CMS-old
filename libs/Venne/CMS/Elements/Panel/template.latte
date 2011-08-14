@@ -192,25 +192,25 @@
 			{/if}
 		{/if}
 
-		{*if !$Venne->administration}
+		{if $venneModeFront}
 		<div class="box">
 			<div class="popup">Mode
-				{if $presenter->isModeEditModule()}<a href="javaScript:;">{_"Edit module"}</a>
-				{elseif $presenter->isModeEditLayout()}<a href="javaScript:;">{_"Edit Layout"}</a>
-				{elseif $presenter->isModeEditElements()}<a href="javaScript:;">{_"Edit Elements"}</a>
+				{if $presenter->isModeModule()}<a href="javaScript:;">{_"Edit module"}</a>
+				{elseif $presenter->isModeLayout()}<a href="javaScript:;">{_"Edit Layout"}</a>
+				{elseif $presenter->isModeElements()}<a href="javaScript:;">{_"Edit Elements"}</a>
 				{else}<a href="javaScript:;">{_"Normal"}</a>
 				{/if}
 				<div class="popup-open elements">
 					<ul>
-						<li><a href="{link this, 'mode'=>0}">Normal</a></li>
-						<li><a href="{link this, 'mode'=>1}">Edit module</a></li>
-						<li><a href="{link this, 'mode'=>2}">Edit Layout</a></li>
-						<li><a href="{link this, 'mode'=>3}">Edit Elements</a></li>
+						<li><a href="{plink this, 'mode'=>0}">Normal</a></li>
+						<li><a href="{plink this, 'mode'=>1}">Edit module</a></li>
+						<li><a href="{plink this, 'mode'=>2}">Edit Layout</a></li>
+						<li><a href="{plink this, 'mode'=>3}">Edit Elements</a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
-		{/if*}
+		{/if}
 
 	</div>
 	{else}
