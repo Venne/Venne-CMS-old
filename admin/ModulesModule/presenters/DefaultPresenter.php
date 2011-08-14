@@ -29,6 +29,15 @@ class DefaultPresenter extends BasePresenter
 		}
 	}
 	
+	public function createComponentDefaultForm($name)
+	{
+		$form = new \Venne\CMS\Modules\ModulesDefaultForm($this, $name);
+		$form->setSuccessLink("default");
+		$form->setFlashMessage("Changes has been saved");
+		$form->setSubmitLabel("Save");
+		return $form;
+	}
+	
 	public function createComponentForm($name)
 	{
 		$form = new \Venne\CMS\Modules\ModulesEditForm($this, $name, $this->getParam("key"));

@@ -245,6 +245,27 @@ class ModuleManager {
 		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 	
+	public function saveDefaultModule($name)
+	{
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
+		$config["common"]["venne"]["defaultModule"] = $name;
+		$config["development"]["venne"]["defaultModule"] = $name;
+		$config["production"]["venne"]["defaultModule"] = $name;
+		$config["console"]["venne"]["defaultModule"] = $name;
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
+	}
+	
+	public function saveDefaultErrorModule($name)
+	{
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
+		$config["common"]["venne"]["defaultErrorModule"] = $name;
+		$config["development"]["venne"]["defaultErrorModule"] = $name;
+		$config["production"]["venne"]["defaultErrorModule"] = $name;
+		$config["console"]["venne"]["defaultErrorModule"] = $name;
+		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
+	}
+
+
 	public function getPresenters($module)
 	{
 		$data = array();
