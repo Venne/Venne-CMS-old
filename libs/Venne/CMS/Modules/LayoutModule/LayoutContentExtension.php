@@ -31,7 +31,7 @@ class LayoutContentExtension extends BaseService implements \Venne\CMS\Developer
 	public function setForm(\Nette\Forms\Container $container)
 	{
 		$container->addCheckbox("use", "Set layout")->setDefaultValue(false);
-		$container->addText("layout", "Layout");
+		$container->addSelect("layout", "Layout", $this->container->moduleManager->getLayouts());
 	}
 
 
