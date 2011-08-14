@@ -43,7 +43,7 @@ class ModuleManager {
 		return $this->modules;
 	}
 	
-	public function getRouteModules()
+	public function getFrontModules()
 	{
 		$arr = array();
 		foreach($this->getModules() as $module){

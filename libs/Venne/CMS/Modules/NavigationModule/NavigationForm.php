@@ -35,7 +35,7 @@ class NavigationForm extends \Venne\CMS\Developer\Form\EntityForm {
 		parent::startup();
 
 		$modules = array();
-		$data = $this->getPresenter()->getContext()->moduleManager->getRouteModules();
+		$data = $this->getPresenter()->getContext()->moduleManager->getFrontModules();
 		foreach ($data as $item) {
 			$modules[ucfirst($item)] = ucfirst($item);
 		}
