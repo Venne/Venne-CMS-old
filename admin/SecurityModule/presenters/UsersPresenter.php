@@ -26,7 +26,7 @@ class UsersPresenter extends BasePresenter {
 	{
 		parent::startup();
 		$this->addPath("Users", $this->link(":Security:Users:"));
-		$this->template->table = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Users")->findAll();
+		$this->template->table = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Users")->findAll();
 	}
 
 

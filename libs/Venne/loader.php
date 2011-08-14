@@ -25,6 +25,4 @@ require_once __DIR__ . "/Configurator.php";
 define('VENNE', TRUE);
 define('VENNE_DIR', __DIR__);
 define('VENNE_VERSION_ID', '2.0000');
-define('VENNE_VERSION_STATE', 'pre-alpha'); 
-
-define('VENNE_MODULES_NAMESPACE', "\\Venne\\CMS\Modules\\");
+define('VENNE_VERSION_STATE', 'pre-alpha');

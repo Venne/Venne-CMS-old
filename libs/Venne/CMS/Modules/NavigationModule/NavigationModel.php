@@ -87,7 +87,7 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 		if($parent_id){
 			$entity->parent = $this->getRepository()->find($parent_id);
 		}
-		$entity->website = $this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Website")->find($website_id);
+		$entity->website = $this->getEntityManager()->getRepository($this->container->params["venneModulesNamespace"] . "Website")->find($website_id);
 		$entity->type = Navigation::TYPE_LINK;
 		$this->getEntityManager()->persist($entity);
 
@@ -113,7 +113,7 @@ class NavigationModel extends Venne\CMS\Developer\Model {
 		if($parent_id){
 			$menuEntity->parent = $this->getRepository()->find($parent_id);
 		}
-		$menuEntity->website = $this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Website")->find($website_id);
+		$menuEntity->website = $this->getEntityManager()->getRepository($this->container->params["venneModulesNamespace"] . "Website")->find($website_id);
 
 		foreach ($menuEntity->keys as $value) {
 			$this->getEntityManager()->remove($value);

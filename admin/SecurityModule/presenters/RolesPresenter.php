@@ -27,7 +27,7 @@ class RolesPresenter extends BasePresenter {
 		parent::startup();
 		$this->addPath("Roles", $this->link(":Security:Roles:"));
 
-		$this->template->items = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->findBy(array("parent" => NULL));
+		$this->template->items = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->findBy(array("parent" => NULL));
 	}
 
 
@@ -84,7 +84,7 @@ class RolesPresenter extends BasePresenter {
 	{
 		foreach ($menu as $key => $item) {
 			if ($form["delete_" . $item->id]->isSubmittedBy()) {
-				$this->getEntityManager()->remove($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->find($item->id));
+				$this->getEntityManager()->remove($this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->find($item->id));
 				$this->getEntityManager()->flush();
 				$this->flashMessage("Role has been deleted", "success");
 				$this->redirect("this");
@@ -127,7 +127,7 @@ class RolesPresenter extends BasePresenter {
 			$order = count($data[$depend]) + 1;
 			$data[$depend][] = array("id" => $id, "order" => $order, "role_id" => $depend);
 		}
-		$this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->setStructure($data);
+		$this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->setStructure($data);
 		$this->flashMessage("Structure has been saved.", "success");
 		$this->redirect("this");
 	}
@@ -139,7 +139,7 @@ class RolesPresenter extends BasePresenter {
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Role has been saved");
 		$form->setSubmitLabel("Create");
-		$form["role_id"]->setItems($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->getList());
+		$form["role_id"]->setItems($this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->getList());
 		$form["role_id"]->setPrompt("root");
 		return $form;
 	}
@@ -148,11 +148,11 @@ class RolesPresenter extends BasePresenter {
 	public function createComponentFormRoleEdit($name)
 	{
 		$form = new \Venne\CMS\Modules\RoleForm($this, $name);
-		$form->setEntity($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->find($this->getParam("id")));
+		$form->setEntity($this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->find($this->getParam("id")));
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Role has been updated");
 		$form->setSubmitLabel("Update");
-		$form["role_id"]->setItems($this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->getList());
+		$form["role_id"]->setItems($this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->getList());
 		$form["role_id"]->setPrompt("root");
 		return $form;
 	}

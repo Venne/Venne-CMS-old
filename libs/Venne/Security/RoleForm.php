@@ -51,7 +51,7 @@ class RoleForm extends \Venne\CMS\Developer\Form\EntityForm {
 		}
 
 		$this->entity->name = $values["name"];
-		$this->entity->parent = $em->getRepository(VENNE_MODULES_NAMESPACE . "Role")->find($values["role_id"]);
+		$this->entity->parent = $em->getRepository($this->getPresenter()->getContext()->params["venneModulesNamespace"] . "Role")->find($values["role_id"]);
 		$em->flush();
 	}
 

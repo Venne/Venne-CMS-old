@@ -36,7 +36,7 @@ class UsersForm extends \Venne\CMS\Developer\Form\EntityForm {
 
 		$this->addGroup("Next informations");
 		$this->addText("email", "E-mail")->addRule(\Nette\Forms\Form::EMAIL, "Enter email");
-		$this->addMultiSelect("roles", "Roles", $this->getPresenter()->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->fetchPairs("id", "name"));
+		$this->addMultiSelect("roles", "Roles", $this->getPresenter()->getContext()->entityManager->getRepository($this->getPresenter()->getContext()->params["venneModulesNamespace"] . "Role")->fetchPairs("id", "name"));
 	}
 
 
@@ -81,7 +81,7 @@ class UsersForm extends \Venne\CMS\Developer\Form\EntityForm {
 
 		/* add roles */
 		foreach ($values["roles"] as $role) {
-			$this->entity->addRole($this->getPresenter()->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->find($role));
+			$this->entity->addRole($this->getPresenter()->getContext()->entityManager->getRepository($this->getPresenter()->getContext()->params["venneModulesNamespace"] . "Role")->find($role));
 		}
 		$em->flush();
 	}

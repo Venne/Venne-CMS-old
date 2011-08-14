@@ -27,15 +27,15 @@ class PermissionsPresenter extends BasePresenter {
 		parent::startup();
 		$this->addPath("Permissions", $this->link(":Security:Permissions:"));
 
-		$this->template->items = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Resource")->findBy(array("parent" => NULL));
-		$this->template->roles = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->findAll();
+		$this->template->items = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Resource")->findBy(array("parent" => NULL));
+		$this->template->roles = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->findAll();
 		if (!$this->role) {
 			$this->role = "guest";
 		}
-		$role = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->findOneByName($this->role);
+		$role = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->findOneByName($this->role);
 
 		$this->template->permissions = array();
-		$permissions = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Permission")->findByRole($role->id);
+		$permissions = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Permission")->findByRole($role->id);
 		foreach ($permissions as $permission) {
 			$this->template->permissions[$permission->resource->name] = $permission;
 		}
@@ -46,7 +46,7 @@ class PermissionsPresenter extends BasePresenter {
 	{
 		$form = new \Venne\Application\UI\Form($this, $name);
 		$form->addGroup("Role");
-		$form->addSelect("role", "Role", $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "Role")->fetchPairs("name", "name"));
+		$form->addSelect("role", "Role", $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->fetchPairs("name", "name"));
 		$form->addSubmit("submit", "Select");
 		$form->onSuccess[] = array($this, "handleSaveRole");
 		return $form;
@@ -88,8 +88,8 @@ class PermissionsPresenter extends BasePresenter {
 		foreach ($menu as $key => $item) {
 			if ($form["allow_" . $item->id]->isSubmittedBy()) {
 				$permission = new \Venne\CMS\Modules\Permission;
-				$permission->resource = $this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Resource")->find($item->id);
-				$permission->role = $this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Role")->findOneByName($this->role);
+				$permission->resource = $this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Resource")->find($item->id);
+				$permission->role = $this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Role")->findOneByName($this->role);
 				$permission->allow = true;
 
 				$this->getEntityManager()->persist($permission);
@@ -98,7 +98,7 @@ class PermissionsPresenter extends BasePresenter {
 				$this->redirect("this");
 			}
 			if ($form["delete_" . $item->id]->isSubmittedBy()) {
-				$item2 = $this->getEntityManager()->getRepository(VENNE_MODULES_NAMESPACE . "Permission")->findOneByResource($item->id);
+				$item2 = $this->getEntityManager()->getRepository($this->getContext()->params["venneModulesNamespace"] . "Permission")->findOneByResource($item->id);
 				$this->getEntityManager()->remove($item2);
 				$this->getEntityManager()->flush();
 				$this->flashMessage("Permission has been deleted", "success");

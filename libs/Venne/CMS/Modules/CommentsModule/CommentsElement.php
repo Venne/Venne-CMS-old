@@ -32,7 +32,7 @@ class CommentsElement extends Venne\CMS\Developer\Element\ContentExtensionElemen
 			if ($item) {
 				$this->template->show = true;
 
-				$this->template->items = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "CommentsItem")->findBy(
+				$this->template->items = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "CommentsItem")->findBy(
 								array(
 									"key" => $this->moduleName . "-" . $this->moduleItemId
 						));
@@ -69,7 +69,7 @@ class CommentsElement extends Venne\CMS\Developer\Element\ContentExtensionElemen
 	
 	public function handleDelete($id)
 	{
-		$item = $this->getContext()->entityManager->getRepository(VENNE_MODULES_NAMESPACE . "CommentsItem")->find($id);
+		$item = $this->getContext()->entityManager->getRepository($this->getContext()->params["venneModulesNamespace"] . "CommentsItem")->find($id);
 		$this->getContext()->entityManager->remove($item);
 		$this->getContext()->entityManager->flush();
 		$this->flashMessage("Comment has been removed", "success");

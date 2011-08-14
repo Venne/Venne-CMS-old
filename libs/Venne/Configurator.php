@@ -44,9 +44,12 @@ class Configurator extends \Nette\Configurator {
 		$this->container->params["venneDir"] = $this->container->params["libsDir"] . '/Venne';
 		$this->container->params["frontDir"] = $this->container->params["rootDir"] . '/app';
 		$this->container->params["flagsDir"] = $this->container->params["rootDir"] . '/flags';
+		
 		$this->container->params["venneModeInstallation"] = false;
 		$this->container->params["venneModeAdmin"] = false;
 		$this->container->params["venneModeFront"] = false;
+		
+		$this->container->params["venneModulesNamespace"] = "\\Venne\\CMS\Modules\\";
 
 		/*
 		 * detect appDir
@@ -113,7 +116,7 @@ class Configurator extends \Nette\Configurator {
 		 * Load Modules
 		 */
 		foreach ($container->moduleManager->getModules() as $item) {
-			$serviceClass = VENNE_MODULES_NAMESPACE . ucfirst($item) . "Service";
+			$serviceClass = $container->params["venneModulesNamespace"] . ucfirst($item) . "Service";
 
 			$container->addService($item, function() use ($container, $serviceClass) {
 						return new $serviceClass($container);
