@@ -1,0 +1,30 @@
+{**
+ * Venne:CMS layout template.
+ *
+ * @copyright  Copyright (c) 2011 Josef Kříž 
+ *
+ * @param string   $basePath	web base path
+ * @param array    $flashes		flash messages
+ * 
+ * @param $venneModeAdmin
+ * @param $venneModeInstallation
+ * @param $venneModeFront
+ *
+ * @param $lang
+ * @param $langName
+ * @param $langAlias
+ *}
+{js /js/jquery-1.6.min.js}
+{js /js/netteForms.js}
+{js /js/jquery.nette.js}
+{js /js/jquery.ajaxform.js}
+{js /js/venne.js}
+{capture $body}
+{if !isset($installationMode)}{element panel}{/if}
+{include #body}
+{/capture}
+{element header:html5}
+<body>
+{!$body}
+</body>
+</html>
