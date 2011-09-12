@@ -1,0 +1,13 @@
+<h1>{_"Pages module"}</h1>
+
+<ul class="menu">
+
+	<li n:if="$presenter->isAllowed('Admin:Pages:Default:default')">
+		<a href="{link default}"{if $presenter->isCurrent("Admin:Pages:Default:default")} class="active"{/if}>pages</a>
+	</li>
+
+	<li n:if="$presenter->isAllowed('Admin:Pages:Default:create')">
+		<a href="{link create}"{if $presenter->isCurrent("Admin:Pages:Default:create")} class="active"{/if}>new item</a>
+	</li>
+
+</ul>
