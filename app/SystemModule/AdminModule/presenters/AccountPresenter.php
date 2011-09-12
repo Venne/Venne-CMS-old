@@ -21,7 +21,7 @@ class AccountPresenter extends BasePresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Account", $this->link(":Admin:System:Account:"));
+		$this->addPath("Account", $this->link(":System:Admin:Account:"));
 	}
 	
 	public function createComponentFormEdit($name)

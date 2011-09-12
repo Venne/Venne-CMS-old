@@ -20,7 +20,7 @@ class PackagesPresenter extends BasePresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Packages", $this->link(":Modules:Packages:"));
+		$this->addPath("Packages", $this->link(":Modules:Admin:Packages:"));
 	}
 	
 	public function actionDefault()

@@ -25,7 +25,7 @@ class RolesPresenter extends BasePresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Roles", $this->link(":Admin:Security:Roles:"));
+		$this->addPath("Roles", $this->link(":Security:Admin:Roles:"));
 
 		$this->template->items = $this->context->services->role->getRepository()->findBy(array("parent" => NULL));
 	}
@@ -33,13 +33,13 @@ class RolesPresenter extends BasePresenter {
 
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Admin:Security:Roles:create"));
+		$this->addPath("new item", $this->link(":Security:Admin:Roles:create"));
 	}
 
 
 	public function actionEdit()
 	{
-		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Admin:Security:Roles:edit"));
+		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Security:Admin:Roles:edit"));
 	}
 
 

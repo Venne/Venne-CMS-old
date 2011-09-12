@@ -29,19 +29,19 @@ class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Error", $this->link(":Admin:Error:Default:"));
+		$this->addPath("Error", $this->link(":Error:Admin:Default:"));
 	}
 
 
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Admin:Error:Default:create"));
+		$this->addPath("new item", $this->link(":Error:Admin:Default:create"));
 	}
 
 
 	public function actionEdit()
 	{
-		$this->addPath("Edit ({$this->id})", $this->link(":Admin:Error:Default:edit"));
+		$this->addPath("Edit ({$this->id})", $this->link(":Error:Admin:Default:edit"));
 	}
 
 

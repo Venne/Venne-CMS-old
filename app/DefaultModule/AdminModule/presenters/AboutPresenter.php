@@ -14,7 +14,7 @@ namespace DefaultModule\AdminModule;
 /**
  * @author Josef Kříž
  */
-class AboutPresenter extends \Venne\Application\UI\Presenter
+class AboutPresenter extends \Venne\Developer\Presenter\AdminPresenter
 {
 
 	public function renderDefault()

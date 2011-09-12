@@ -21,7 +21,7 @@ class DatabasePresenter extends BasePresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Database", $this->link(":Admin:System:Database:"));
+		$this->addPath("Database", $this->link(":System:Admin:Database:"));
 	}
 	
 	public function createComponentFormEdit($name)

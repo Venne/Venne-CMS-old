@@ -30,7 +30,7 @@ class PermissionsPresenter extends BasePresenter {
 			$this->role = "guest";
 		}
 
-		$this->addPath("Permissions", $this->link(":Admin:Security:Permissions:"));
+		$this->addPath("Permissions", $this->link(":Security:Admin:Permissions:"));
 
 		$role = $this->context->services->role->repository->findOneByName($this->role);
 

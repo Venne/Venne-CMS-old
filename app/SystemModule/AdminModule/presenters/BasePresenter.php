@@ -23,7 +23,7 @@ class BasePresenter extends \Venne\Developer\Presenter\AdminPresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("System", $this->link(":Admin:System:Default:"));
+		$this->addPath("System", $this->link(":System:Admin:Default:"));
 	}
 	
 	public function createComponentFormMode($name)

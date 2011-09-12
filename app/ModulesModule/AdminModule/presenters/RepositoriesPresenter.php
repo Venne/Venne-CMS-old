@@ -23,7 +23,7 @@ class RepositoriesPresenter extends BasePresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Repositories", $this->link(":Modules:Repositories:"));
+		$this->addPath("Repositories", $this->link(":Modules:Admin:Repositories:"));
 	}
 	
 	public function actionDefault()
@@ -33,7 +33,7 @@ class RepositoriesPresenter extends BasePresenter
 	
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Modules:Repositories:create"));
+		$this->addPath("new item", $this->link(":Modules:Admin:Repositories:create"));
 	}
 	
 	public function createComponentForm($name)

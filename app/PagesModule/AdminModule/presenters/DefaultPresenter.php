@@ -20,17 +20,17 @@ class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Pages", $this->link(":Admin:Pages:Default:"));
+		$this->addPath("Pages", $this->link(":Pages:Admin:Default:"));
 	}
 
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Admin:Pages:Default:create"));
+		$this->addPath("new item", $this->link(":Pages:Admin:Default:create"));
 	}
 
 	public function actionEdit()
 	{
-		$this->addPath("Edit ({$this->id})", $this->link(":Admin:Pages:Default:edit"));
+		$this->addPath("Edit ({$this->id})", $this->link(":Pages:Admin:Default:edit"));
 	}
 
 

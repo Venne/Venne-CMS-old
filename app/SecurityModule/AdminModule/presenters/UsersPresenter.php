@@ -25,20 +25,20 @@ class UsersPresenter extends BasePresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Users", $this->link(":Admin:Security:Users:"));
+		$this->addPath("Users", $this->link(":Security:Admin:Users:"));
 		$this->template->table = $this->context->services->user->getRepository()->findAll();
 	}
 
 
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Admin:Security:Users:create"));
+		$this->addPath("new item", $this->link(":Security:Admin:Users:create"));
 	}
 
 
 	public function actionEdit()
 	{
-		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Admin:Security:Users:edit"));
+		$this->addPath("edit" . " (" . $this->id . ")", $this->link(":Security:Admin:Users:edit"));
 	}
 
 

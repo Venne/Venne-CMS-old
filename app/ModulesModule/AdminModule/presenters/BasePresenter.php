@@ -20,7 +20,7 @@ class BasePresenter extends \Venne\Developer\Presenter\AdminPresenter
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Modules", $this->link(":Admin:Modules:Default:"));
+		$this->addPath("Modules", $this->link(":Modules:Admin:Default:"));
 	}
 	
 	public function beforeRender()

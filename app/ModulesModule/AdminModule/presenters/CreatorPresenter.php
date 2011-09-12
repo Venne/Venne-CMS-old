@@ -22,12 +22,12 @@ class CreatorPresenter extends BasePresenter {
 	public function startup()
 	{
 		parent::startup();
-		$this->addPath("Creator", $this->link(":Modules:Creator:"));
+		$this->addPath("Creator", $this->link(":Modules:Admin:Creator:"));
 	}
 	
 	public function actionCreate()
 	{
-		$this->addPath("new item", $this->link(":Modules:Creator:create"));
+		$this->addPath("new item", $this->link(":Modules:Admin:Creator:create"));
 	}
 	
 	public function actionDefault()
