@@ -4,7 +4,7 @@ namespace ErrorModule;
 
 use Nette\Environment;
 
-class ErrorPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter {
+class ErrorPresenter extends \Venne\Developer\Presenter\FrontPresenter {
 
 
 	/**
@@ -25,7 +25,7 @@ class ErrorPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter {
 			Debugger::log($exception, Debugger::ERROR); // and log exception
 		}
 		
-		$this->template->error = $this->getContext()->error->model->getError($code);
+		$this->template->error = $this->getContext()->cms->error->model->getError($code);
 		$this->template->code = $code;
 		if($this->template->error){
 			$this->setView("error");

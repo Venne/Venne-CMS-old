@@ -9,16 +9,16 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\CMS\Modules;
+namespace Venne\Modules;
 
 /**
  * @author Josef Kříž
- * @Entity(repositoryClass="Venne\CMS\Modules\NavigationRepository")
+ * @Entity(repositoryClass="\Venne\Developer\Doctrine\BaseRepository")
  * @Table(name="resource")
  * 
  * @property string $name
  */
-class Resource extends \Venne\Models\BaseEntity {
+class Resource extends \Venne\Developer\Doctrine\BaseEntity {
 
 	/**
 	 * @Column(type="string")

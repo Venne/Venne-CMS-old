@@ -1,0 +1,13 @@
+*
+!.*
+!AdminModule/
+!DefaultModule/
+!ErrorModule/
+!InstallationModule/
+!PagesModule/
+!proxies/
+!RepositoryModule/
+!SitemapModule
+!config.neon
+!web.config
+!bootstrap.php

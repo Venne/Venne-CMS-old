@@ -5,23 +5,25 @@ namespace PagesModule;
 use Nette\Environment;
 
 /**
- * @allowed(module-pages)
+ * @resource PagesModule
  */
-class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter {
+class DefaultPresenter extends \Venne\Developer\Presenter\FrontPresenter {
 
 
 	/** @persistent */
 	public $url = "";
 
-
+	/**
+	 * @privilege read
+	 */
 	public function startup()
 	{
 		parent::startup();
 
-		$this->template->entity = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findOneBy(array("url" => $this->url, "website" => $this->getWebsite()->current->id));
+		$this->template->entity = $this->context->services->pages->getRepository()->findOneBy(array("url" => $this->url));
 
 		if (!$this->template->entity && !$this->url) {
-			$this->template->entity = $this->getEntityManager()->getRepository("\\Venne\\CMS\\Modules\\Pages")->findOneBy(array("mainPage" => true, "website" => $this->getWebsite()->current->id));
+			$this->template->entity = $this->context->services->pages->getRepository()->findOneBy(array("mainPage" => true));
 			if (!$this->template->entity) {
 				throw new \Nette\Application\BadRequestException;
 			}
@@ -33,6 +35,14 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter {
 		}
 
 		$this->contentExtensionsKey = $this->template->entity->id;
+	}
+	
+	public function createComponentForm($name)
+	{
+		$form = new \Venne\Modules\PagesFrontForm($this, $name);
+		$form->setSuccessLink("this");
+		$form->setFlashMessage("Page has been updated");
+		return $form;
 	}
 
 

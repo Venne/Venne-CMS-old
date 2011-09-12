@@ -1,0 +1,27 @@
+{cache $presenter->context->httpRequest->url->path, tags => ['Venne\NavigationModule']}
+
+{var items=>$control->getItems()}
+
+{var sub=>false}
+{block #menu}
+<ul>
+	{foreach $items as $item}
+		{if $presenter->isCurrentUrl($item->getLink($presenter))}
+			{var ok=>true}
+		{else}
+			{var ok=>false}
+		{/if}
+	
+		<li {if $ok}class="active"{/if}>
+			{if $ok}<span>{/if}
+				<a href="{$item->getLink($presenter)}" {if $presenter->isCurrentUrl($item->getLink($presenter))}class="{if $sub}sub{/if}active"{/if}>{$item->name}</a>
+			{if $ok}</span>{/if}
+		</li>
+		
+		{if count($item->childrens) > 0}okokokokoko {include #menu, "items"=>$item->childrens, "sub"=>true} {/if}
+	{/foreach}
+</ul>
+{/block}
+
+{/cache}
+

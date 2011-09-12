@@ -48,7 +48,7 @@ class Authenticator extends \Nette\Object implements \Nette\Security\IAuthentica
 		/*
 		 * Login from config file
 		 */
-		$cfg = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . "/../config.neon");
+		$cfg = \Nette\Config\NeonAdapter::load($this->container->params["appDir"] . "/config.neon");
 		if (
 				$this->container->params["venne"]["admin"]["name"] == $username &&
 				$this->container->params["venne"]["admin"]["password"] == $password
@@ -59,7 +59,7 @@ class Authenticator extends \Nette\Object implements \Nette\Security\IAuthentica
 		/*
 		 * Login from DB
 		 */
-		$user = $this->container->users->getRepository()->findOneBy(array("name"=>$username));
+		$user = $this->container->services->user->getRepository()->findOneBy(array("name"=>$username));
 		if($user){
 			$hash = md5($user->salt . $password);
 			if($user->password == $hash){

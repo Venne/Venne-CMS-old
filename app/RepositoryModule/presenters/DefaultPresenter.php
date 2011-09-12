@@ -7,7 +7,7 @@ use Nette\Environment;
 /**
  * @allowed(module-pages)
  */
-class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter
+class DefaultPresenter extends \Venne\Developer\Presenter\FrontPresenter
 {
 	/** @persistent */
 	public $repository;
@@ -22,7 +22,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter
 	
 	public function createComponentFormPackage($name)
 	{
-		$form = new \Venne\CMS\Modules\RepositoryUploadForm($this, $name, $this->getParam("repository"));
+		$form = new \Venne\Modules\RepositoryUploadForm($this, $name, $this->getParam("repository"));
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Package has been uploaded");
 		$form->addSubmit("submit", "Upload");

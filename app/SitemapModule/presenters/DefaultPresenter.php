@@ -4,7 +4,7 @@ namespace SitemapModule;
 
 use Nette\Environment;
 
-class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter
+class DefaultPresenter extends \Venne\Developer\Presenter\FrontPresenter
 {
 	
 	public $sitemap;
@@ -24,7 +24,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\FrontPresenter
 	
 	public function renderRobots()
 	{
-		$this->template->modules = $this->getContext()->moduleManager->getSitemapModules();
+		$this->template->modules = $this->getContext()->cms->moduleManager->getSitemapModules();
 		$this->template->path = str_replace("robots.txt", "", $this->getHttpRequest()->getUrl()->getAbsoluteUrl());
 	}
 

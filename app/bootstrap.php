@@ -19,16 +19,16 @@ require $params['libsDir'] . '/Venne/loader.php';
 $configurator = new Venne\Configurator($params);
 //$configurator->container->params += $params;
 $configurator->container->params['tempDir'] = __DIR__ . '/../temp';
-$container = $configurator->loadConfig(__DIR__ . '/../config.neon');
+$container = $configurator->loadConfig(__DIR__ . '/config.neon');
 
 
 // Setup router
-$routingManager = $container->routing;
-$routingManager->setRoutes($container->application->router);
+//$routingManager = $container->routing;
+//$routingManager->setRoutes($container->application->router);
 
 
 // Configure and run the application!
 $application = $container->application;
 $application->catchExceptions = (bool) Debugger::$productionMode;
-$application->errorPresenter = ucfirst($container->params['venne']['defaultErrorModule']).":Error";
+$application->errorPresenter = ucfirst($container->params['venne']['website']['defaultErrorModule']).":Error";
 $application->run();

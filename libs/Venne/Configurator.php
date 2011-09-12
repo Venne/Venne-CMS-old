@@ -15,20 +15,41 @@ use Nette,
 	Nette\Caching\Cache,
 	Nette\DI,
 	Nette\Diagnostics\Debugger,
-	Venne\CMS\Modules;
+	Venne\Modules,
+	Nette\Application\Routers\SimpleRouter,
+	Nette\Application\Routers\Route;
 
 /**
  * @author     Josef Kříž
  * 
- * @property \Nette\Application\Application $application
+ * @property-read \Nette\Application\Container $container
  */
 class Configurator extends \Nette\Configurator {
 
-
-	public function __construct($params, $containerClass = 'Nette\DI\Container')
+	/** @var array */
+	protected $defaultModules = array(
+			"hook" => array(),
+			"website" => array(),
+			"system" => array(),
+			"security" => array(),
+			"navigation" => array(),
+			"comments" => array(),
+			"modules" => array(),
+			"error" => array(),
+			"layout" => array(),
+		);
+	
+	public function __construct($params, $containerClass = 'Venne\Application\Container')
 	{
+		require_once $params["libsDir"] . '/Venne/DI/Container.php';
+		require_once $params["libsDir"] . '/Venne/Application/Container.php';
 		parent::__construct($containerClass);
 
+		$this->container->addService("services", new \Venne\DI\Container($this->container));
+		$this->container->addService("modules", new \Venne\DI\Container($this->container));
+		$this->container->addService("routes", new \Venne\DI\Container($this->container));
+		$this->container->addService("pages", new \Venne\DI\Container($this->container));
+		
 		/*
 		 * Params
 		 */
@@ -44,43 +65,31 @@ class Configurator extends \Nette\Configurator {
 		$this->container->params["venneDir"] = $this->container->params["libsDir"] . '/Venne';
 		$this->container->params["frontDir"] = $this->container->params["rootDir"] . '/app';
 		$this->container->params["flagsDir"] = $this->container->params["rootDir"] . '/flags';
-		
+		$this->container->params["configsDir"] = $this->container->params["appDir"] . '/configs';
+
 		$this->container->params["venneModeInstallation"] = false;
 		$this->container->params["venneModeAdmin"] = false;
 		$this->container->params["venneModeFront"] = false;
+
+		$this->container->params["venneModulesNamespace"] = "\\Venne\\Modules\\";
 		
-		$this->container->params["venneModulesNamespace"] = "\\Venne\\CMS\Modules\\";
-
 		/*
-		 * detect appDir
+		 * Detect mode
 		 */
-		$httpRequest = $this->container->httpRequest;
-		$url = $httpRequest->url->__toString();
-		$baseUrl = $httpRequest->url->baseUrl;
-		$url = str_replace($baseUrl, "", $url);
-
-		if (substr($url, 0, 19) == "admin/installation/" || $url == "admin/installation") {
-			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/installation';
-			$this->container->params["venneModeInstallation"] = true;
-		} else if (substr($url, 0, 6) == "admin/" || $url == "admin") {
-			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/admin';
+		$url = explode("/", substr($this->container->httpRequest->url->path, strlen($this->container->httpRequest->url->basePath)), 2);
+		if($url[0] == "admin"){
 			$this->container->params["venneModeAdmin"] = true;
-		} else {
-			$this->container->params["appDir"] = $this->container->params["rootDir"] . '/app';
+		}else if($url[0] == "installation"){
+			$this->container->params["venneModeInstallation"] = true;
+		}else{
 			$this->container->params["venneModeFront"] = true;
 		}
-
-		if (!file_exists($this->container->params["flagsDir"] . '/installed') && !$this->container->params["venneModeInstallation"]) {
-			header("Location: {$baseUrl}admin/installation", TRUE, 301);
-			die('Please continue <a href="' . $baseUrl . 'admin/installation">here</a>.');
-		}
-
-
-
+		
+		
 		/*
 		 * Set mode
 		 */
-		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . "/../config.neon");
+		$config = \Nette\Config\NeonAdapter::load($this->container->params["appDir"] . "/config.neon");
 		if ($config["global"]["mode"] == "production") {
 			$this->container->params['productionMode'] = true;
 		} else if ($config["global"]["mode"] == "development") {
@@ -110,24 +119,102 @@ class Configurator extends \Nette\Configurator {
 	public function loadConfig($file, $section = NULL)
 	{
 		$container = parent::loadConfig($file, $section);
+		$this->container->params["venne"]["moduleNamespaces"] = array("\\Venne\\", "\\");
+		$this->container->params['venne']['modules'] = $this->defaultModules + $this->container->params['venne']['modules'];
+		
+		foreach($this->container->params['venne']['modules'] as $key=>$module){
+			$class = ucfirst($key) . "Module\\Module";
+			foreach($this->container->params["venne"]["moduleNamespaces"] as $ns){
+				if(class_exists($ns . $class)){
+					$class = $ns . $class;
+					break;
+				}
+			}
+			$this->container->modules->addService($key, new $class);
+			$this->container->modules->$key->setListeners($this->container);
+		}
+		foreach($this->container->params['venne']['modules'] as $key=>$module){
+			$this->container->modules->$key->setServices($this->container);
+		}
+		foreach($this->container->params['venne']['modules'] as $key=>$module){
+			$this->container->modules->$key->setHooks($this->container, $this->container->hookManager);
+		}
+		
+		$this->setRoutes($container->application->router);
+		
+		return $container;
+	}
 
+	/**
+	 * @param \Nette\Application\Routers\RouteList
+	 */
+	public function setRoutes(\Nette\Application\Routers\RouteList $router)
+	{
+		$prefix = $this->container->services->website->current->routePrefix;
+
+
+		$router[] = $adminRouter = new \Nette\Application\Routers\RouteList('Admin');
+		$adminRouter[] = new Route('admin/<module>/<presenter>[/<action>[/<id>]]', array(
+					'module' => 'Default',
+					'presenter' => 'Default',
+					'action' => 'default',
+				));
+		
+		$router[] = $installationRouter = new \Nette\Application\Routers\RouteList('Installation');
+		$installationRouter[] = new Route('installation/<presenter>[/<action>[/<id>]]', array(
+					'presenter' => 'Default',
+					'action' => 'default',
+				));
 
 		/*
-		 * Load Modules
+		 * Routes for modules
 		 */
-		foreach ($container->moduleManager->getModules() as $item) {
-			$serviceClass = $container->params["venneModulesNamespace"] . ucfirst($item) . "Service";
-
-			$container->addService($item, function() use ($container, $serviceClass) {
-						return new $serviceClass($container);
-					});
+		foreach ($this->container->params["venne"]["modules"] as $key => $module) {
+			if(isset($module["routePrefix"])){
+				$this->container->modules->$key->setRoutes($router, $prefix . $module["routePrefix"]);
+			}
 		}
 
-		foreach ($container->moduleManager->getStartupModules() as $item) {
-			$container->$item->startup();
+		/*
+		 * Default route
+		 */
+		$router[] = new Route('', $this->container->params["venne"]["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
+		if ($prefix) {
+			$router[] = new Route($prefix, $this->container->params["venne"]["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
 		}
+	}
 
-		return $container;
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Venne\Doctrine\Container
+	 */
+	public static function createServiceDoctrineContainer(\Nette\DI\IContainer $container)
+	{
+		return new Doctrine\Container($container);
+	}
+	
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Venne\Doctrine\Container
+	 */
+	public static function createServiceModuleManager(\Nette\DI\IContainer $container)
+	{
+		return new ModuleManager\Manager($container, $container->doctrineContainer->entityManager);
+	}
+	
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Nette\Database\Connection
+	 */
+	public static function createServiceDatabaseService(\Nette\DI\IContainer $container)
+	{
+		$driver = substr($container->params['database']['driver'], 4);
+		$host = $container->params['database']['host'];
+		$dbname = $container->params['database']['dbname'];
+		$user = $container->params['database']['user'];
+		$password = $container->params['database']['password'];
+
+		return new Nette\Database\Connection("$driver:host=$host;dbname=$dbname", $user, $password);
 	}
 
 
@@ -153,52 +240,11 @@ class Configurator extends \Nette\Configurator {
 
 	/**
 	 * @param \Nette\DI\IContainer
-	 * @return \Venne\CMS\ModuleManager
-	 */
-	public static function createServiceModuleManager(\Nette\DI\IContainer $container)
-	{
-		return new CMS\ModuleManager($container);
-	}
-
-
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Venne\CMS\RoutingManager
+	 * @return \Venne\RoutingManager
 	 */
 	public static function createServiceRouting(\Nette\DI\IContainer $container)
 	{
-		return new CMS\RoutingManager($container);
-	}
-
-
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Doctrine\ORM\EntityManager
-	 */
-	public static function createServiceEntityManager(\Nette\DI\IContainer $container)
-	{
-
-		//if ($container->getService("application")-> == "development") {
-		$cache = new \Doctrine\Common\Cache\ArrayCache;
-		//} else {
-		//	$cache = new \Doctrine\Common\Cache\ApcCache();
-		//}
-
-		$config = new \Doctrine\ORM\Configuration();
-		$config->setMetadataCacheImpl($cache);
-		$driverImpl = $config->newDefaultAnnotationDriver(array($container->params["appDir"], $container->params["venneDir"]));
-		$config->setMetadataDriverImpl($driverImpl);
-		$config->setQueryCacheImpl($cache);
-		$config->setProxyDir($container->params["appDir"] . '/proxies');
-		$config->setProxyNamespace('App\Proxies');
-
-		//if ($applicationMode == "development") {
-		$config->setAutoGenerateProxyClasses(true);
-		//} else {
-		//	$config->setAutoGenerateProxyClasses(false);
-		//}
-
-		return \Doctrine\ORM\EntityManager::create((array) $container->params['database'], $config);
+		return new RoutingManager\Service($container);
 	}
 
 
@@ -219,7 +265,7 @@ class Configurator extends \Nette\Configurator {
 	public static function createServiceTranslator(\Nette\DI\IContainer $container)
 	{
 		$translator = new \Nella\Localization\Translator();
-		$translator->setLang($container->language->getCurrentLang($container->httpRequest)->name);
+		$translator->setLang($container->cms->language->getCurrentLang($container->httpRequest)->name);
 		$translator->addDictionary('Venne', $container->params["wwwDir"] . "/templates/" . $container->params['CMS']["template"]);
 		return $translator;
 	}
@@ -232,22 +278,6 @@ class Configurator extends \Nette\Configurator {
 	public static function createServiceTranslatorPanel(\Nette\DI\IContainer $container)
 	{
 		return new \Nella\Localization\Panel($container);
-	}
-
-
-	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Nette\Database\Connection
-	 */
-	public static function createServiceDatabase(\Nette\DI\IContainer $container)
-	{
-		$driver = substr($container->params['database']['driver'], 4);
-		$host = $container->params['database']['host'];
-		$dbname = $container->params['database']['dbname'];
-		$user = $container->params['database']['user'];
-		$password = $container->params['database']['password'];
-
-		return new Nette\Database\Connection("$driver:host=$host;dbname=$dbname", $user, $password);
 	}
 
 

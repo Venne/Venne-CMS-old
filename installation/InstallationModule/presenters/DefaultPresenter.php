@@ -16,7 +16,7 @@ use \Nette\Application\UI\Form;
 /**
  * @author Josef Kříž
  */
-class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresenter
+class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 {
 	
 	public function startup()
@@ -51,14 +51,14 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	
 	public function actionFinish()
 	{
-		$this->getContext()->system->model->setInstallationDone();
+		$this->getContext()->cms->system->model->setInstallationDone();
 		$this->template->websiteUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
 	}
 
 	
 	public function createComponentFormAccount($name)
 	{
-		$form = new \Venne\CMS\Modules\SystemAccountForm($this, $name, "common");
+		$form = new \Venne\Modules\SystemAccountForm($this, $name, "common");
 		$form->setSuccessLink("database");
 		$form->setSubmitLabel("Next");
 		return $form;
@@ -66,7 +66,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	
 	public function createComponentFormDatabase($name)
 	{
-		$form = new \Venne\CMS\Modules\SystemDatabaseForm($this, $name, "common", false, true);
+		$form = new \Venne\Modules\SystemDatabaseForm($this, $name, "common", false, true);
 		$form->setSuccessLink("website");
 		//$form->setFlashMessage("Database settings has been updated");
 		$form->setSubmitLabel("Install");
@@ -75,7 +75,7 @@ class DefaultPresenter extends \Venne\CMS\Developer\Presenter\InstallationPresen
 	
 	public function createComponentFormWebsite($name)
 	{
-		$form = new \Venne\CMS\Modules\WebsiteForm($this, $name);
+		$form = new \Venne\Modules\WebsiteForm($this, $name);
 		$form->setSuccessLink("finish");
 		$form->setSubmitLabel("Install");
 		return $form;

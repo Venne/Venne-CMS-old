@@ -17,6 +17,8 @@ use Venne;
  * Description of Presenter
  *
  * @author Josef Kříž
+ * 
+ * @property-read Venne\Application\Container $context
  */
 class Presenter extends \Nette\Application\UI\Presenter {
 
@@ -27,10 +29,8 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	CONST ROBOTS_FOLLOW = 4;
 	CONST ROBOTS_NOFOLLOW = 8;
 
-	/** @persistent */
-	public $lang;
-
 	/* current module */
+
 	protected $moduleName;
 
 	/* vars for template */
@@ -52,57 +52,75 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function getEntityManager()
 	{
-		return $this->getContext()->entityManager;
+		return $this->getContext()->doctrineContainer->entityManager;
 	}
 
 
 	/**
-	 * @return Venne\CMS\Modules\NavigationService
+	 * @param \Nette\Application\UI\PresenterComponentReflection $element 
 	 */
-	public function getNavigation()
+	public function checkRequirements($element)
 	{
-		return $this->getContext()->navigation;
+		parent::checkRequirements($element);
+		
+		if (!$this->isMethodAllowed("startup")) {
+			throw new \Nette\Application\ForbiddenRequestException;
+		}
+		
+		$method = $this->formatActionMethod(ucfirst($this->getAction()));
+		if (!$this->isMethodAllowed($method)) {
+			throw new \Nette\Application\ForbiddenRequestException;
+		}
+
+		$signal = $this->getSignal();
+		if ($signal) {
+			$method = $this->formatSignalMethod(ucfirst($signal[1]));
+			if (!$this->isMethodAllowed($method)) {
+				throw new \Nette\Application\ForbiddenRequestException;
+			}
+		}
 	}
 
 
-	/**
-	 * @return Venne\CMS\Modules\LanguageService
-	 */
-	public function getLanguage()
+	public function isMethodAllowed($method)
 	{
-		return $this->getContext()->language;
-	}
+		if (!$this->getReflection()->hasMethod($method)) {
+			return true;
+		}
 
+		$data = \Venne\Security\Authorizator::parseAnnotations(get_called_class(), $method);
 
-	/**
-	 * @return Venne\CMS\Website\WebsiteService
-	 */
-	public function getWebsite()
-	{
-		return $this->getContext()->website;
+		if($data[\Venne\Security\Authorizator::RESOURCE] === NULL){
+			return true;
+		}
+		
+		if (!$this->user->isAllowed($data[\Venne\Security\Authorizator::RESOURCE], $data[\Venne\Security\Authorizator::PRIVILEGE])) {
+			dump($this->user->isAllowed($data[\Venne\Security\Authorizator::RESOURCE]));
+			//die(dump($data));
+			return false;
+		}
+
+		return true;
 	}
 
 
 	public function startup()
 	{
+		if (!file_exists($this->context->params["flagsDir"] . "/installed") && substr($this->name, 0, 13) != "Installation:") {
+			$this->redirect(":Installation:Default:");
+		}
+
 		parent::startup();
 		/*
 		 * Add modules to DebugBar
 		 */
-		foreach ($this->getContext()->params["venne"]["panels"] as $item) {
-			$class = "\\Venne\\Panels\\" . ucfirst($item);
-			\Nette\Diagnostics\Debugger::addPanel(new $class($this->getContext()));
-		}
-		$userPanel = new Venne\Panels\UserPanel($this->getContext());
-		$userPanel->setNameColumn("name");
-		\Nette\Diagnostics\Debugger::addPanel($userPanel);
-
-		/*
-		 * Security
-		 */
-		if (!$this->isAllowed("this")) {
-			throw new \Nette\Application\ForbiddenRequestException;
-		}
+//		foreach ($this->getContext()->params["venne"]["panels"] as $item) {
+//			$class = "\\Venne\\Panels\\" . ucfirst($item);
+//			\Nette\Diagnostics\Debugger::addPanel(new $class($this->getContext()));
+//		}
+//		$userPanel = new Venne\Panels\UserPanel($this->getContext());
+//		$userPanel->setNameColumn("name");
+//		\Nette\Diagnostics\Debugger::addPanel($userPanel);
 
 		/*
 		 * Macros
@@ -113,14 +131,6 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		 * Module
 		 */
 		$this->moduleName = lcfirst(substr($this->name, 0, strpos($this->name, ":")));
-		
-		/*
-		 * Add Callback modules
-		 */
-		if (!$this->getContext()->params['venneModeInstallation']) {
-			$this->getContext()->callback->callbackListenerOnPresenterStartup();
-		}
-
 
 		/*
 		 * Translator
@@ -140,9 +150,6 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public function beforeRender()
 	{
 		parent::beforeRender();
-		$this->template->lang = $this->getLanguage()->getCurrentLang($this->getHttpRequest())->id;
-		$this->template->langAlias = $this->getLanguage()->getCurrentLang($this->getHttpRequest())->alias;
-		$this->template->langName = $this->getLanguage()->getCurrentLang($this->getHttpRequest())->name;
 
 		$this->template->venneModeAdmin = $this->getContext()->params['venneModeAdmin'];
 		$this->template->venneModeFront = $this->getContext()->params['venneModeFront'];
@@ -196,7 +203,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 			if (class_exists($c_name)) {
 				$control = new $c_name($this, $name, $nameArr[1], isset($nameArr[2]) ? $nameArr[2] : NULL);
 			} else {
-				$c_name = "\Venne\CMS\Elements\\" . \ucfirst($nameArr[1]) . "Element";
+				$c_name = "\Venne\Elements\\" . \ucfirst($nameArr[1]) . "Element";
 				$control = new $c_name($this, $name, $nameArr[1], isset($nameArr[2]) ? $nameArr[2] : NULL);
 			}
 			return $control;
@@ -212,14 +219,14 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function formatLayoutTemplateFiles()
 	{
-		$skinName = $this->getWebsite()->current->skin;
+		$skinName = $this->getContext()->services->website->current->skin;
 		if($this->getContext()->params["venneModeFront"]){
-			$layout = $this->getContext()->layout->model->detectLayout();
+			$layout = $this->context->services->layout->detectLayout();
 		}else{
 			$layout = "layout";
 		}
 		$list = array(
-			$this->getContext()->params["extensionsDir"]. "/skins/$skinName/layouts/@$layout.latte"
+			$this->getContext()->params["wwwDir"] . "/skins/$skinName/layouts/@$layout.latte"
 		);
 		return $list;
 	}
@@ -231,17 +238,17 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function formatTemplateFiles()
 	{
-		$skinName = $this->getWebsite()->current->skin;
+		$skinName = $this->getContext()->services->website->current->skin;
 		$name = $this->getName();
 		$presenter = substr($name, strrpos(':' . $name, ':'));
 		$dir = dirname(dirname($this->getReflection()->getFileName()));
 		$dirP = substr(str_replace(realpath($this->getContext()->params["appDir"]), "", $dir), 1);
 
 		return array(
-			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
-			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
-			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
-			$this->getContext()->params["extensionsDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
+			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
+			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
+			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
+			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
 			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.latte",
 			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter.$this->view.latte",
 			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.phtml",
@@ -260,28 +267,11 @@ class Presenter extends \Nette\Application\UI\Presenter {
 
 
 	/**
-	 * @return mixed
-	 */
-	public function getModule()
-	{
-		return $this->getContext()->{$this->moduleName};
-	}
-
-
-	/**
-	 * @return mixed
-	 */
-	public function getModel()
-	{
-		return $this->getModule()->model;
-	}
-
-
-	/**
 	 * @param type $destination 
 	 */
 	public function isAllowed($destination)
 	{
+		return true;
 		if ($this->getContext()->params['venneModeInstallation'])
 			return true;
 		if ($destination == "this") {
@@ -341,11 +331,11 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$url2 = $this->getContext()->httpRequest->getUrl()->getPath();
 		$link = explode("?", $url);
 		$basePath = $this->getContext()->httpRequest->getUrl()->getBasePath();
-		
-		if($url2 == $basePath && $link[0] == $basePath){
+
+		if ($url2 == $basePath && $link[0] == $basePath) {
 			return true;
 		}
-		
+
 		if (strpos($url2, $link[0]) === 0 && $link[0] != $this->getContext()->httpRequest->getUrl()->getBasePath()) {
 			return true;
 		} else {
@@ -414,7 +404,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function addPath($name, $url)
 	{
-		$this->getContext()->navigation->model->addPath($name, $url);
+		$this->getContext()->services->navigation->addPath($name, $url);
 	}
 
 

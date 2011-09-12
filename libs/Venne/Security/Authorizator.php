@@ -19,10 +19,20 @@ use Venne;
 class Authorizator extends \Nette\Security\Permission {
 
 
+	const ROLE = 'role';
+	const RESOURCE = 'resource';
+	const PRIVILEGE = 'privilege';
+
 	/** @var \Nette\DI\Container */
 	private $container;
-	public $defaultResources = array();
-	public $defaultRoles = array();
+	protected $defaultRoles = array();
+	protected $resourceTree = array();
+
+	/** @var array */
+	protected $privileges;
+
+	/** @var array  Resource storage */
+	private $resources = array();
 
 
 	/**
@@ -31,121 +41,109 @@ class Authorizator extends \Nette\Security\Permission {
 	public function __construct(\Nette\DI\Container $container)
 	{
 		$this->container = $container;
-		
+
 		/*
 		 * Update identity
 		 */
 		$identity = $this->container->user->getIdentity();
-		if($identity instanceof \Venne\CMS\Modules\User){
-			$identity2 = $this->container->users->getRepository()->find($identity->id);
+		if ($identity instanceof Venne\SecurityModule\UserEntity) {
+			$identity2 = $this->container->services->user->getRepository()->find($identity->id);
 			$identity->setRoles($identity2->getRoles());
 			$identity->setData($identity2->getData());
 		}
-		
-		
-//		$cache = new \Nette\Caching\Cache($container->cacheStorage, "Venne");
-//		if(($resources = $cache->load("authorizator-resources")) == NULL){
-//			$resources = $this->container->entityManager->getRepository("\\Venne\\CMS\\Modules\\Resource")->findAll();
-//			$cache->save("authorizator-resources", $resources);
-//		}
-//		
-//		if(($roles = $cache->load("authorizator-roles")) == NULL){
-//			$roles = $this->container->entityManager->getRepository("\\Venne\\CMS\\Modules\\Role")->findAll();
-//			$cache->save("authorizator-roles", $roles);
-//		}
-		
-		$resources = $this->container->entityManager->getRepository("\\Venne\\CMS\\Modules\\Resource")->findAll();
-		$roles = $this->container->entityManager->getRepository("\\Venne\\CMS\\Modules\\Role")->findAll();
-
 
 		/*
 		 * Add resources
 		 */
-		foreach ($this->defaultResources as $resource) {
-			$this->addResource($resource);
-		}
-		foreach ($resources as $resource) {
-			$this->addResource($resource->name);
+		$this->addResource("adminpanel");
+		$this->addResource("AdminModule");
+		foreach ($this->container->params["venne"]["modules"] as $key => $module) {
+			$this->container->modules->$key->setPermissions($container, $this);
 		}
 
 		/*
 		 * Add roles
 		 */
-		foreach ($this->defaultRoles as $role) {
-			$this->addRole($role);
-		}
-		foreach ($roles as $role) {
-			$this->addRole($role->name, $role->parent ? $role->parent->name : NULL);
-
-			foreach ($role->permissions as $permission) {
-				if ($permission->allow) {
-					$this->allowWithRecursion($permission->resource, $role->name, $permission->resource->name, $permission->privilege ? $permission->privilege : NULL);
-				} else {
-					$this->deny($permission->resource, $role->name, $permission->resource->name, $permission->privilege ? $permission->privilege : NULL);
-				}
+		$roles = array();
+		$res = $this->container->services->role->getRepository()->findAll();
+		foreach ($res as $item) {
+			$this->addRole($item->name, $item->parent ? $item->parent->name : NULL);
+			if (in_array($item->name, $this->container->user->roles)) {
+				$roles[] = $item->id;
 			}
 		}
 
 		/*
-		 * Add permissions
+		 * Setup permissions
 		 */
+		$permissions = $this->container->services->permission->repository->findAll();
+		foreach ($permissions as $permission) {
+			if ($this->hasResource($permission->resource)) {
+				if ($permission->allow) {
+					$this->allow($permission->role->name, $permission->resource, $permission->privilege ? $permission->privilege : NULL);
+				} else {
+					$this->deny($permission->role->name, $permission->resource, $permission->privilege ? $permission->privilege : NULL);
+				}
+			}
+		}
 		$this->allow("admin", \Nette\Security\Permission::ALL);
 	}
 
 
-	/**
-	 * Allows one or more Roles access to [certain $privileges upon] the specified Resource(s).
-	 * If $assertion is provided, then it must return TRUE in order for rule to apply.
-	 *
-	 * @param  string|array|Permission::ALL  roles
-	 * @param  string|array|Permission::ALL  resources
-	 * @param  string|array|Permission::ALL  privileges
-	 * @param  callback    assertion
-	 * @return Permission  provides a fluent interface
-	 */
-	public function allowWithRecursion($resourceEntity, $roles, $resources, $privileges, $assertion = NULL)
+	public function getResources()
 	{
-		$this->allow($roles, $resources, $privileges, $assertion);
-		
-		/* recursion */
-		if($resourceEntity->parent){
-			$this->allowWithRecursion($resourceEntity->parent, $roles, $resourceEntity->parent->name, self::ALL);
-		}
+		return $this->resourceTree;
 	}
-	
-	
-	/**
-	 * @param string
-	 * @param string
-	 * @return array
-	 */
-	public function getClassResource($class)
-	{
-		$ref = new \Nette\Reflection\ClassType($class);
 
-		if($ref->hasAnnotation('allowed')){
-			return $ref->getAnnotation("allowed");
-		}
-		return NULL;
+
+	public function getPrivileges()
+	{
+		return $this->privileges;
 	}
-	
+
+
+	public function addResource($resource, $parent = NULL)
+	{
+		if ($parent) {
+			$this->resourceTree[$parent][] = $resource;
+		} else {
+			$this->resourceTree["root"][] = $resource;
+		}
+		parent::addResource($resource, $parent);
+	}
+
+
+	public function addPrivilege($resourceName, $privileges)
+	{
+		if (!isset($this->privileges[$resourceName])) {
+			$this->privileges[$resourceName] = array();
+		}
+		$this->privileges[$resourceName] = array_merge($this->privileges[$resourceName], (array) $privileges);
+	}
+
+
 	/**
 	 * @param string
 	 * @param string
 	 * @return array
 	 */
-	public function getMethodResource($class, $method)
+	public static function parseAnnotations($class, $method = NULL)
 	{
-		if(!method_exists($class, $method)){
-			return NULL;
+		if (strpos($class, '::') !== FALSE && !$method) {
+			list($class, $method) = explode('::', $class);
 		}
-		
+
 		$ref = new \Nette\Reflection\Method($class, $method);
+		$cRef = new \Nette\Reflection\ClassType($class);
 
-		if($ref->hasAnnotation('allowed')){
-			return $ref->getAnnotation("allowed");
-		}
-		return NULL;
+		$resource = $ref->hasAnnotation('resource') ? $ref->getAnnotation('resource') : ($cRef->hasAnnotation('resource') ? $cRef->getAnnotation('resource') : NULL);
+
+		$privilege = $ref->hasAnnotation('privilege') ? $ref->getAnnotation('privilege') : NULL;
+
+		return array(
+			static::RESOURCE => $resource,
+			static::PRIVILEGE => $privilege,
+		);
 	}
 
 }

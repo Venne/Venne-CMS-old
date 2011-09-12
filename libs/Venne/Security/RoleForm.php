@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\CMS\Modules;
+namespace Venne\Modules;
 
 use Venne\ORM\Column;
 use Nette\Utils\Html;
@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class RoleForm extends \Venne\CMS\Developer\Form\EntityForm {
+class RoleForm extends \Venne\Developer\Form\EntityForm {
 
 
 	public function startup()
@@ -25,34 +25,31 @@ class RoleForm extends \Venne\CMS\Developer\Form\EntityForm {
 		parent::startup();
 		$this->addGroup("Role");
 		$this->addText("name", "Name");
-		$this->addSelect("role_id", "Parent")->setPrompt("root");
+		$this->addSelect("parent", "Parent")
+				->setItems($this->presenter->context->services->role->getList())
+				->setPrompt("root");
 	}
 
 
-	public function setValuesFromEntity()
+	public function load()
 	{
-		parent::setValuesFromEntity();
-		if($this->entity->parent) $this["role_id"]->setValue($this->entity->parent->id);
+		$this->setDefaults($this->key);
 	}
 
 
 	public function save()
 	{
-		parent::save();
 		$values = $this->getValues();
-		$presenter = $this->getPresenter();
-		$em = $presenter->getContext()->entityManager;
-
-		if (!$this->entity) {
-			$this->entity = new Role;
-			$em->persist($this->entity);
+		
+		if (!$this->key) {
+			$this->key = $this->presenter->context->services->role->create($values);
 		} else {
-
+			$this->presenter->context->services->role->update($this->key, $values);
 		}
-
-		$this->entity->name = $values["name"];
-		$this->entity->parent = $em->getRepository($this->getPresenter()->getContext()->params["venneModulesNamespace"] . "Role")->find($values["role_id"]);
-		$em->flush();
+		if($values["role_id"]){
+			$this->key->parent = $this->presenter->context->services->role->getRepository()->find($values["role_id"]);
+			$this->presenter->context->doctrineContainer->entityManager->flush();
+		}
 	}
 
 }

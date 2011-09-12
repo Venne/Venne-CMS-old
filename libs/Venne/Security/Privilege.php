@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\CMS\Modules;
+namespace Venne\Modules;
 
 /**
  * @author Josef Kříž
@@ -18,7 +18,7 @@ namespace Venne\CMS\Modules;
  * 
  * @property string $name
  */
-class Privilege extends \Venne\Models\BaseEntity {
+class Privilege extends \Venne\Developer\Doctrine\BaseEntity {
 
 	/**
 	 * @Column(type="string")
