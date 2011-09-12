@@ -1,11 +1,6 @@
 *
 !.*
 
-!AdminModule/
-!AdminModule/*
-!AdminModule/*/*
-!AdminModule/*/*/*
-
 !DefaultModule/
 !DefaultModule/*
 !DefaultModule/*/*
@@ -21,24 +16,49 @@
 !InstallationModule/*/*
 !InstallationModule/*/*/*
 
+!ModulesModule/
+!ModulesModule/*
+!ModulesModule/*/*
+!ModulesModule/*/*/*
+
+!NavigationModule/
+!NavigationModule/*
+!NavigationModule/*/*
+!NavigationModule/*/*/*
+
 !PagesModule/
 !PagesModule/*
 !PagesModule/*/*
 !PagesModule/*/*/*
-
-!proxies/
-!proxies/*
 
 !RepositoryModule/
 !RepositoryModule/*
 !RepositoryModule/*/*
 !RepositoryModule/*/*/*
 
+!SecurityModule/
+!SecurityModule/*
+!SecurityModule/*/*
+!SecurityModule/*/*/*
+
 !SitemapModule/
 !SitemapModule/*
 !SitemapModule/*/*
 !SitemapModule/*/*/*
 
+!SystemModule/
+!SystemModule/*
+!SystemModule/*/*
+!SystemModule/*/*/*
+
+!WebsiteModule/
+!WebsiteModule/*
+!WebsiteModule/*/*
+!WebsiteModule/*/*/*
+
+!proxies/
+!proxies/*
+
 !config.neon
 !web.config
-!bootstrap.php
+!bootstrap.php 

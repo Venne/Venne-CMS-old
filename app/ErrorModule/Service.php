@@ -43,7 +43,7 @@ class Service extends Venne\Developer\Service\DoctrineService implements Venne\C
 	public function hookAdminMenu($menu)
 	{
 		$nav = new Venne\NavigationModule\NavigationEntity("Error module");
-		$nav->addKey("module", "Admin:Error");
+		$nav->addKey("module", "Error:Admin");
 		$menu[] = $nav;
 	}
 	

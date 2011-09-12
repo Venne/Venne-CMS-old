@@ -27,8 +27,8 @@ class AdminPresenter extends \Venne\Application\UI\Presenter {
 		/*
 		 * Login
 		 */
-		if (!$this->getUser()->isLoggedIn() && $this->getName() != "Admin:Login:Default") {
-			$this->redirect(":Admin:Login:Default:");
+		if (!$this->getUser()->isLoggedIn() && $this->getName() != "Default:Admin:Login") {
+			$this->redirect(":Default:Admin:Login:");
 		}
 
 		parent::startup();

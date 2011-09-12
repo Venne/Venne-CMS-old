@@ -153,15 +153,15 @@ class Configurator extends \Nette\Configurator {
 		$prefix = $this->container->services->website->current->routePrefix;
 
 
-		$router[] = $adminRouter = new \Nette\Application\Routers\RouteList('Admin');
+		$router[] = $adminRouter = new \Venne\Application\Routers\RouteList("admin");
 		$adminRouter[] = new Route('admin/<module>/<presenter>[/<action>[/<id>]]', array(
-					'module' => 'Default',
+					'module' => "Default",
 					'presenter' => 'Default',
 					'action' => 'default',
 				));
 		
-		$router[] = $installationRouter = new \Nette\Application\Routers\RouteList('Installation');
-		$installationRouter[] = new Route('installation/<presenter>[/<action>[/<id>]]', array(
+		$router[] = $installationRouter = new \Venne\Application\Routers\RouteList("admin");
+		$installationRouter[] = new Application\Routers\InstallationRoute('installation/<presenter>[/<action>[/<id>]]', array(
 					'presenter' => 'Default',
 					'action' => 'default',
 				));

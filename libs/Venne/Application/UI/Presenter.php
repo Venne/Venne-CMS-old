@@ -95,8 +95,6 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		}
 		
 		if (!$this->user->isAllowed($data[\Venne\Security\Authorizator::RESOURCE], $data[\Venne\Security\Authorizator::PRIVILEGE])) {
-			dump($this->user->isAllowed($data[\Venne\Security\Authorizator::RESOURCE]));
-			//die(dump($data));
 			return false;
 		}
 

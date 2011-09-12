@@ -61,7 +61,7 @@ class Service extends \Venne\Developer\Service\DoctrineService {
 	public function hookAdminMenu($menu)
 	{
 		$nav = new Venne\NavigationModule\NavigationEntity("Pages module");
-		$nav->addKey("module", "Admin:Pages");
+		$nav->addKey("module", "Pages:Admin");
 		$menu[] = $nav;
 	}
 

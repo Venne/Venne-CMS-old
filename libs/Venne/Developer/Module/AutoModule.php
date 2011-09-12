@@ -16,51 +16,51 @@ namespace Venne\Developer\Module;
  */
 abstract class AutoModule extends BaseModule {
 
+
 	public function setPermissions(\Venne\Application\Container $container, \Venne\Security\Authorizator $permissions)
 	{
 		parent::setPermissions($container, $permissions);
-		
-		$paths = array(
-			"" => $container->params["appDir"] . "/" . ucfirst($this->getName()) . "Module/presenters",
-			"\\AdminModule" => $container->params["appDir"] . "/AdminModule/" . ucfirst($this->getName()) . "Module/presenters",
-		);
 
 		$resources = array();
-		
-		foreach ($paths as $key => $path) {
-			if (file_exists($path)) {
-				foreach (\Nette\Utils\Finder::findFiles("*Presenter.php")->in($path) as $file) {
-					$className = $key . "\\" . ucfirst($this->getName()) . "Module\\" . substr($file->getBaseName(), 0, -4);
 
-					$ref = new \Nette\Reflection\ClassType($className);
-					if ($ref->hasAnnotation("resource")) {
-						$resource = $ref->getAnnotation("resource");
-						$j = explode("\\", $resource);
-						unset($j[count($j) - 1]);
-						$j = join("\\", $j);
+		$path = $container->params["appDir"] . "/" . ucfirst($this->getName()) . "Module";
 
-						$resources[] = array("resource"=>$resource, "privilege"=>NULL, "parent"=>$j);
-					}
+		if (file_exists($path)) {
+			foreach (array(""=>$path . "/presenters", "\\AdminModule"=>$path . "/AdminModule/presenters") as $key=>$pathP) {
+				if (file_exists($pathP)) {
+					foreach (\Nette\Utils\Finder::findFiles("*Presenter.php")->in($pathP) as $file) {
 
-					foreach ($ref->getMethods() as $method) {
-						if ($method->hasAnnotation("privilege")) {
-							$resources[] = array("resource"=>$resource, "privilege"=>$method->getAnnotation("privilege"), "parent"=>NULL);
+						$className = "\\" . ucfirst($this->getName()) . "Module{$key}\\" . substr($file->getBaseName(), 0, -4);
+
+						$ref = new \Nette\Reflection\ClassType($className);
+						if ($ref->hasAnnotation("resource")) {
+							$resource = $ref->getAnnotation("resource");
+							$j = explode("\\", $resource);
+							unset($j[count($j) - 1]);
+							$j = join("\\", $j);
+
+							$resources[] = array("resource" => $resource, "privilege" => NULL, "parent" => $j);
+						}
+
+						foreach ($ref->getMethods() as $method) {
+							if ($method->hasAnnotation("privilege")) {
+								$resources[] = array("resource" => $resource, "privilege" => $method->getAnnotation("privilege"), "parent" => NULL);
+							}
 						}
 					}
 				}
 			}
 		}
-		
+
 		sort($resources);
-				
-		foreach($resources as $item){
-			if(!$permissions->hasResource($item["resource"])){
+		
+		foreach ($resources as $item) {
+			if (!$permissions->hasResource($item["resource"])) {
 				$permissions->addResource($item["resource"], $item["parent"] ? $item["parent"] : NULL);
 			}
 			$permissions->addPrivilege($item["resource"], $item["privilege"]);
 		}
 	}
-
 
 }
 
