@@ -1,0 +1,36 @@
+{block content}
+
+{include "../head.latte"}
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+
+		function setVisibility(){
+			if(!$("#frmformEdit-use").is(":checked")){
+				$("#frmformEdit-host").attr('disabled', 'disabled');
+				$("#frmformEdit-driver").attr('disabled', 'disabled');
+				$("#frmformEdit-user").attr('disabled', 'disabled');
+				$("#frmformEdit-password").attr('disabled', 'disabled');
+				$("#frmformEdit-dbname").attr('disabled', 'disabled');
+				$("#frmformEdit-test").attr('disabled', 'disabled');
+			}else{
+				$("#frmformEdit-host").removeAttr('disabled');
+				$("#frmformEdit-driver").removeAttr('disabled');
+				$("#frmformEdit-user").removeAttr('disabled');
+				$("#frmformEdit-password").removeAttr('disabled');
+				$("#frmformEdit-dbname").removeAttr('disabled');
+				$("#frmformEdit-test").removeAttr('disabled');
+			}
+		}
+
+		if($("#frmformEdit-section").val() != "common"){
+			$("#frmformEdit-use").change(function(){
+				setVisibility();
+			})
+			setVisibility();
+		}
+
+    });
+</script>
+
+{control formEdit}

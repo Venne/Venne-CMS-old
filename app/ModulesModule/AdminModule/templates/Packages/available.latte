@@ -1,0 +1,55 @@
+{* This is temporary page, you can delete it *}
+
+{block content}
+
+{include "../head.latte"}
+
+{include "./head.latte"}
+
+{form form}
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width: 5%;"></th>
+			<th style="width: 20%;">{_"Name"}</th>
+			<th style="width: 30%;">{_"Description"}</th>
+			<th style="width: 15%;">{_"Version"}</th>
+			<th style="width: 30%;"></th>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach $items as $name=>$item}
+		<tr class="screens {if $iterator->getCounter()%2 == 0} even{/if}{if $iterator->isLast()} footer{/if}">
+			<td>
+				{var $ver=>str_replace(".","p",$item["pkgver"])}
+				{input "item_".$item["pkgname"]."_".$ver}
+			</td>
+			<td>
+				{$item["pkgname"]}
+			</td>
+			<td>
+				{$item["pkgdesc"]}
+			</td>
+			<td>
+				{$item["pkgver"]}
+			</td>
+			<td class="actions">
+				<ul>
+					{if $presenter->isAllowed('edit')}
+					{*}<li><a href="{link build! id=>$name}">build</a></li>{*}
+					<li><a href="{link download! pkgname=>$name, pkgver=>$item["pkgver"]}">download</a></li>
+					<li><a n:confirm="really?" href="{link delete! pkgname=>$name, pkgver=>$item["pkgver"]}">smazat</a></li>
+					{/if}
+				</ul>
+			</td>
+		</tr>
+		{/foreach}
+	</tbody>
+</table>
+{input action}{input submit}
+{/form}
+
+{control formPackage}
+
+
+

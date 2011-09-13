@@ -1,0 +1,76 @@
+{block content}
+
+{include "../head.latte"}
+
+{*control menu*}
+
+{control formRole}
+
+{var $form=>$presenter["form"]}
+{var $dep=>NULL}
+<?php echo $form->getRenderer()->render($form, "begin"); ?>
+
+{var $items = $permissions["root"]}
+
+{block #items}
+<ul{if $dep == ""} class="sortable"{/if}>
+		{if count($items) > 0}
+			{foreach $items as $item}
+			{if $presenter->getContext()->authorizator->isAllowed($role, $item)}
+				{var $ok=>true}
+			{else}
+				{var $ok=>false}
+			{/if}
+
+			<li id="item-{$item}">
+				<div{if $ok} style="background: #00aa00; border-color: #008800; color: #ffffff;"{/if}>
+					<span class="text">
+						{=str_replace($dep."\\", "", $item)}
+					</span>
+					<span class="buttons">
+						{if !$ok && !isset($allowed[$item][NULL])}
+							{$control['form']["allow_".str_replace("\\", "_", $item)]->control}
+						{elseif isset($allowed[$item][NULL])}
+							{$control['form']["delete_".str_replace("\\", "_", $item)]->control}
+						{else}
+							{$control['form']["deny_".str_replace("\\", "_", $item)]->control}
+						{/if}
+					</span>
+				</div>
+				
+				{if isset($privileges[$item])}
+				{foreach $privileges[$item] as $item2}
+				{if $presenter->getContext()->authorizator->isAllowed($role, $item, $item2)}
+					{var $ok2=>true}
+				{else}
+					{var $ok2=>false}
+				{/if}
+				<ul>
+				<li id="item-{$item2}">
+					<div{if $ok2} style="background: #00aa00; border-color: #008800; color: #ffffff;"{/if}>
+						<span class="text">
+							{$item2}
+						</span>
+						<span class="buttons">
+							{if isset($allowed[$item][$item2])}
+								{$control['form']["delete_".str_replace("\\", "_", $item)."_".$item2]->control}
+							{elseif !$ok && !$ok2}
+								{$control['form']["allow_".str_replace("\\", "_", $item)."_".$item2]->control}
+							{else}
+								{$control['form']["deny_".str_replace("\\", "_", $item)."_".$item2]->control}
+							{/if}
+						</span>
+					</div>
+				</li>
+				</ul>
+				{/foreach}
+				{/if}
+				
+				{if isset($permissions[$item])}{include #items, "items"=>$permissions[$item], 'dep' => $item}{/if}
+			</li>
+			{/foreach}
+		{/if}
+</ul>
+{/block}
+
+<?php echo $form->getRenderer()->render($form, "end"); ?>
