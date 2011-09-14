@@ -9,23 +9,36 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Templating;
+namespace Venne\Latte\Macros;
 
 use Venne;
 
 /**
- * Description of ThumbHelper
- *
  * @author Josef Kříž
  */
-class ThumbHelper {
+class ThumbMacro extends \Nette\Latte\Macros\MacroSet {
 	
+	public static function filter(\Nette\Latte\MacroNode $node, $writer)
+	{
+		$param = $writer->formatArray();
+		if (strpos($node->args, '=>') === FALSE) {
+			$param = substr($param, 6, -1); // removes array()
+		}
+		$param = explode(" ", $param);
+		$name = $param[0];
+		unset($param[0]);
+		if(!count($param)){
+			return $writer->write('?>src="<?php echo $basePath;?>' . $name . '"<?php');
+		}
+		return $writer->write('?>src="<?php echo \Venne\Latte\Macros\ThumbMacro::thumb($presenter, "' . $name . '", ' . implode(", ", $param) . '); ?>"<?php');
+	}
 	
-	/*	 * ************************* vytvareni miniatur ************************** */
-
-	/** @var string relativni URI k adresari s miniaturami (zacina se v document_rootu) */
-	public static $thumbDirUri = NULL;
-
+	public static function install(\Nette\Latte\Parser $parser)
+	{
+		$me = new static($parser);
+		$me->addMacro('@src', array($me, "filter"));
+	}
+	
 	/**
 	 * Vytvoreni miniatury obrazku a vraceni jeho URI
 	 *
@@ -34,35 +47,53 @@ class ThumbHelper {
 	 * @param  NULL|int vyska miniatury
 	 * @return string absolutni URI miniatury
 	 */
-	public static function thumb($origName, $width, $height = NULL, $flags = self::FIT, $crop = false, $tag = false)
+	public static function thumb($presenter, $origName, $width = NULL, $height = NULL, $flags = \Nette\Image::FIT, $crop = false, $tag = false)
 	{
+		if(!$width){
+			$width = NULL;
+		}
+		if(!$height){
+			$height = NULL;
+		}
+		
+		$basePath = $presenter->context->httpRequest->url->basePath;
+		$path = $basePath . "cache/thumbs/";
+		$wwwDir = $presenter->context->params["wwwDir"];
+		$dir = $wwwDir . "/cache/thumbs";
+		
+		if(!$width && !$height){
+			return $basePath . $origName;
+		}
+		
 		if($tag){
 			$tagWeb = \str_replace("-", "/", \Nette\Utils\Strings::webalize($tag));
-			$thumbDirPath = WWW_DIR . '/' . trim(self::$thumbDirUri, '/\\').'/'.$tagWeb;
+			$thumbDirPath = $dir . '/' . $tagWeb;
 		}else{
-			$thumbDirPath = WWW_DIR . '/' . trim(self::$thumbDirUri, '/\\');
+			$thumbDirPath = $dir . '/';
 		}
-		$origPath = WWW_DIR . '/' . $origName;
+		$origPath = $wwwDir . '/' . $origName;
 
-		if (!\file_exists($thumbDirPath))
+		if (!\file_exists($thumbDirPath)){
 			\mkdir($thumbDirPath, 0777, true);
+		}
+		
 		if (($width === NULL && $height === NULL) || !is_file($origPath) || !is_dir($thumbDirPath) || !is_writable($thumbDirPath)){
-			return $origName;
+			return $basePath . "/" . $origName;
 		}
 
 		$thumbName = self::getThumbName($origName, $width, $height, filemtime($origPath), $flags, $crop);
 
 		if($tag){
-			$thumbUri = trim(self::$thumbDirUri, '/\\') . '/' . $tagWeb . '/' .$thumbName;
+			$thumbUri = $tagWeb . '/' .$thumbName;
 		}else{
-			$thumbUri = trim(self::$thumbDirUri, '/\\') . '/' . $thumbName;
+			$thumbUri = $thumbName;
 		}
 
 		$thumbPath = $thumbDirPath . '/' . $thumbName;
 
 		// miniatura jiz existuje
 		if (is_file($thumbPath)) {
-			return $thumbUri;
+			return $path . $thumbUri;
 		}
 
 		try {
@@ -82,7 +113,7 @@ class ThumbHelper {
 			$newHeight = $image->getHeight();
 
 			if($crop){
-				$image->crop(($newWidth-$width)/2, ($newHeight-$height)/2, $width, $height);
+				$image->crop('50%', '50%', $width, $height);
 			}
 
 			// doslo ke zmenseni -> ulozime miniaturu
@@ -91,15 +122,15 @@ class ThumbHelper {
 				$image->save($thumbPath);
 
 				if (is_file($thumbPath)) {
-					return $thumbUri;
+					return $path . $thumbUri;
 				} else {
-					return $origName;
+					return $basePath . $origName;
 				}
 			} else {
-				return $origName;
+				return $basePath . $origName;
 			}
 		} catch (Exception $e) {
-			return $origName;
+			return $basePath . $origName;
 		}
 	}
 

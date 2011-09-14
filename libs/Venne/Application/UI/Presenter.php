@@ -172,6 +172,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	{
 		$template = parent::createTemplate($class);
 		$template->setTranslator($this->getContext()->getService("ITranslator"));
+		$template->registerHelper("thumb", '\Venne\Templating\ThumbHelper::thumb');
 		return $template;
 	}
 

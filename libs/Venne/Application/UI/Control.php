@@ -28,6 +28,7 @@ class Control extends \Nette\Application\UI\Control {
 	public function templatePrepareFilters($template)
 	{
 		// default filters
+		$template->registerHelper("thumb", '\Venne\Templating\ThumbHelper::thumb');
 		$template->registerFilter(new Venne\Latte\Engine($this->getPresenter()->getContext()));
 	}
 	

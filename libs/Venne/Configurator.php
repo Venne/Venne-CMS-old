@@ -301,5 +301,5 @@ class Configurator extends \Nette\Configurator {
 		$loader->register();
 		return $loader;
 	}
-
+	
 }
