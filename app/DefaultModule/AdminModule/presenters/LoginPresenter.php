@@ -56,7 +56,7 @@ class LoginPresenter extends \Venne\Developer\Presenter\AdminPresenter
 				$this->getUser()->setExpiration('+ 20 minutes', TRUE);
 			}
 			$this->getUser()->login($values->username, $values->password);
-			$this->redirect(':Admin:Default:Default:');
+			$this->redirect(':Default:Admin:Default:');
 
 		} catch (Security\AuthenticationException $e) {
 			$form->addError($e->getMessage());
