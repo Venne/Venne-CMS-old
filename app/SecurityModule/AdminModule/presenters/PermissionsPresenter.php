@@ -82,9 +82,15 @@ class PermissionsPresenter extends BasePresenter {
 			foreach ($menu as $item) {
 				if (isset($this->template->privileges[$item])) {
 					foreach ($this->template->privileges[$item] as $item2) {
-						$form->addSubmit("allow_" . str_replace("\\", "_", $item) . "_" . $item2, "Allow");
-						$form->addSubmit("deny_" . str_replace("\\", "_", $item) . "_" . $item2, "Deny");
-						$form->addSubmit("delete_" . str_replace("\\", "_", $item) . "_" . $item2, "Delete")->getControlPrototype()->class = "grey";
+						if(!isset($form["allow_" . str_replace("\\", "_", $item) . "_" . $item2])){
+							$form->addSubmit("allow_" . str_replace("\\", "_", $item) . "_" . $item2, "Allow");
+						}
+						if(!isset($form["deny_" . str_replace("\\", "_", $item) . "_" . $item2])){
+							$form->addSubmit("deny_" . str_replace("\\", "_", $item) . "_" . $item2, "Deny");
+						}
+						if(!isset($form["delete_" . str_replace("\\", "_", $item) . "_" . $item2])){
+							$form->addSubmit("delete_" . str_replace("\\", "_", $item) . "_" . $item2, "Delete")->getControlPrototype()->class = "grey";
+						}
 					}
 				}
 				$form->addSubmit("allow_" . str_replace("\\", "_", $item), "Allow");
