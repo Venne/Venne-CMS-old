@@ -59,7 +59,7 @@ class Authenticator extends \Nette\Object implements \Nette\Security\IAuthentica
 		/*
 		 * Login from DB
 		 */
-		$user = $this->container->services->user->getRepository()->findOneBy(array("name"=>$username));
+		$user = $this->container->services->user->getRepository()->findOneBy(array("name"=>$username, "enable"=>1));
 		if($user){
 			$hash = md5($user->salt . $password);
 			if($user->password == $hash){

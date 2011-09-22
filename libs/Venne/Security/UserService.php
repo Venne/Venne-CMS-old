@@ -32,6 +32,18 @@ class UserService extends \Venne\Developer\Service\DoctrineService {
 	}
 
 
-	
+	public function create($values = array(), $withoutFlush = false)
+	{
+		if (!array_key_exists("salt", $values)) {
+			$values["salt"] = \Nette\Utils\Strings::random(8);
+		}
+		if (!array_key_exists("password", $values)) {
+			$values["password"] = md5($values["salt"] . $values["password"]);
+		}
+		if (!array_key_exists("enable", $values)) {
+			$values["enable"] = 1;
+		}
+		parent::create($values, $withoutFlush);
+	}
 
 }
