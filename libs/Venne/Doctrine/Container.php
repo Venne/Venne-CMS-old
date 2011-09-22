@@ -55,11 +55,11 @@ class Container extends \Nette\DI\Container {
 	{
 		$evm = $this->eventManager;
 		
-		//if ($container->getService("application")-> == "development") {
-		$cache = new \Doctrine\Common\Cache\ArrayCache;
-		//} else {
-		//	$cache = new \Doctrine\Common\Cache\ApcCache();
-		//}
+		if (!$this->context->params["productionMode"]) {
+		    $cache = new \Doctrine\Common\Cache\ArrayCache;
+		} else {
+			$cache = new \Doctrine\Common\Cache\ApcCache();
+		}
 
 		$config = new \Doctrine\ORM\Configuration();
 		$config->setMetadataCacheImpl($cache);
