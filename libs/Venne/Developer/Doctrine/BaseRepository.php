@@ -19,31 +19,6 @@ use Venne;
  */
 class BaseRepository extends \Doctrine\ORM\EntityRepository {
 
-	
-	
-	public function findAll($order = NULL, $limit = NULL, $offset = NULL)
-	{
-		
-		if(!$limit && !$offset && !$order){
-			return parent::findAll();
-		}
-		
-		if(!is_array($order)){
-			$order = (array)$order;
-		}
-		
-		$qb = $this->createQueryBuilder('uni')
-				->setMaxResults($limit)
-				->setFirstResult($offset);
-		
-		if(isset($order[0])){
-			$qb = $qb->orderBy("uni.".$order[0], isset($order[1]) ? strtoupper($order[1]) : NULL);
-		}
-		
-		return $qb->getQuery()->getResult();
-	}
-
-
 	/**
 	 * Does an entity with a key equal to value exist?
 	 *
