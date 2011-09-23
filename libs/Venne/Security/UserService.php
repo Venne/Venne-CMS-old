@@ -43,7 +43,27 @@ class UserService extends \Venne\Developer\Service\DoctrineService {
 		if (!array_key_exists("enable", $values)) {
 			$values["enable"] = 1;
 		}
-		parent::create($values, $withoutFlush);
+		$entity = parent::create($values, true);
+		if(!$this->isUserUnique($entity)){
+			throw new \Exception("This name or e-mail is used");
+		}
+		if(!$withoutFlush){
+			$this->entityManager->flush();
+		}
+		return $entity;
+	}
+	
+	public function isUserUnique($entity)
+	{
+		$item = $this->repository->findOneByName($entity->name);
+		if($item){
+			return false;
+		}
+		$item = $this->repository->findOneByEmail($entity->email);
+		if($item){
+			return false;
+		}
+		return true;
 	}
 
 }
