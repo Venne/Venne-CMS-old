@@ -43,6 +43,9 @@ class UserService extends \Venne\Developer\Service\DoctrineService {
 		if (!array_key_exists("enable", $values)) {
 			$values["enable"] = 1;
 		}
+		if (!$values["enable"]){
+			$values["key"] = \Nette\Utils\Strings::random(30);
+		}
 		$entity = parent::create($values, true);
 		
 		try{
