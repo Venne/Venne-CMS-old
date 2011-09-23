@@ -44,9 +44,14 @@ class UserService extends \Venne\Developer\Service\DoctrineService {
 			$values["enable"] = 1;
 		}
 		$entity = parent::create($values, true);
-		if(!$this->isUserUnique($entity)){
-			throw new \Exception("This name or e-mail is used");
+		
+		try{
+			$this->isUserUnique($entity);
+		}catch(\Exception $ex){
+			$this->entityManager->remove($entity);
+			throw $ex;
 		}
+		
 		if(!$withoutFlush){
 			$this->entityManager->flush();
 		}
@@ -57,11 +62,11 @@ class UserService extends \Venne\Developer\Service\DoctrineService {
 	{
 		$item = $this->repository->findOneByName($entity->name);
 		if($item){
-			return false;
+			throw new UserNameExistsException("Username ".$entity->name." already exists");
 		}
 		$item = $this->repository->findOneByEmail($entity->email);
 		if($item){
-			return false;
+			throw new UserEmailExistsException("E-mail ".$entity->email." already exists");
 		}
 		return true;
 	}
