@@ -52,6 +52,9 @@ class UserEntity extends \Nette\Security\Identity {
 	 */
 	public $password;
 	/**
+	 * @Column(type="string", name="`key`")
+	 */
+	public $key;/**
 	 * @Column(type="string")
 	 */
 	public $salt;
