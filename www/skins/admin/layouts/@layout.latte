@@ -45,9 +45,9 @@
 								{if count($item->childrens) > 0}
 								<ul>
 								{foreach $item->childrens as $item2}
-									<li><a href="{$item2->getLink($presenter)}">{$item2->name}</a></li>
+									<li {if $presenter->isCurrent($item->keys["module"]->val.":*")}class="active" {/if}><a href="{$item2->getLink($presenter)}">{$item2->name}</a></li>
 								{/foreach}
-								<ul>
+								</ul>
 								{/if}
 							</li>
 						{/foreach}
