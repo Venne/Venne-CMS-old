@@ -40,6 +40,10 @@ class UserEntity extends \Nette\Security\Identity {
 	 */
 	public $id;
 	/**
+	 * @Column(type="boolean")
+	 */
+	public $enable;
+	/**
 	 * @Column(type="string")
 	 */
 	public $name;
