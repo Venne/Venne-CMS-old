@@ -18,6 +18,7 @@ class BaseForm extends \Venne\Application\UI\Form {
 
 
 	protected $successLink;
+	protected $successLinkParams;
 	protected $flash;
 	protected $flashStatus;
 
@@ -33,9 +34,10 @@ class BaseForm extends \Venne\Application\UI\Form {
 		$this->flashStatus = $this->getPresenter()->getContext()->params['flashes']['success'];
 	}
 
-	public function setSuccessLink($link)
+	public function setSuccessLink($link, $params = NULL)
 	{
 		$this->successLink = $link;
+		$this->successLinkParams = (array)$params;
 	}
 
 
@@ -64,7 +66,7 @@ class BaseForm extends \Venne\Application\UI\Form {
 			if ($this->flash)
 				$this->getPresenter()->flashMessage($this->flash, $this->flashStatus);
 			if ($this->successLink)
-				$this->presenter->redirect($this->successLink);
+				$this->presenter->redirect($this->successLink, $this->successLinkParams);
 		}
 	}
 

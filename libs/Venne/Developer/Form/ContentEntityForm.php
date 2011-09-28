@@ -49,7 +49,7 @@ class ContentEntityForm extends EntityForm {
 			}
 			if ($this->successLink) {
 				$this->presenter->context->hookManager->callHook("content\\extension\\save", $this, $this->getModuleName(), $this->getModuleItemId(), $this->getLinkParams());
-				$this->presenter->redirect($this->successLink);
+				$this->presenter->redirect($this->successLink, $this->successLinkParams);
 			}
 		}
 	}
