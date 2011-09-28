@@ -49,6 +49,8 @@ class ThumbMacro extends \Nette\Latte\Macros\MacroSet {
 	 */
 	public static function thumb($presenter, $origName, $width = NULL, $height = NULL, $flags = \Nette\Image::FIT, $crop = false, $tag = false)
 	{
+		$flags = $flags | \Nette\Image::ENLARGE;
+	
 		if(!$width){
 			$width = NULL;
 		}
