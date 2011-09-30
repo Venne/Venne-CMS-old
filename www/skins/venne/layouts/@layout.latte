@@ -20,10 +20,6 @@
 {block #layout}
 			{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
 			{*element area "content_top"*}
-			
-			{element staItem:news limit=>2, order=>array("name", "asc")}
-			{element staItem:news limit=>2, order=>array("name", "desc")}
-			
 			{include #content}
 			{element extensions}
 			{*element area "content_bottom"*}
