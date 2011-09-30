@@ -17,9 +17,9 @@ common:
 	database:
 		driver: pdo_mysql
 		host: localhost
-		dbname: venne-ng
-		user: root
-		password: tajne
+		dbname: dbname
+		user: user
+		password: pass
 		charset: utf8
 		driverOptions:
 			1002: SET NAMES utf8
@@ -35,7 +35,7 @@ common:
 		
 	venne:
 		website:
-			template: stawebniny
+			template: venne
 			defaultModule: pages
 			defaultErrorModule: error
 		lang: cs
@@ -49,14 +49,12 @@ common:
 				
 			
 		admin:
-			name: pepakriz
-			password: tajne
+			name: admin
+			password: pass
 			
 		modules:
 			pages:
 				routePrefix: ""
-			sta:
-				routePrefix: "sta/"
 			
 		macros:
 			- js
