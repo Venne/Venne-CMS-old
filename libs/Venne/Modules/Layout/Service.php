@@ -89,15 +89,6 @@ class Service extends Venne\Developer\Service\DoctrineService {
 		return "layout";
 	}
 
-
-	public function getLayouts()
-	{
-		$website = $this->container->cms->website->currentFront;
-
-		return $this->getRepository()->findBy(array("website" => $website->id));
-	}
-
-
 	public function removeLayout($id)
 	{
 		$this->getEntityManager()->remove($this->getRepository()->find($id));

@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Modules;
+namespace Venne\LayoutModule;
 
 use Venne\ORM\Column;
 use Nette\Utils\Html;
@@ -19,27 +19,19 @@ use Nette\Utils\Html;
  */
 class LayoutForm extends \Venne\Developer\Form\EntityForm{
 	
-	protected $id;
-	
-	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $id = NULL)
-	{
-		$this->id = $id;
-		parent::__construct($parent, $name);
-	}
-	
 	public function startup()
 	{
 		parent::startup();
 		
 		$modules = array();
-		$data = $this->getPresenter()->getContext()->cms->moduleManager->getFrontModules();
+		$data = $this->presenter->context->services->modules->getFrontModules();
 		foreach ($data as $item) {
 			$modules[ucfirst($item)] = ucfirst($item);
 		}
 		
 		$this->addGroup("Layout");
 		
-		$this->addSelect("layout", "Layout", $this->getPresenter()->getContext()->cms->moduleManager->getLayouts())->addRule(self::FILLED, "Enter layout");
+		$this->addSelect("layout", "Layout", $this->presenter->context->services->modules->getLayouts())->addRule(self::FILLED, "Enter layout");
 		
 		$this->addGroup("Position");
 		
@@ -68,7 +60,7 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 		$module = $form["module"]->getValue();
 		
 		$presenters = array();
-		$data = $this->getPresenter()->getContext()->cms->moduleManager->getPresenters($module);
+		$data = $this->presenter->context->services->modules->getPresenters($module);
 		foreach ($data as $item) {
 			$presenters[ucfirst($item)] = ucfirst($item);
 		}
@@ -83,7 +75,7 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 		$presenter = $form["presenter"]->getValue();
 
 		$actions = array();
-		$data = $this->getPresenter()->getContext()->cms->moduleManager->getActions($module, $presenter);
+		$data = $this->presenter->context->services->modules->getActions($module, $presenter);
 		foreach ($data as $item) {
 			$actions[$item] = $item;
 		}
@@ -102,7 +94,7 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 		}
 		
 		$params = array();
-		$data = $this->getPresenter()->getContext()->cms->moduleManager->getParams($module, $presenter);
+		$data = $this->presenter->context->services->modules->getParams($module, $presenter);
 		foreach ($data as $item) {
 			$params[$item] = $item;
 		}
@@ -112,32 +104,29 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 	
 	public function load()
 	{
-		if($this->id){
-			$model = $this->getPresenter()->getContext()->cms->layout->model;
+			$model = $this->presenter->context->services->layout;
 			
-			$values = $model->getLayout($this->id);
-			$regex = explode(":",$values->regex);
+			$regex = explode(":",$this->key->regex);
 			
 			$this["module"]->setDefaultValue($regex[0]);
 			$this["presenter"]->setDefaultValue($regex[1]);
 			$this["action"]->setDefaultValue($regex[2]);
 			
-			$this["layout"]->setDefaultValue($values->layout);
+			$this["layout"]->setDefaultValue($this->key->layout);
 			
 			$i = 0;
-			foreach($values->keys as $key){
+			foreach($this->key->keys as $key){
 				$this["param_$i"]->setValue($key->key);
 				$this["value_$i"]->setValue($key->val);
 				$i++;
 			}
-		}
 	}
 
 
 	public function save()
 	{
 		$values = $this->getValues();
-		$model = $this->getPresenter()->getContext()->cms->layout->model;
+		$model = $this->presenter->context->services->layout;
 		
 		$params = array();
 		for ($i = 0; $i < 4; $i++) {
@@ -146,7 +135,7 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 			}
 		}
 		
-		if(!$this->id){
+		if(!$this->key){
 			$model->createLayout($values["layout"], $values["module"], $values["presenter"], $values["action"], $params);
 		}else{
 			$model->updateLayout($this->id, $values["layout"], $values["module"], $values["presenter"], $values["action"], $params);

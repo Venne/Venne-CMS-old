@@ -161,10 +161,8 @@ class Service extends \Venne\Developer\Service\BaseService {
 
 	public function getLayouts()
 	{
-		$website = $this->context->website->currentFront;
-
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["extensionsDir"] . "/skins/" . $website->skin . "/layouts/") as $file)
+		foreach(\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/skins/" . $this->context->params["venne"]["website"]["template"] . "/layouts/") as $file)
 		{
 			$data[substr($file->getBaseName(), 1, -6)] = substr($file->getBaseName(), 1, -6);
 		}
