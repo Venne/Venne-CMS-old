@@ -165,17 +165,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 		$this->saveConfig($config);
 	}
 
-
-	/**
-	 * Create Database Structure
-	 * @param \Nette\Database\Connection $database
-	 */
-	public function createDatabaseStructure(\Nette\Database\Connection $database)
-	{
-		$database->loadFile($this->context->params["venneDir"] . "/CMS/sources/installation.sql");
-	}
-
-
+	
 	/**
 	 * Set Installation Done
 	 */

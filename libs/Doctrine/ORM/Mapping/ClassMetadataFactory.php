@@ -248,11 +248,13 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
 
         // Move down the hierarchy of parent classes, starting from the topmost class
         $parent = null;
+        $rootEntityFound = false;
         $visited = array();
         foreach ($parentClasses as $className) {
             if (isset($this->loadedMetadata[$className])) {
                 $parent = $this->loadedMetadata[$className];
                 if ( ! $parent->isMappedSuperclass) {
+                    $rootEntityFound = true;
                     array_unshift($visited, $className);
                 }
                 continue;
@@ -281,7 +283,10 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
                 throw MappingException::reflectionFailure($className, $e);
             }
 
-            if ($parent && ! $parent->isMappedSuperclass) {
+            // If this class has a parent the id generator strategy is inherited.
+            // However this is only true if the hierachy of parents contains the root entity,
+            // if it consinsts of mapped superclasses these don't necessarily include the id field.
+            if ($parent && $rootEntityFound) {
                 if ($parent->isIdGeneratorSequence()) {
                     $class->setSequenceGeneratorDefinition($parent->sequenceGeneratorDefinition);
                 } else if ($parent->isIdGeneratorTable()) {
@@ -308,34 +313,14 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
                 $this->evm->dispatchEvent(Events::loadClassMetadata, $eventArgs);
             }
 
-            // Verify & complete identifier mapping
-            if ( ! $class->identifier && ! $class->isMappedSuperclass) {
-                throw MappingException::identifierRequired($className);
-            }
-
-            // verify inheritance
-            if (!$class->isMappedSuperclass && !$class->isInheritanceTypeNone()) {
-                if (!$parent) {
-                    if (count($class->discriminatorMap) == 0) {
-                        throw MappingException::missingDiscriminatorMap($class->name);
-                    }
-                    if (!$class->discriminatorColumn) {
-                        throw MappingException::missingDiscriminatorColumn($class->name);
-                    }
-                } else if ($parent && !in_array($class->name, array_values($class->discriminatorMap))) {
-                    // enforce discriminator map for all entities of an inheritance hierachy, otherwise problems will occur.
-                    throw MappingException::mappedClassNotPartOfDiscriminatorMap($class->name, $class->rootEntityName);
-                }
-            } else if ($class->isMappedSuperclass && $class->name == $class->rootEntityName && (count($class->discriminatorMap) || $class->discriminatorColumn)) {
-                // second condition is necessary for mapped superclasses in the middle of an inheritance hierachy
-                throw MappingException::noInheritanceOnMappedSuperClass($class->name);
-            }
+            $this->validateRuntimeMetadata($class, $parent);
             
             $this->loadedMetadata[$className] = $class;
 
             $parent = $class;
 
             if ( ! $class->isMappedSuperclass) {
+                $rootEntityFound = true;
                 array_unshift($visited, $className);
             }
 
@@ -343,6 +328,38 @@ class ClassMetadataFactory implements ClassMetadataFactoryInterface
         }
 
         return $loaded;
+    }
+
+    /**
+     * Validate runtime metadata is correctly defined.
+     *
+     * @param ClassMetadata $class
+     * @param ClassMetadata $parent
+     */
+    protected function validateRuntimeMetadata($class, $parent)
+    {
+        // Verify & complete identifier mapping
+        if ( ! $class->identifier && ! $class->isMappedSuperclass) {
+            throw MappingException::identifierRequired($class->name);
+        }
+
+        // verify inheritance
+        if (!$class->isMappedSuperclass && !$class->isInheritanceTypeNone()) {
+            if (!$parent) {
+                if (count($class->discriminatorMap) == 0) {
+                    throw MappingException::missingDiscriminatorMap($class->name);
+                }
+                if (!$class->discriminatorColumn) {
+                    throw MappingException::missingDiscriminatorColumn($class->name);
+                }
+            } else if ($parent && !$class->reflClass->isAbstract() && !in_array($class->name, array_values($class->discriminatorMap))) {
+                // enforce discriminator map for all entities of an inheritance hierachy, otherwise problems will occur.
+                throw MappingException::mappedClassNotPartOfDiscriminatorMap($class->name, $class->rootEntityName);
+            }
+        } else if ($class->isMappedSuperclass && $class->name == $class->rootEntityName && (count($class->discriminatorMap) || $class->discriminatorColumn)) {
+            // second condition is necessary for mapped superclasses in the middle of an inheritance hierachy
+            throw MappingException::noInheritanceOnMappedSuperClass($class->name);
+        }
     }
 
     /**

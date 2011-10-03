@@ -19,7 +19,7 @@ use Venne\ORM\Column;
  * @Table(name="comments")
  * 
  * @property string $moduleName
- * @property integer $moduleItemId
+ * @property string $moduleItemId
  */
 class CommentsEntity extends \Venne\Developer\Doctrine\BaseEntity {
 
@@ -29,9 +29,9 @@ class CommentsEntity extends \Venne\Developer\Doctrine\BaseEntity {
 		$this->moduleItemId = 0;
 	}
 	
-	/** @Column(type="string", length=300) */
+	/** @Column(type="string", nullable=true) */
 	protected $moduleName;
-	/** @Column(type="integer") */
+	/** @Column(type="string", nullable=true) */
 	protected $moduleItemId;
 
 }

@@ -61,6 +61,10 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 */
 	public function checkRequirements($element)
 	{
+		if (!file_exists($this->context->params["flagsDir"] . "/installed") && substr($this->name, 0, 13) != "Installation:") {
+			$this->redirect(":Installation:Admin:Default:");
+		}
+	
 		parent::checkRequirements($element);
 		
 		if (!$this->isMethodAllowed("startup")) {
@@ -104,10 +108,6 @@ class Presenter extends \Nette\Application\UI\Presenter {
 
 	public function startup()
 	{
-		if (!file_exists($this->context->params["flagsDir"] . "/installed") && substr($this->name, 0, 13) != "Installation:") {
-			$this->redirect(":Installation:Default:");
-		}
-
 		parent::startup();
 		/*
 		 * Add modules to DebugBar

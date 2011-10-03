@@ -73,6 +73,10 @@ class Configurator extends \Nette\Configurator {
 
 		$this->container->params["venneModulesNamespace"] = "\\Venne\\Modules\\";
 		
+		if(!file_exists($this->container->params["appDir"] . "/config.neon")){
+			copy($this->container->params["venneDir"] . "/sources/config.neon", $this->container->params["appDir"] . "/config.neon");
+		}
+		
 		/*
 		 * Detect mode
 		 */
@@ -160,12 +164,6 @@ class Configurator extends \Nette\Configurator {
 					'action' => 'default',
 				));
 		
-		$router[] = $installationRouter = new \Venne\Application\Routers\RouteList("admin");
-		$installationRouter[] = new Application\Routers\InstallationRoute('installation/<presenter>[/<action>[/<id>]]', array(
-					'presenter' => 'Default',
-					'action' => 'default',
-				));
-
 		/*
 		 * Routes for modules
 		 */

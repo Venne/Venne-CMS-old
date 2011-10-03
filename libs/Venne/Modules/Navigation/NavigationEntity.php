@@ -18,9 +18,9 @@ use Venne\ORM\Column;
  * @Entity(repositoryClass="\Venne\Developer\Doctrine\BaseRepository")
  * @Table(name="navigation")
  * 
- * @property /Venne/CMS/Models/NavigationKey $keys
- * @property /Venne/CMS/Models/Navigation $childrens
- * @property /Venne/CMS/Models/Navigation $parent
+ * @property /Venne/CMS/Models/NavigationKeyEntity $keys
+ * @property /Venne/CMS/Models/NavigationEntity $childrens
+ * @property /Venne/CMS/Models/NavigationEntity $parent
  * @property bool $active
  * @property /Venne/CMS/Models/Website $website
  * @property string $type
@@ -64,7 +64,7 @@ class NavigationEntity extends \Venne\Developer\Doctrine\BaseEntity {
 
 	/**
 	 * @ManyToOne(targetEntity="navigationEntity", inversedBy="id")
-	 * @JoinColumn(name="navigation_id", referencedColumnName="id")
+	 * @JoinColumn(name="navigation_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE")
 	 * @OrderBy({"order" = "ASC"})
 	 */
 	protected $parent;
@@ -72,13 +72,13 @@ class NavigationEntity extends \Venne\Developer\Doctrine\BaseEntity {
 	/** @Column(type="string", length=30) */
 	protected $type;
 
-	/** @Column(type="string", length=300) */
+	/** @Column(type="string") */
 	protected $name;
 
-	/** @Column(type="string", length=300) */
+	/** @Column(type="string", nullable=true) */
 	protected $moduleName;
 
-	/** @Column(type="integer") */
+	/** @Column(type="string", nullable=true) */
 	protected $moduleItemId;
 
 	/**

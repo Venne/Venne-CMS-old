@@ -94,27 +94,27 @@ class PostgreSqlPlatform extends AbstractPlatform
 
     public function getDateDiffExpression($date1, $date2)
     {
-        return '('.$date1 . '-'.$date2.')';
+        return '(DATE(' . $date1 . ')-DATE(' . $date2 . '))';
     }
 
     public function getDateAddDaysExpression($date, $days)
     {
-        return "(" . $date . "+ interval '" . (int)$days . " day')";
+        return "(" . $date . "+ interval '" . $days . " day')";
     }
 
     public function getDateSubDaysExpression($date, $days)
     {
-        return "(" . $date . "- interval '" . (int)$days . " day')";
+        return "(" . $date . "- interval '" . $days . " day')";
     }
 
     public function getDateAddMonthExpression($date, $months)
     {
-        return "(" . $date . "+ interval '" . (int)$months . " month')";
+        return "(" . $date . "+ interval '" . $months . " month')";
     }
 
     public function getDateSubMonthExpression($date, $months)
     {
-        return "(" . $date . "- interval '" . (int)$months . " month')";
+        return "(" . $date . "- interval '" . $months . " month')";
     }
     
     /**
@@ -450,6 +450,12 @@ class PostgreSqlPlatform extends AbstractPlatform
                ' INCREMENT BY ' . $sequence->getAllocationSize() .
                ' MINVALUE ' . $sequence->getInitialValue() .
                ' START ' . $sequence->getInitialValue();
+    }
+    
+    public function getAlterSequenceSQL(\Doctrine\DBAL\Schema\Sequence $sequence)
+    {
+        return 'ALTER SEQUENCE ' . $sequence->getQuotedName($this) . 
+               ' INCREMENT BY ' . $sequence->getAllocationSize();
     }
     
     /**

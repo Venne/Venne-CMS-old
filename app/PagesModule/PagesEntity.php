@@ -84,4 +84,9 @@ class PagesEntity extends \Venne\Developer\Doctrine\BaseEntity{
 	 */
 	protected $mainPage;
 	
+	/**
+	 * @Column(type="string")
+	 */
+	protected $layout;
+	
 }

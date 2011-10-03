@@ -15,7 +15,7 @@
  *
  * @author Josef Kříž
  */
-class ExampleElement extends \Venne\CMS\Developer\Element {
+class ExampleElement extends \Venne\Developer\Element\BaseElement {
 	
 	public function render()
 	{

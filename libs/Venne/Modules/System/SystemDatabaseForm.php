@@ -118,13 +118,6 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 				$this->getPresenter()->flashMessage("Cannot connect to database ".$e->getMessage(), "warning");
 				return false;
 			}
-			
-			/*
-			 * Create structure
-			 */
-			if($this->createStructure){
-				$model->createDatabaseStructure($db);
-			}
 		}
 		
 		if ($values["section"] == "common" || $values["use"]) {
@@ -132,6 +125,29 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 		}else{
 			$config = $model->loadDatabase("common");
 			$model->saveDatabase($config ["driver"], $config ["host"], $config ["dbname"], $config ["user"], $config ["password"], $values["section"]);
+		}
+		
+		$this->presenter->context->params["database"]["driver"] = $values["driver"];
+		$this->presenter->context->params["database"]["host"] = $values["host"];
+		$this->presenter->context->params["database"]["dbname"] = $values["dbname"];
+		$this->presenter->context->params["database"]["user"] = $values["user"];
+		$this->presenter->context->params["database"]["password"] = $values["password"];
+		
+		if($this->createStructure){
+			$em = $this->presenter->context->doctrineContainer->createServiceEntityManager();
+	
+			$classes = array();
+			$robotLoader = $this->presenter->context->robotLoader;
+			$robotLoader->rebuild();
+			foreach($robotLoader->getIndexedClasses() as $key=>$item){
+				$class = "\\{$key}";
+				$classReflection = new \Nette\Reflection\ClassType($class);
+				if($classReflection->isSubclassOf("\\Venne\\Developer\\Doctrine\\BaseEntity")){
+					$classes[] = $em->getClassMetadata($class);
+				}
+			}
+			$tool = new \Doctrine\ORM\Tools\SchemaTool($em);
+			$tool->createSchema($classes);
 		}
 	}
 

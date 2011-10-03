@@ -2,7 +2,7 @@
 
 global:
 	mode: detect
-	developerIp: 
+	developerIp: null
 	
 common:
 	php:
@@ -16,10 +16,10 @@ common:
 		
 	database:
 		driver: pdo_mysql
-		host: localhost
-		dbname: dbname
-		user: user
-		password: pass
+		host: ""
+		dbname: ""
+		user: ""
+		password: ""
 		charset: utf8
 		driverOptions:
 			1002: SET NAMES utf8
@@ -38,23 +38,16 @@ common:
 			template: venne
 			defaultModule: pages
 			defaultErrorModule: error
-		lang: cs
-		repositories:
-			core:
-				mirrors:
-					- http://repo.venne.cz/core/
-					
-				name: anonym
-				password: ""
-				
 			
+		lang: cs
 		admin:
-			name: admin
-			password: pass
+			name: ""
+			password: ""
 			
 		modules:
 			pages:
 				routePrefix: ""
+				
 			
 		macros:
 			- js

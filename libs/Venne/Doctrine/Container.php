@@ -82,9 +82,9 @@ class Container extends \Nette\DI\Container {
 	 * @param \Nette\DI\IContainer
 	 * @return \Doctrine\DBAL\Schema\SchemaManager
 	 */
-	public static function createServiceSchemaManager(\Nette\DI\IContainer $container)
+	public function createServiceSchemaManager()
 	{
-		$db = \Doctrine\DBAL\DriverManager::getConnection($container->params['database']);
+		$db = \Doctrine\DBAL\DriverManager::getConnection($this->context->params['database']);
 		return $db->getSchemaManager();
 	}
 

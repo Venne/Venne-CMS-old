@@ -17,7 +17,6 @@ require $params['libsDir'] . '/Venne/loader.php';
 
 // Load configuration from config.neon file
 $configurator = new Venne\Configurator($params);
-//$configurator->container->params += $params;
 $configurator->container->params['tempDir'] = __DIR__ . '/../temp';
 $container = $configurator->loadConfig(__DIR__ . '/config.neon');
 

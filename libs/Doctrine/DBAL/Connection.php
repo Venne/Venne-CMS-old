@@ -276,7 +276,7 @@ class Connection implements DriverConnection
     /**
      * Gets the DBAL driver instance.
      *
-     * @return Doctrine\DBAL\Driver
+     * @return \Doctrine\DBAL\Driver
      */
     public function getDriver()
     {
@@ -286,7 +286,7 @@ class Connection implements DriverConnection
     /**
      * Gets the Configuration used by the Connection.
      *
-     * @return Doctrine\DBAL\Configuration
+     * @return \Doctrine\DBAL\Configuration
      */
     public function getConfiguration()
     {
@@ -296,7 +296,7 @@ class Connection implements DriverConnection
     /**
      * Gets the EventManager used by the Connection.
      *
-     * @return Doctrine\Common\EventManager
+     * @return \Doctrine\Common\EventManager
      */
     public function getEventManager()
     {
@@ -306,7 +306,7 @@ class Connection implements DriverConnection
     /**
      * Gets the DatabasePlatform for the connection.
      *
-     * @return Doctrine\DBAL\Platforms\AbstractPlatform
+     * @return \Doctrine\DBAL\Platforms\AbstractPlatform
      */
     public function getDatabasePlatform()
     {
@@ -316,7 +316,7 @@ class Connection implements DriverConnection
     /**
      * Gets the ExpressionBuilder for the connection.
      *
-     * @return Doctrine\DBAL\Query\ExpressionBuilder
+     * @return \Doctrine\DBAL\Query\ExpressionBuilder
      */
     public function getExpressionBuilder()
     {
@@ -661,7 +661,20 @@ class Connection implements DriverConnection
     {
         $this->connect();
 
-        return call_user_func_array(array($this->_conn, 'query'), func_get_args());
+        $args = func_get_args();
+
+        $logger = $this->getConfiguration()->getSQLLogger();
+        if ($logger) {
+            $logger->startQuery($args[0]);
+        }
+
+        $statement = call_user_func_array(array($this->_conn, 'query'), $args);
+
+        if ($logger) {
+            $logger->stopQuery();
+        }
+
+        return $statement;
     }
 
     /**

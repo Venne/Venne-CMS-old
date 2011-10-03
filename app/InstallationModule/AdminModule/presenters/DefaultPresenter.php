@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace InstallationModule;
+namespace InstallationModule\AdminModule;
 
 use \Nette\Application\UI\Form;
 
@@ -23,10 +23,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 	{
 		
 		parent::startup();
-		if(file_exists($this->getContext()->params["flagsDir"] . "/installed") && $this->getAction() != "finish" && $this->getAction() != "installed"){
-			$this->redirect("installed");
-		}
-		
+
 		/*
 		 * Extensions
 		 */
@@ -47,19 +44,54 @@ class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 			}
 		}
 		
+		if(file_exists($this->getContext()->params["flagsDir"] . "/installed")){
+			$this->setView("finish");
+		}else{
+			$this->setView("default");
+			if($this->context->params["venne"]["admin"]["password"]){
+				$this->setView("database");
+				if($this->context->params["database"]["dbname"]){
+					$this->setView("website");
+				}
+			}
+		}
 	}
 	
 	public function actionFinish()
 	{
-		$this->getContext()->cms->system->model->setInstallationDone();
-		$this->template->websiteUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
+		$this->context->services->system->setInstallationDone();
+		$this->redirect("default");
 	}
+	
+	/*public function actionDatabase()
+	{
+		$em = $this->context->doctrineContainer->entityManager;
+	
+		$classes = array();
+		$robotLoader = $this->context->robotLoader;
+		$robotLoader->rebuild();
+		foreach($robotLoader->getIndexedClasses() as $key=>$item){
+			$class = "\\{$key}";
+			$classReflection = new \Nette\Reflection\ClassType($class);
+			if($classReflection->isSubclassOf("\\Venne\\Developer\\Doctrine\\BaseEntity")){
+				dump($class);
+				$classes[] = $em->getClassMetadata($class);
+			}
+		}
+		$tool = new \Doctrine\ORM\Tools\SchemaTool($em);
+		dump($tool->getCreateSchemaSql($classes));
+		$tool->createSchema($classes);
+		//$sm = $this->context->doctrineContainer->schemaManager;
+		//$fromSchema = $sm->createSchema();
+		//dump($fromSchema);
+		die("ok");
+	}*/
 
 	
 	public function createComponentFormAccount($name)
 	{
 		$form = new \Venne\Modules\SystemAccountForm($this, $name, "common");
-		$form->setSuccessLink("database");
+		$form->setSuccessLink("this");
 		$form->setSubmitLabel("Next");
 		return $form;
 	}
@@ -67,7 +99,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 	public function createComponentFormDatabase($name)
 	{
 		$form = new \Venne\Modules\SystemDatabaseForm($this, $name, "common", false, true);
-		$form->setSuccessLink("website");
+		$form->setSuccessLink("this");
 		//$form->setFlashMessage("Database settings has been updated");
 		$form->setSubmitLabel("Install");
 		return $form;
@@ -89,6 +121,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 	public function beforeRender()
 	{
 		parent::beforeRender();
+		$this->template->websiteUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
 		$this->template->installationMode = true;
 		$this->template->hideMenuItems = true;
 		

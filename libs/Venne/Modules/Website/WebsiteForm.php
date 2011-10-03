@@ -37,23 +37,7 @@ class WebsiteForm extends \Venne\Developer\Form\EditForm{
 
 	public function save()
 	{
-		$values = $this->getValues();
-		$model = $this->getPresenter()->getContext()->cms->website->model;
-		$langModel = $this->getPresenter()->getContext()->cms->language->model;
-		
-		/*
-		 * Update language
-		 */
-		$langEntity = $this->entity ? $this->getPresenter()->getContext()->cms->language->getRepository()->find($this->entity->langDefault) : NULL; 
-		$langEntity = $langModel->saveItem($langEntity, $values["lang"], $values["langName"], $values["langAlias"], $this->entity);
-		
-		
-		$this->entity = $model->saveItem(
-					$this->entity, $values["name"], $values["regex"], $values["skin"],
-					$values["langType"], $values["langValue"], $langEntity->id, $values["routePrefix"]
-				);
-		
-		$langEntity = $langModel->saveItem($langEntity, $values["lang"], $values["langName"], $values["langAlias"], $this->entity);
+
 	}
 
 }

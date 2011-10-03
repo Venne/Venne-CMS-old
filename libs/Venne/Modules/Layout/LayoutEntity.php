@@ -28,16 +28,16 @@ use Venne\ORM\Column;
 class LayoutEntity extends \Venne\Developer\Doctrine\BaseEntity {
 
 
-	/** @Column(name="`regex`", type="string", length=255) */
+	/** @Column(name="`regex`", type="string") */
 	protected $regex;
 
-	/** @Column(type="string", length=255) */
+	/** @Column(type="string", nullable=true) */
 	protected $moduleName;
 
-	/** @Column(type="string", length=255) */
+	/** @Column(type="string", nullable=true) */
 	protected $moduleItemId;
 
-	/** @Column(type="string", length=255) */
+	/** @Column(type="string") */
 	protected $layout;
 	
 	/**
