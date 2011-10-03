@@ -146,6 +146,7 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 					$classes[] = $em->getClassMetadata($class);
 				}
 			}
+			$classes[] = $em->getClassMetadata("\Venne\SecurityModule\UserEntity");
 			$tool = new \Doctrine\ORM\Tools\SchemaTool($em);
 			$tool->createSchema($classes);
 			
