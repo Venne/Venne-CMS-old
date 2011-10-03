@@ -17,6 +17,8 @@ namespace Venne\SecurityModule;
  * @Table(name="role")
  * 
  * @property string $name
+ * @property \Doctrine\Common\Collections\ArrayCollection $childrens
+ * @property RoleEntity $parent
  */
 class RoleEntity extends \Venne\Developer\Doctrine\BaseEntity {
 

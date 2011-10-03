@@ -148,6 +148,21 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 			}
 			$tool = new \Doctrine\ORM\Tools\SchemaTool($em);
 			$tool->createSchema($classes);
+			
+			$admin = new \Venne\SecurityModule\RoleEntity;
+			$admin->name = "admin";
+			
+			$guest = new \Venne\SecurityModule\RoleEntity;
+			$guest->name = "guest";
+			
+			$registred = new \Venne\SecurityModule\RoleEntity;
+			$registred->name = "registred";
+			$registred->parent = $guest;
+			
+			$em->persist($admin);
+			$em->persist($guest);
+			$em->persist($registred);
+			$em->flush();
 		}
 	}
 
