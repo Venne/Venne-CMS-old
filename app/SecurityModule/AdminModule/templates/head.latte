@@ -2,17 +2,17 @@
 
 <ul class="toolbar">
 	
-	<li n:if="$presenter->isAllowed('Admin:Security:Default:default')">
-		<a href="{plink Default:}"{if $presenter->isCurrent("Admin:Security:Default:*")} class="active"{/if}>general</a>
+	<li n:if="$presenter->isAllowed('Security:Admin:Default:default')">
+		<a href="{plink Default:}"{if $presenter->isCurrent("Security:Admin:Default:*")} class="active"{/if}>general</a>
 	</li>
-	<li n:if="$presenter->isAllowed('Admin:Security:Users:default')">
-		<a href="{plink Users:}"{if $presenter->isCurrent("Admin:Security:Users:*")} class="active"{/if}>users</a>
+	<li n:if="$presenter->isAllowed('Security:Admin:Users:default')">
+		<a href="{plink Users:}"{if $presenter->isCurrent("Security:Admin:Users:*")} class="active"{/if}>users</a>
 	</li>
-	<li n:if="$presenter->isAllowed('Admin:Security:Roles:default')">
-		<a href="{plink Roles:}"{if $presenter->isCurrent("Admin:Security:Roles:*")} class="active"{/if}>roles</a>
+	<li n:if="$presenter->isAllowed('Security:Admin:Roles:default')">
+		<a href="{plink Roles:}"{if $presenter->isCurrent("Security:Admin:Roles:*")} class="active"{/if}>roles</a>
 	</li>
-	<li n:if="$presenter->isAllowed('Admin:Security:Permissions:default')">
-		<a href="{plink Permissions:}"{if $presenter->isCurrent("Admin:Security:Permissions:*")} class="active"{/if}>permissions</a>
+	<li n:if="$presenter->isAllowed('Security:Admin:Permissions:default')">
+		<a href="{plink Permissions:}"{if $presenter->isCurrent("Security:Admin:Permissions:*")} class="active"{/if}>permissions</a>
 	</li>
 
 </ul>

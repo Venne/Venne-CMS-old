@@ -3,7 +3,7 @@
 <ul class="menu">
 
 	<li n:if="$presenter->isAllowed('Admin:Pages:Default:default')">
-		<a href="{link default}"{if $presenter->isCurrent("Admin:Pages:Default:default")} class="active"{/if}>pages</a>
+		<a href="{link default}"{if $presenter->isCurrent("Admin:Pages:Default:default")} class="active"{/if}>list</a>
 	</li>
 
 	<li n:if="$presenter->isAllowed('Admin:Pages:Default:create')">

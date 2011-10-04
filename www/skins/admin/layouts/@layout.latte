@@ -25,10 +25,10 @@
 			<div id="menu">
 				{if !isset($hideMenuItems)}
 				<ul>
-					<li><a href="{plink :Website:Admin:Default:}" {if $presenter->isCurrent("Admin:Website:*")}class="active"{/if}>Správa webu</a></li>
-					<li><a href="{plink :Modules:Admin:Default:}" {if $presenter->isCurrent("Admin:Modules:*")}class="active"{/if}>Správa modulů</a></li>
-					<li><a href="{plink :Security:Admin:Default:}" {if $presenter->isCurrent("Admin:Security:*")}class="active"{/if}>Security settings</a></li>
-					<li><a href="{plink :System:Admin:Default:}" {if $presenter->isCurrent("Admin:System:*")}class="active"{/if}>Správa systému</a></li>
+					<li><a href="{plink :Website:Admin:Default:}" {if $presenter->isCurrent("Website:Admin:*")}class="active"{/if}>Správa webu</a></li>
+					<li><a href="{plink :Modules:Admin:Default:}" {if $presenter->isCurrent("Modules:Admin:*")}class="active"{/if}>Správa modulů</a></li>
+					<li><a href="{plink :Security:Admin:Default:}" {if $presenter->isCurrent("Security:Admin:*")}class="active"{/if}>Security settings</a></li>
+					<li><a href="{plink :System:Admin:Default:}" {if $presenter->isCurrent("System:Admin:*")}class="active"{/if}>Správa systému</a></li>
 				</ul>
 				{/if}
 			</div>

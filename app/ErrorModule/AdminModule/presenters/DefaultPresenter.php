@@ -41,7 +41,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter {
 
 	public function actionEdit()
 	{
-		$this->addPath("Edit ({$this->id})", $this->link(":Error:Admin:Default:edit"));
+		$this->addPath("edit ({$this->id})", $this->link(":Error:Admin:Default:edit"));
 	}
 
 
