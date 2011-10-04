@@ -34,6 +34,21 @@ class AdminPresenter extends \Venne\Application\UI\Presenter {
 		parent::startup();
 	}
 
+	/**
+	 * @param \Nette\Application\UI\PresenterComponentReflection $element 
+	 */
+	public function checkRequirements($element)
+	{
+		if (!$this->getUser()->loggedIn  && $this->getName() != "Default:Admin:Login") {
+			if ($this->getUser()->logoutReason === \Nette\Http\User::INACTIVITY) {
+				$this->flashMessage(__("You have been logged out due to inactivity. Please login again."), 'info');
+			}
+
+			$this->redirect(":Default:Admin:Login:", array('backlink' => $this->getApplication()->storeRequest()));
+		}
+		
+		parent::checkRequirements($element);
+	}
 
 	public function beforeRender()
 	{

@@ -62,7 +62,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public function checkRequirements($element)
 	{
 		if (!file_exists($this->context->params["flagsDir"] . "/installed") && substr($this->name, 0, 13) != "Installation:") {
-			$this->redirect(":Installation:Admin:Default:");
+			$this->redirect(":Installation:Admin:Default:", array('backlink' => $this->getApplication()->storeRequest()));
 		}
 	
 		parent::checkRequirements($element);

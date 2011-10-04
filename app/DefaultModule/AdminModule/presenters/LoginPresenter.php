@@ -12,74 +12,40 @@ namespace DefaultModule\AdminModule;
 use Nette\Application\UI,
 	Nette\Security;
 
-
 /**
  * Sign in/out presenters.
  *
  * @author     John Doe
  * @package    MyApplication
  */
-class LoginPresenter extends \Venne\Developer\Presenter\AdminPresenter
-{
+class LoginPresenter extends \Venne\Developer\Presenter\AdminPresenter {
+
+
+	/** @persistent */
+	public $backlink;
 
 
 	/**
 	 * Sign in form component factory.
 	 * @return Nette\Application\UI\Form
 	 */
-	protected function createComponentSignInForm()
+	protected function createComponentSignInForm($name)
 	{
-		$form = new UI\Form;
-		$form->addText('username', 'Username:')
-			->setRequired('Please provide a username.');
-
-		$form->addPassword('password', 'Password:')
-			->setRequired('Please provide a password.');
-
-		$form->addCheckbox('remember', 'Remember me on this computer');
-
-		$form->addSubmit('send', 'Sign in');
-
-		$form->onSuccess[] = callback($this, 'signInFormSubmitted');
+		$form = new \Venne\SecurityModule\LoginForm($this, $name);
+		$form->setSubmitLabel("Login");
 		return $form;
 	}
 
-
-
-	public function signInFormSubmitted($form)
-	{
-		try {
-			$values = $form->getValues();
-			if ($values->remember) {
-				$this->getUser()->setExpiration('+ 14 days', FALSE);
-			} else {
-				$this->getUser()->setExpiration('+ 20 minutes', TRUE);
-			}
-			$this->getUser()->login($values->username, $values->password);
-			$this->redirect(':Default:Admin:Default:');
-
-		} catch (Security\AuthenticationException $e) {
-			$form->addError($e->getMessage());
-		}
-	}
 
 	public function beforeRender()
 	{
 		parent::beforeRender();
 		$this->template->hideMenuItems = true;
-		
+
 		$this->setTitle("Venne:CMS | Login");
 		$this->setKeywords("login");
 		$this->setDescription("Login");
 		$this->setRobots(self::ROBOTS_NOINDEX | self::ROBOTS_NOFOLLOW);
-	}
-
-
-	public function actionOut()
-	{
-		$this->getUser()->logout();
-		$this->flashMessage('You have been signed out.');
-		$this->redirect('in');
 	}
 
 }
