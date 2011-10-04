@@ -33,6 +33,7 @@ class PagesEntity extends \Venne\Developer\Doctrine\BaseEntity{
 		$this->created = new \Nette\DateTime;
 		$this->updated = new \Nette\DateTime;
 		$this->mainPage = false;
+		$this->layout = "";
 	}
 
 
