@@ -31,6 +31,7 @@ class UserEntity extends \Nette\Security\Identity {
 	public function __construct()
 	{
 		$this->roles = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->key = "";
 	}
 
 	/**
@@ -64,7 +65,8 @@ class UserEntity extends \Nette\Security\Identity {
 	 */
 	public $salt;
 	/**
-	 * @ManyToMany(targetEntity="RoleEntity")
+	 * @var \Doctrine\Common\Collections\ArrayCollection
+	 * @ManyToMany(targetEntity="RoleEntity", indexBy="id")
 	 * @JoinTable(name="users_roles",
 	 *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@JoinColumn(name="role_id", referencedColumnName="id")}

@@ -19,12 +19,18 @@ use Nette\Utils\Html;
  */
 class UserForm extends \Venne\Developer\Form\EntityForm {
 
-	
+	/** @var UserEntity*/
+	protected $key;
+
 	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $key = NULL)
 	{
-		$this->key = $key;
 		parent::__construct($parent, $name);
+		$this->key = $key;
+		if (!$this["_submit"]->isSubmittedBy() && $this->key) {
+			$this->load();
+		}
 	}
+
 
 	public function startup()
 	{
@@ -35,8 +41,8 @@ class UserForm extends \Venne\Developer\Form\EntityForm {
 		$this->addPassword("password", "Password")
 				->setOption("description", "minimal length is 5 char")
 				->addConditionOn($this['password_new'], \Nette\Forms\Form::FILLED)
-					->addRule(\Nette\Forms\Form::FILLED, 'Enter password')
-					->addRule(\Nette\Forms\Form::MIN_LENGTH, 'Password is short', 5);
+				->addRule(\Nette\Forms\Form::FILLED, 'Enter password')
+				->addRule(\Nette\Forms\Form::MIN_LENGTH, 'Password is short', 5);
 		$this->addPassword("password_confirm", "Confirm password")
 				->addRule(\Nette\Forms\Form::EQUAL, 'Invalid re password', $this['password']);
 
@@ -48,7 +54,10 @@ class UserForm extends \Venne\Developer\Form\EntityForm {
 
 	public function load()
 	{
-		$this->setDefaults($this->key);
+		$this["password_new"]->setDefaultValue(false);
+		$this["name"]->setDefaultValue($this->key->name);
+		$this["email"]->setDefaultValue($this->key->email);
+		$this["roles"]->setDefaultValue($this->key->roleEntities->getKeys());
 	}
 
 
@@ -58,29 +67,38 @@ class UserForm extends \Venne\Developer\Form\EntityForm {
 		$values = $this->getValues();
 		$presenter = $this->getPresenter();
 
-		if (!$this->key) {
-			$this->key = $this->presenter->context->services->user->create(array(), true);
-			$this->key->salt = \Nette\Utils\Strings::random(8);
-		} else {
-			/* remove roles */
-			foreach ($this->key->getRoleEntities() as $role) {
-				$this->key->removeRole($role);
+		try {
+			if (!$this->key) {
+				$this->key = $this->presenter->context->services->user->create($values, true);
+				$this->key->salt = \Nette\Utils\Strings::random(8);
+			} else {
+				/* remove roles */
+				foreach ($this->key->getRoleEntities() as $role) {
+					$this->key->removeRole($role);
+				}
+				$this->presenter->context->doctrineContainer->entityManager->flush();
 			}
-			$this->presenter->context->doctrineContainer->entityManager->flush();
+
+			$this->key->name = $values["name"];
+			$this->key->email = $values["email"];
+
+			/* password */
+			if ($values["password_new"]) {
+				$this->key->password = md5($this->key->salt . $values["password"]);
+			}
+
+			/* add roles */
+			foreach ($values["roles"] as $role) {
+				$this->key->addRole($this->presenter->context->services->role->repository->find($role));
+			}
+		} catch (\Venne\SecurityModule\UserNameExistsException $e) {
+			$this->presenter->flashMessage("Uživatelské jméno je již používáno", "warning");
+			return false;
+		} catch (\Venne\SecurityModule\UserEmailExistsException $e) {
+			$this->presenter->flashMessage("Uživatelský e-mail je již používán", "warning");
+			return false;
 		}
 
-		$this->key->name = $values["name"];
-		$this->key->email = $values["email"];
-
-		/* password */
-		if($values["password_new"]){
-			$this->key->password = md5($this->key->salt . $values["password"]);
-		}
-
-		/* add roles */
-		foreach ($values["roles"] as $role) {
-			$this->key->addRole($this->presenter->context->services->role->repository->find($role));
-		}
 		$this->presenter->context->doctrineContainer->entityManager->flush();
 	}
 

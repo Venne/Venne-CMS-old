@@ -58,7 +58,7 @@ class UsersPresenter extends BasePresenter {
 		$form = new \Venne\SecurityModule\UserForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("User has been created");
-		$form->setSubmitLabel(" Create");
+		$form->setSubmitLabel("Create");
 		return $form;
 	}
 
@@ -68,7 +68,7 @@ class UsersPresenter extends BasePresenter {
 		$form = new \Venne\SecurityModule\UserForm($this, $name, $this->context->services->user->getRepository()->find($this->id));
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Website has been updated");
-		$form->setSubmitLabel(" Update");
+		$form->setSubmitLabel("Update");
 		return $form;
 	}
 
