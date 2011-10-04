@@ -41,12 +41,13 @@ class Service extends \Venne\Developer\Service\BaseService {
 		}
 		return $ret;
 	}
-	
+
+
 	public function getFrontModules()
 	{
 		$arr = array();
-		foreach($this->context->modules->getServiceNames() as $module){
-			if(file_exists($this->context->params["appDir"] . "/" . ucfirst($module) . "Module")){
+		foreach ($this->context->modules->getServiceNames() as $module) {
+			if (file_exists($this->context->params["appDir"] . "/" . ucfirst($module) . "Module")) {
 				$arr[] = $module;
 			}
 		}
@@ -114,61 +115,69 @@ class Service extends \Venne\Developer\Service\BaseService {
 		}
 		throw new \Exception("Module `$moduleName` not exist");
 	}
-	
-	
+
+
 	public function getPresenters($module)
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("*Presenter.php")->from($this->context->params["frontDir"] . "/".ucfirst($module)."Module") as $file)
-		{
-			$data[] = substr($file->getBaseName(), 0, -13);
+		$dir = $this->context->params["appDir"] . "/" . ucfirst($module) . "Module";
+		if (file_exists($dir)) {
+			foreach (\Nette\Utils\Finder::findFiles("*Presenter.php")->from($dir) as $file) {
+				$data[] = substr($file->getBaseName(), 0, -13);
+			}
 		}
 		return $data;
 	}
+
 
 	public function getActions($module, $presenter)
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("*")->from($this->context->params["frontDir"] . "/".ucfirst($module)."Module/templates/".  ucfirst($presenter)) as $file)
-		{
-			$data[] = substr($file->getBaseName(), 0, -6);
+		$dir = $this->context->params["appDir"] . "/" . ucfirst($module) . "Module/templates/" . ucfirst($presenter);
+		if (file_exists($dir)) {
+			foreach (\Nette\Utils\Finder::findFiles("*")->from($dir) as $file) {
+				$data[] = substr($file->getBaseName(), 0, -6);
+			}
 		}
 		return $data;
 	}
+
 
 	public function getParams($module, $presenter)
 	{
 		$data = array();
+		$file = $this->context->params["appDir"] . '/' . ucfirst($module) . "Module/presenters/" . ucfirst($presenter) . "Presenter.php";
 
-		$text = file_get_contents($this->context->params["frontDir"] . '/'.  ucfirst($module)."Module/presenters/".  ucfirst($presenter) . "Presenter.php");
-		preg_match_all('/@persistent(.*?)\\n(.*?)public(.*?)\$(.*?)[;= ]/', $text, $matches);
+		if (file_exists($file)) {
+			$text = file_get_contents($file);
+			preg_match_all('/@persistent(.*?)\\n(.*?)public(.*?)\$(.*?)[;= ]/', $text, $matches);
 
-		foreach($matches[4] as $item){
-			$data[] = $item;
+			foreach ($matches[4] as $item) {
+				$data[] = $item;
+			}
 		}
 		return $data;
 	}
 
+
 	public function getSkins()
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findDirectories("*")->in($this->context->params["extensionsDir"] . "/skins/") as $file)
-		{
+		foreach (\Nette\Utils\Finder::findDirectories("*")->in($this->context->params["extensionsDir"] . "/skins/") as $file) {
 			$data[$file->getBaseName()] = $file->getBaseName();
 		}
 		return $data;
 	}
 
+
 	public function getLayouts()
 	{
 		$data = array();
-		foreach(\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/skins/" . $this->context->params["venne"]["website"]["template"] . "/layouts/") as $file)
-		{
+		foreach (\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/skins/" . $this->context->params["venne"]["website"]["template"] . "/layouts/") as $file) {
 			$data[substr($file->getBaseName(), 1, -6)] = substr($file->getBaseName(), 1, -6);
 		}
 		return $data;
 	}
-
 
 }
 
