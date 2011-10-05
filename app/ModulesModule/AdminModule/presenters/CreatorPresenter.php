@@ -32,9 +32,9 @@ class CreatorPresenter extends BasePresenter {
 	
 	public function actionDefault()
 	{
-		$this->template->items = $this->getModel()->getPackageBuilds();
+		$this->template->items = $this->context->services->modules->getPackageBuilds();
 		foreach($this->template->items as $key=>$item){
-			$this->template->items[$key] = $this->getModel()->loadPackageBuild($key);
+			$this->template->items[$key] = $this->context->services->modules->loadPackageBuild($key);
 		}
 	}
 
@@ -58,7 +58,7 @@ class CreatorPresenter extends BasePresenter {
 	
 	public function handleBuild($id)
 	{
-		if($this->getModel()->buildPackage($id)){
+		if($this->context->services->modules->buildPackage($id)){
 			$this->flashMessage("Package has been builded", "success");
 		}else{
 			$this->flashMessage("Building failed", "warning");
@@ -69,7 +69,7 @@ class CreatorPresenter extends BasePresenter {
 
 	public function handleDelete($id)
 	{
-		$this->getModel()->removePackageBuild($id);
+		$this->context->services->modules->removePackageBuild($id);
 		$this->flashMessage("Script has been deleted", "success");
 		$this->redirect("this");
 	}

@@ -18,15 +18,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class ModulesCreatorForm extends \Venne\Developer\Form\BaseForm {
-
-	protected $id;
-	
-	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $id = NULL)
-	{
-		$this->id = $id;
-		parent::__construct($parent, $name);
-	}	
+class ModulesCreatorForm extends \Venne\Developer\Form\EditForm {
 
 	public function startup()
 	{
@@ -49,22 +41,20 @@ class ModulesCreatorForm extends \Venne\Developer\Form\BaseForm {
 
 	public function load()
 	{
-		if($this->id){
-			$model = $this->getPresenter()->getContext()->cms->modules->model;
+			$model = $this->presenter->context->services->modules;
 			
-			$values = $model->loadPackageBuild($this->id);
+			$values = $model->loadPackageBuild($this->key);
 			$values["files"] = join("\n", $values["files"]);
 						
 			$this->setValues($values);
 			$this["dependencies"]->setDefaultValue($values["dependencies"]);
-		}
 	}
 
 	public function save()
 	{
 		parent::save();
 		$values = $this->getValues();
-		$model = $this->getPresenter()->getContext()->cms->modules->model;
+		$model = $this->presenter->context->services->modules;
 
 		$values["files"] = str_replace("\r", "", $values["files"]);
 		$values["files"] = explode("\n", $values["files"]);

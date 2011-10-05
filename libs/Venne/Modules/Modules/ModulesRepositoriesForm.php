@@ -18,24 +18,12 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class ModulesRepositoriesForm extends \Venne\Developer\Form\BaseForm {
-
-
-	protected $id;
-
-
-	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $id = NULL)
-	{
-		$this->id = $id;
-		parent::__construct($parent, $name);
-	}
+class ModulesRepositoriesForm extends \Venne\Developer\Form\EditForm {
 
 
 	public function startup()
 	{
 		parent::startup();
-		$model = $this->getPresenter()->getContext()->cms->modules->model;
-
 
 		$this->addGroup("Repository");
 		$this->addText("name", "Name")->addRule(self::FILLED, "Enter name");
@@ -52,11 +40,11 @@ class ModulesRepositoriesForm extends \Venne\Developer\Form\BaseForm {
 
 	public function load()
 	{
-		if ($this->id) {
-			$model = $this->getPresenter()->getContext()->cms->modules->model;
+		$model = $this->presenter->context->services->modules;
 
-			$config = $model->getRepositoryInfo($this->id);
-			$this["name"]->setValue($this->id);
+		$config = $model->getRepositoryInfo($this->key);
+		if($config){
+			$this["name"]->setValue($this->key);
 			$this["mirrors"]->setValue(join("\n", $config["mirrors"]));
 
 			if (isset($config["name"])) {
@@ -73,7 +61,7 @@ class ModulesRepositoriesForm extends \Venne\Developer\Form\BaseForm {
 	public function save()
 	{
 		$values = $this->getValues();
-		$model = $this->getPresenter()->getContext()->cms->modules->model;
+		$model = $this->presenter->context->services->modules;
 
 		$values["mirrors"] = str_replace("\r", "", $values["mirrors"]);
 		$values["mirrors"] = explode("\n", $values["mirrors"]);

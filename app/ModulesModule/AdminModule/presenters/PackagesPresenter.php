@@ -61,14 +61,14 @@ class PackagesPresenter extends BasePresenter
 	
 	public function handleSync()
 	{
-		$this->getModel()->syncPackages();
+		$this->context->services->modules->syncPackages();
 		$this->flashMessage("Packages has been synced");
 		$this->redirect("this");
 	}
 
 	public function handleDelete($pkgname, $pkgver)
 	{
-		$this->getModel()->removePackage($pkgname, $pkgver);
+		$this->context->services->modules->removePackage($pkgname, $pkgver);
 		$this->flashMessage("Package has been deleted", "success");
 		$this->redirect("this");
 	}
@@ -76,7 +76,7 @@ class PackagesPresenter extends BasePresenter
 
 	public function handleDownload($pkgname, $pkgver)
 	{
-		$this->getModel()->sendPackage($pkgname, $pkgver);
+		$this->context->services->modules->sendPackage($pkgname, $pkgver);
 	}
 
 	public function renderDefault()

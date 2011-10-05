@@ -22,17 +22,17 @@ class DefaultPresenter extends \Venne\Developer\Presenter\FrontPresenter
 	
 	public function createComponentFormPackage($name)
 	{
-		$form = new \Venne\Modules\RepositoryUploadForm($this, $name, $this->getParam("repository"));
+		$form = new RepositoryUploadForm($this, $name, $this->getParam("repository"));
 		$form->setSuccessLink("default");
+		$form->setSubmitLabel("Upload");
 		$form->setFlashMessage("Package has been uploaded");
-		$form->addSubmit("submit", "Upload");
 		return $form;
 	}
 	
 	public function startup()
 	{
 		if($this->repository && $this->package){
-			$this->sendResponse($this->getContext()->repository->model->sendPackage($this->getParam("package"), $this->getParam("repository")));
+			$this->sendResponse($this->context->services->repository->sendPackage($this->getParam("package"), $this->getParam("repository")));
 		}
 		
 		parent::startup();
@@ -42,9 +42,9 @@ class DefaultPresenter extends \Venne\Developer\Presenter\FrontPresenter
 		if($this->repository){
 			$this->addPath("Repository (" . $this->repository . ")", $this->link(":Repository:Default:"));
 			
-			$this->template->packages = $this->getModel()->getPackages($this->repository);
+			$this->template->packages = $this->context->services->repository->getPackages($this->repository);
 		}else{
-			$this->template->repositories = $this->getModel()->getRepositories();
+			$this->template->repositories = $this->context->services->repository->getRepositories();
 		}
 	}
 	

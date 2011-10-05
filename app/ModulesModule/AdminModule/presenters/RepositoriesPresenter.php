@@ -28,7 +28,7 @@ class RepositoriesPresenter extends BasePresenter
 	
 	public function actionDefault()
 	{
-		$this->template->items = $this->getModel()->getRepositories();
+		$this->template->items = $this->context->services->modules->getRepositories();
 	}
 	
 	public function actionCreate()
@@ -56,7 +56,7 @@ class RepositoriesPresenter extends BasePresenter
 	
 	public function handleDelete($id)
 	{
-		$this->getModel()->removeRepository($id);
+		$this->context->services->modules->removeRepository($id);
 		$this->flashMessage("Repository has been removed", "success");
 		$this->redirect("this");
 	}
