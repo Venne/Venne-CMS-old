@@ -1,6 +1,9 @@
 *
-.config.neon
 !.*
+.config.neon
+
+!elements/.*
+!macros/.*
 
 !DefaultModule/
 !DefaultModule/*
