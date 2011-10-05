@@ -37,7 +37,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 		/*
 		 * Writable
 		 */
-		$paths = array($this->getContext()->params["extensionsDir"], $this->getContext()->params["wwwDir"] . "/public/", $this->getContext()->params["wwwDir"] . "/skins/", $this->getContext()->params["appDir"] . "/config.neon", $this->getContext()->params["flagsDir"]);
+		$paths = array($this->getContext()->params["wwwDir"] . "/public/", $this->getContext()->params["wwwDir"] . "/skins/", $this->getContext()->params["appDir"] . "/config.neon", $this->getContext()->params["flagsDir"]);
 		foreach ($paths as $item) {
 			if (!is_writable($item)) {
 				$this->flashMessage("Path " . $item . " is not writable.", "warning");

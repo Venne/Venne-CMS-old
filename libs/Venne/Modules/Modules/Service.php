@@ -181,7 +181,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function getSkins()
 	{
 		$data = array();
-		foreach (\Nette\Utils\Finder::findDirectories("*")->in($this->context->params["extensionsDir"] . "/skins/") as $file) {
+		foreach (\Nette\Utils\Finder::findDirectories("*")->in($this->context->params["wwwDir"] . "/skins/") as $file) {
 			$data[$file->getBaseName()] = $file->getBaseName();
 		}
 		return $data;

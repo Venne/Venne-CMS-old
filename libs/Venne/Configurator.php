@@ -57,7 +57,6 @@ class Configurator extends \Nette\Configurator {
 		 */
 		$this->container->params += (array) $params;
 		$this->container->params["rootDir"] = $this->container->params["wwwDir"] . '/..';
-		$this->container->params["extensionsDir"] = $this->container->params["rootDir"] . '/extensions';
 		$this->container->params['flashes'] = array(
 			'success' => "success",
 			'error' => "error",
