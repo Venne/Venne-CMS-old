@@ -18,7 +18,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class ModulesDefaultForm extends \Venne\Developer\Form\BaseForm {
+class ModulesDefaultForm extends \Venne\Developer\Form\EditForm {
 
 	public function startup()
 	{
@@ -29,19 +29,15 @@ class ModulesDefaultForm extends \Venne\Developer\Form\BaseForm {
 		$this->addGroup("Default modules");
 		$this->addSelect("defaultModule", "Default module")->setItems($model->getFrontModules(), false);
 		$this->addSelect("defaultErrorModule", "Error module")->setItems($model->getFrontModules(), false);
-	}
-
-
-	public function load()
-	{
-		$this["defaultModule"]->setDefaultValue($this->getPresenter()->getContext()->params["venne"]["defaultModule"]);
-		$this["defaultErrorModule"]->setDefaultValue($this->getPresenter()->getContext()->params["venne"]["defaultErrorModule"]);
+		
+		$this["defaultModule"]->setDefaultValue($this->presenter->context->params["venne"]["website"]["defaultModule"]);
+		$this["defaultErrorModule"]->setDefaultValue($this->presenter->context->params["venne"]["website"]["defaultErrorModule"]);
 	}
 
 	public function save()
 	{
-		$this->getPresenter()->getContext()->cms->moduleManager->saveDefaultModule($this["defaultModule"]->getValue());
-		$this->getPresenter()->getContext()->cms->moduleManager->saveDefaultErrorModule($this["defaultErrorModule"]->getValue());
+		$this->presenter->context->services->system->saveDefaultModule($this["defaultModule"]->getValue());
+		$this->presenter->context->services->system->saveDefaultErrorModule($this["defaultErrorModule"]->getValue());
 	}
 
 }

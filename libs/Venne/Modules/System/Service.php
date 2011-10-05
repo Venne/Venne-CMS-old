@@ -165,7 +165,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 		$this->saveConfig($config);
 	}
 
-	
+
 	/**
 	 * Set Installation Done
 	 */
@@ -174,6 +174,28 @@ class Service extends \Venne\Developer\Service\BaseService {
 		$handle = \fopen($this->context->params["flagsDir"] . "/installed", 'w');
 		\fwrite($handle, "");
 		\fclose($handle);
+	}
+
+
+	public function saveDefaultModule($name)
+	{
+		$config = $this->loadConfig();
+		$config["common"]["venne"]["website"]["defaultModule"] = $name;
+		$config["development"]["venne"]["website"]["defaultModule"] = $name;
+		$config["production"]["venne"]["website"]["defaultModule"] = $name;
+		$config["console"]["venne"]["website"]["defaultModule"] = $name;
+		$this->saveConfig($config);
+	}
+
+
+	public function saveDefaultErrorModule($name)
+	{
+		$config = $this->loadConfig();
+		$config["common"]["venne"]["website"]["defaultErrorModule"] = $name;
+		$config["development"]["venne"]["website"]["defaultErrorModule"] = $name;
+		$config["production"]["venne"]["website"]["defaultErrorModule"] = $name;
+		$config["console"]["venne"]["website"]["defaultErrorModule"] = $name;
+		$this->saveConfig($config);
 	}
 
 }
