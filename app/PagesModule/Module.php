@@ -44,13 +44,13 @@ class Module extends \Venne\Developer\Module\AutoModule {
 					'presenter' => 'Default',
 					'action' => 'default',
 					'url' => array(
-						\Nette\Application\Routers\Route::PATTERN => '.*?',
+						\Nette\Application\Routers\Route::VALUE => NULL,
+						\Nette\Application\Routers\Route::FILTER_IN => NULL,
+						\Nette\Application\Routers\Route::FILTER_OUT => NULL,
 					)
-						)
+			)
 		);
 	}
-
-
 
 
 	public function setServices(\Venne\Application\Container $container)
