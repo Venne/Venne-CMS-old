@@ -35,6 +35,7 @@ class DefaultPresenter extends BasePresenter
 	{
 		$form = new \Venne\Modules\ModulesDefaultForm($this, $name);
 		$form->setSuccessLink("default");
+		$form->setSubmitLabel("Save");
 		$form->setFlashMessage("Changes has been saved");
 		return $form;
 	}
