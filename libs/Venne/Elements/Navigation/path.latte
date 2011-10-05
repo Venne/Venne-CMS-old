@@ -1,6 +1,0 @@
-{var items=>$control->getItems()}
-
-{foreach $items as $item}
-	{if !$iterator->isFirst()} » {/if}
-	<span class="item"><a href="{$item->getURL()}">{$item->getName()}</a></span>
-{/foreach}

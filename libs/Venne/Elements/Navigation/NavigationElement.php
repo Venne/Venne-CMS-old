@@ -20,18 +20,36 @@ class NavigationElement extends \Venne\Developer\Element\BaseElement {
 	
 	public function startup()
 	{
-		if ($this->key == "path") {
-			$this->template->setFile(__DIR__ . "/path.latte");
+		$this->template->type = "navigation";
+		if ($this->key == "main" || $this->key == "tree" || $this->key == "submain") {
+			$this->template->startDepth = 0;
+			$this->template->maxDepth = 9999;
+			$this->template->followActive = true;
+			
+			if($this->key == "main"){
+				$this->template->maxDepth = 1;
+			}
+			
+			if($this->key == "submain"){
+				$this->template->startDepth = 1;
+				$this->template->maxDepth = 1;
+			}
+			
+			if(isset($this->params["followActive"])){
+				$this->template->followActive = $this->params["followActive"];
+			}
+			
+		}else{
+			$this->template->type = "path";
 		}
 	}
 
 
 	public function getItems()
 	{
-		if ($this->key == "main") {
+		if ($this->key == "main" || $this->key == "tree" || $this->key == "submain") {
 			return $this->getContext()->services->navigation->getRootItems();
 		} else if ($this->key == "path") {
-			$this->template->setFile(__DIR__ . "/path.latte");
 			return $this->getContext()->services->navigation->getPaths();
 		}
 	}
