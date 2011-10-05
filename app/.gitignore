@@ -71,6 +71,12 @@
 !WebsiteModule/*/*/*
 !WebsiteModule/*/*/*/*
 
+!LayoutModule/
+!LayoutModule/*
+!LayoutModule/*/*
+!LayoutModule/*/*/*
+!LayoutModule/*/*/*/*
+
 !proxies/
 !proxies/*
 
