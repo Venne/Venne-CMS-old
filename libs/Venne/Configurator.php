@@ -26,19 +26,21 @@ use Nette,
  */
 class Configurator extends \Nette\Configurator {
 
+
 	/** @var array */
 	protected $defaultModules = array(
-			"hook" => array(),
-			"website" => array(),
-			"system" => array(),
-			"security" => array(),
-			"navigation" => array(),
-			"comments" => array(),
-			"modules" => array(),
-			"error" => array(),
-			"layout" => array(),
-		);
-	
+		"hook" => array(),
+		"website" => array(),
+		"system" => array(),
+		"security" => array(),
+		"navigation" => array(),
+		"comments" => array(),
+		"modules" => array(),
+		"error" => array(),
+		"layout" => array(),
+	);
+
+
 	public function __construct($params, $containerClass = 'Venne\Application\Container')
 	{
 		require_once $params["libsDir"] . '/Venne/DI/Container.php';
@@ -49,7 +51,7 @@ class Configurator extends \Nette\Configurator {
 		$this->container->addService("modules", new \Venne\DI\Container($this->container));
 		$this->container->addService("routes", new \Venne\DI\Container($this->container));
 		$this->container->addService("pages", new \Venne\DI\Container($this->container));
-		
+
 		/*
 		 * Params
 		 */
@@ -72,24 +74,24 @@ class Configurator extends \Nette\Configurator {
 		$this->container->params["venneModeFront"] = false;
 
 		$this->container->params["venneModulesNamespace"] = "\\Venne\\Modules\\";
-		
-		if(!file_exists($this->container->params["appDir"] . "/config.neon")){
+
+		if (!file_exists($this->container->params["appDir"] . "/config.neon")) {
 			copy($this->container->params["venneDir"] . "/sources/config.neon", $this->container->params["appDir"] . "/config.neon");
 		}
-		
+
 		/*
 		 * Detect mode
 		 */
 		$url = explode("/", substr($this->container->httpRequest->url->path, strlen($this->container->httpRequest->url->basePath)), 2);
-		if($url[0] == "admin"){
+		if ($url[0] == "admin") {
 			$this->container->params["venneModeAdmin"] = true;
-		}else if($url[0] == "installation"){
+		} else if ($url[0] == "installation") {
 			$this->container->params["venneModeInstallation"] = true;
-		}else{
+		} else {
 			$this->container->params["venneModeFront"] = true;
 		}
-		
-		
+
+
 		/*
 		 * Set mode
 		 */
@@ -125,11 +127,11 @@ class Configurator extends \Nette\Configurator {
 		$container = parent::loadConfig($file, $section);
 		$this->container->params["venne"]["moduleNamespaces"] = array("\\Venne\\", "\\");
 		$this->container->params['venne']['modules'] = $this->defaultModules + $this->container->params['venne']['modules'];
-		
-		foreach($this->container->params['venne']['modules'] as $key=>$module){
+
+		foreach ($this->container->params['venne']['modules'] as $key => $module) {
 			$class = ucfirst($key) . "Module\\Module";
-			foreach($this->container->params["venne"]["moduleNamespaces"] as $ns){
-				if(class_exists($ns . $class)){
+			foreach ($this->container->params["venne"]["moduleNamespaces"] as $ns) {
+				if (class_exists($ns . $class)) {
 					$class = $ns . $class;
 					break;
 				}
@@ -137,17 +139,18 @@ class Configurator extends \Nette\Configurator {
 			$this->container->modules->addService($key, new $class);
 			$this->container->modules->$key->setListeners($this->container);
 		}
-		foreach($this->container->params['venne']['modules'] as $key=>$module){
+		foreach ($this->container->params['venne']['modules'] as $key => $module) {
 			$this->container->modules->$key->setServices($this->container);
 		}
-		foreach($this->container->params['venne']['modules'] as $key=>$module){
+		foreach ($this->container->params['venne']['modules'] as $key => $module) {
 			$this->container->modules->$key->setHooks($this->container, $this->container->hookManager);
 		}
-		
+
 		$this->setRoutes($container->application->router);
-		
+
 		return $container;
 	}
+
 
 	/**
 	 * @param \Nette\Application\Routers\RouteList
@@ -163,12 +166,12 @@ class Configurator extends \Nette\Configurator {
 					'presenter' => 'Default',
 					'action' => 'default',
 				));
-		
+
 		/*
 		 * Routes for modules
 		 */
 		foreach ($this->container->params["venne"]["modules"] as $key => $module) {
-			if(isset($module["routePrefix"])){
+			if (isset($module["routePrefix"])) {
 				$this->container->modules->$key->setRoutes($router, $prefix . $module["routePrefix"]);
 			}
 		}
@@ -182,6 +185,7 @@ class Configurator extends \Nette\Configurator {
 		}
 	}
 
+
 	/**
 	 * @param \Nette\DI\IContainer
 	 * @return \Venne\Doctrine\Container
@@ -190,7 +194,8 @@ class Configurator extends \Nette\Configurator {
 	{
 		return new Doctrine\Container($container);
 	}
-	
+
+
 	/**
 	 * @param \Nette\DI\IContainer
 	 * @return \Venne\Doctrine\Container
@@ -199,7 +204,8 @@ class Configurator extends \Nette\Configurator {
 	{
 		return new ModuleManager\Manager($container, $container->doctrineContainer->entityManager);
 	}
-	
+
+
 	/**
 	 * @param \Nette\DI\IContainer
 	 * @return \Nette\Database\Connection
@@ -278,26 +284,4 @@ class Configurator extends \Nette\Configurator {
 		return new \Nella\Localization\Panel($container);
 	}
 
-
-	/**
-	 * @return Nette\Loaders\RobotLoader
-	 */
-	public static function createServiceRobotLoader(DI\Container $container, array $options = NULL)
-	{
-		$loader = new Nette\Loaders\RobotLoader;
-		$loader->autoRebuild = isset($options['autoRebuild']) ? $options['autoRebuild'] : !$container->params['productionMode'];
-		$loader->setCacheStorage($container->cacheStorage);
-		if (isset($options['directory'])) {
-			$loader->addDirectory($options['directory']);
-		} else {
-			foreach (array('appDir', 'libsDir', 'extensionsDir') as $var) {
-				if (isset($container->params[$var])) {
-					$loader->addDirectory($container->params[$var]);
-				}
-			}
-		}
-		$loader->register();
-		return $loader;
-	}
-	
 }
