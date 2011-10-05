@@ -11,7 +11,7 @@
 
 	{dump $followActive}	
 
-	{cache $presenter->context->httpRequest->url->path, $startDepth, $maxDepth, $followActive, tags => ['Venne\NavigationModule']}
+	{*cache $presenter->context->httpRequest->url->path, $type, $startDepth, $maxDepth, $followActive, tags => ['Venne\NavigationModule']*}
 
 	{var items=>$control->getItems()}
 	{var sub=>0}
@@ -29,7 +29,7 @@
 			{/if}
 		
 			{capture $m}
-			{if $item->childrens->count() > 0 && $sub < ($startDepth + $maxDepth - 1)}
+			{if $item->childrens->count() > 0}
 				{include #menu, "items"=>$item->childrens, "sub"=>($sub+1)}
 			{/if}
 			{/capture}
@@ -47,7 +47,7 @@
 					<a href="{$item->getLink($presenter)}" {if $presenter->isCurrentUrl($item->getLink($presenter)) || $ok}class="active"{/if}>{$item->name}</a>
 				{if $ok}</span>{/if}
 				
-				{if $ok || !$followActive}{!$m}{/if}
+				{if ($sub < ($startDepth + $maxDepth - 1)) && ($ok || !$followActive)}{!$m}{/if}
 			</li>
 			{/if}
 			
@@ -56,6 +56,6 @@
 	</ul>
 	{/block}
 
-	{/cache}
+	{*/cache*}
 {/if}
 
