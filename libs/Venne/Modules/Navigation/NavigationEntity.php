@@ -59,6 +59,7 @@ class NavigationEntity extends \Venne\Developer\Doctrine\BaseEntity {
 
 	/**
 	 * @OneToMany(targetEntity="navigationEntity", mappedBy="parent")
+	 * @OrderBy({"order" = "ASC"})
 	 */
 	protected $childrens;
 

@@ -117,6 +117,7 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 	{
 		$entity = $this->presenter->context->services->navigation->getRepository()->find($this->key);
 		$this["name"]->setValue($entity->name);
+		$this["type"]->setValue($entity->type);
 		if ($entity->type == "url") {
 			$this["url"]->setValue($entity->keys["url"]->val);
 		}
