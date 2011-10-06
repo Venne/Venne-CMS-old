@@ -23,11 +23,7 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 	{
 		parent::startup();
 		
-		$modules = array();
-		$data = $this->presenter->context->services->modules->getFrontModules();
-		foreach ($data as $item) {
-			$modules[ucfirst($item)] = ucfirst($item);
-		}
+		$data = $this->presenter->context->services->modules->getModules();
 		
 		$this->addGroup("Layout");
 		
@@ -36,7 +32,9 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 		$this->addGroup("Position");
 		
 		\DependentSelectBox\DependentSelectBox::$disableChilds = false;
-		$this->addSelect("module", "Module", $modules)->setDefaultValue("Pages");
+		$this->addSelect("module", "Module")
+				->setItems($data, false)
+				->setDefaultValue("Pages");
 		$this->addDependentSelectBox("presenter", "Presenter", $this["module"], array($this, "getValuesPresenter"))->setDefaultValue("Default");
 		$this->addDependentSelectBox("action", "Action", $this["presenter"], array($this, "getValuesAction"))->setDefaultValue("default");
 		

@@ -23,11 +23,7 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 	{
 		parent::startup();
 
-		$modules = array();
-		$data = $this->presenter->context->services->modules->getFrontModules();
-		foreach ($data as $item) {
-			$modules[ucfirst($item)] = ucfirst($item);
-		}
+		$data = $this->presenter->context->services->modules->getModules();
 
 		$this->addGroup("Item");
 		$this->addHidden("id");
@@ -39,7 +35,9 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 		$this->addGroup("Link")->setOption('container', Html::el('fieldset')->id("linkto"));
 
 		\DependentSelectBox\DependentSelectBox::$disableChilds = false;
-		$this->addSelect("module", "Module", $modules)->setDefaultValue("Pages");
+		$this->addSelect("module", "Module")
+				->setItems($data, false)
+				->setDefaultValue("Pages");
 		$this->addDependentSelectBox("presenter", "Presenter", $this["module"], array($this, "getValuesPresenter"))->setDefaultValue("Default");
 		$this->addDependentSelectBox("action", "Action", $this["presenter"], array($this, "getValuesAction"))->setDefaultValue("default");
 

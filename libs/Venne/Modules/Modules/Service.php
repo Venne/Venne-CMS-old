@@ -50,10 +50,11 @@ class Service extends \Venne\Developer\Service\BaseService {
 
 	public function getAvailableModules()
 	{
+		$defaultModules = \Venne\Configurator::$defaultModules;
 		$ret = array();
 		foreach (\Nette\Utils\Finder::findDirectories("*")->in($this->context->params["appDir"]) as $file) {
 			$module = lcfirst(substr($file->getBaseName(), 0, -6));
-			if ($module != "default" && $module != "admin" && $module != "installation" && $this->moduleExist($module)) {
+			if ($module != "default" && $module != "admin" && $module != "installation" && $this->moduleExist($module) && !array_key_exists($module, $defaultModules)) {
 				$ret[] = $module;
 			}
 		}
@@ -79,6 +80,9 @@ class Service extends \Venne\Developer\Service\BaseService {
 			"name" => $moduleName,
 			"description" => $this->getModuleDescription($moduleName),
 			"version" => $this->getModuleVersion($moduleName),
+			"run" => isset($this->context->params["venne"]["modules"][$moduleName]["run"])
+					&& $this->context->params["venne"]["modules"][$moduleName]["run"],
+			"routePrefix" => isset($this->context->params["venne"]["modules"][$moduleName]["routePrefix"]) ?$this->context->params["venne"]["modules"][$moduleName]["routePrefix"]: NULL
 		);
 	}
 
@@ -134,6 +138,24 @@ class Service extends \Venne\Developer\Service\BaseService {
 		throw new \Exception("Module `$moduleName` not exist");
 	}
 
+	public function getModules()
+	{
+		return $this->getModulesRecursion($this->context->params["appDir"]);
+	}
+	
+	protected function getModulesRecursion($dir)
+	{
+		$arr = array();
+		foreach (\Nette\Utils\Finder::findDirectories("*Module")->in($dir) as $file) {
+			$module = substr($file->getBaseName(), 0, -6);
+			$arr[] = $module;
+			$sub = $this->getModulesRecursion($dir . "/" . $file->getBaseName());
+			foreach($sub as $item){
+				$arr[] = $module . ":" . $item;
+			}
+		}
+		return $arr;
+	}
 
 	public function getPresenters($module)
 	{
