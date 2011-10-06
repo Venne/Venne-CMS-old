@@ -160,7 +160,11 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function getPresenters($module)
 	{
 		$data = array();
-		$dir = $this->context->params["appDir"] . "/" . ucfirst($module) . "Module";
+		$dir = $this->context->params["appDir"];
+		$module = explode(":", $module);
+		foreach($module as $item){
+			$dir .= "/".$item."Module";
+		}
 		if (file_exists($dir)) {
 			foreach (\Nette\Utils\Finder::findFiles("*Presenter.php")->from($dir) as $file) {
 				$data[] = substr($file->getBaseName(), 0, -13);
@@ -173,7 +177,12 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function getActions($module, $presenter)
 	{
 		$data = array();
-		$dir = $this->context->params["appDir"] . "/" . ucfirst($module) . "Module/templates/" . ucfirst($presenter);
+		$dir = $this->context->params["appDir"];
+		$module = explode(":", $module);
+		foreach($module as $item){
+			$dir .= "/".$item."Module";
+		}
+		$dir .= "/templates/" . ucfirst($presenter);
 		if (file_exists($dir)) {
 			foreach (\Nette\Utils\Finder::findFiles("*")->from($dir) as $file) {
 				$data[] = substr($file->getBaseName(), 0, -6);
