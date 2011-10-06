@@ -195,7 +195,12 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function getParams($module, $presenter)
 	{
 		$data = array();
-		$file = $this->context->params["appDir"] . '/' . ucfirst($module) . "Module/presenters/" . ucfirst($presenter) . "Presenter.php";
+		$dir = $this->context->params["appDir"];
+		$module = explode(":", $module);
+		foreach($module as $item){
+			$dir .= "/".$item."Module";
+		}
+		$file = $dir . "/presenters/" . ucfirst($presenter) . "Presenter.php";
 
 		if (file_exists($file)) {
 			$text = file_get_contents($file);
