@@ -4,7 +4,7 @@
 
 <script type="text/javascript">
 	var adminpanel = true;
-	$(document).ready(function(){
+	$(function() {
 		{if $venneModeFront}
 		$("#venne-panel-roller a").click(function(){
 			if(adminpanel){
@@ -32,28 +32,28 @@
 
 		$("#venne-panel .elements a").hover(
 		function(){
-			class = $(this).attr('class');
-			class = class.toString().substr(7);
-			$(".element-"+class).addClass("element-hover");
+			cl = $(this).attr('class');
+			cl = cl.toString().substr(7);
+			$(".element-"+cl).addClass("element-hover");
 		},
 		function(){
-			class = $(this).attr('class');
-			class = class.toString().substr(7);
+			cl = $(this).attr('class');
+			cl = cl.toString().substr(7);
 
-			$(".element-"+class).removeClass("element-hover");
+			$(".element-"+cl).removeClass("element-hover");
 		});
 		
 		$("#venne-panel .areas a").hover(
 		function(){
-			class = $(this).attr('class');
-			class = class.toString().substr(7);
-			$(".area-"+class).addClass("area-hover");
+			cl = $(this).attr('class');
+			c = cl.toString().substr(7);
+			$(".area-"+cl).addClass("area-hover");
 		},
 		function(){
-			class = $(this).attr('class');
-			class = class.toString().substr(7);
+			cl = $(this).attr('class');
+			cl = cl.toString().substr(7);
 
-			$(".area-"+class).removeClass("area-hover");
+			$(".area-"+cl).removeClass("area-hover");
 		});
 
 		{if $showAdminPanel}
