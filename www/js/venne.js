@@ -33,19 +33,6 @@ $(function() {
 			}
 		}
 	});
-
-
-	$('.dialog').dialog({
-		autoOpen: true,
-		modal: true,
-		resizable: false,
-		width: 800,
-		maxWidth: 800,
-		close: function(ev, ui) {
-			$(this).remove();
-		}
-	});
-
 });
 
 
