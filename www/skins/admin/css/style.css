@@ -234,6 +234,10 @@ img {
 	color: #aaaaaa;
 }
 
+form {
+	float: left;
+	width: 100%;
+}
 form table{
 	width: 100%;
 }
