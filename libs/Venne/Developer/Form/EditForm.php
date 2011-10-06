@@ -29,7 +29,7 @@ class EditForm extends BaseForm {
 		$this->key = $key;
 		parent::__construct($parent, $name);
 		$this->addSubmit("_submit", "Submit")->onClick[] = callback($this, 'onSubmitForm');
-		if (!$this["_submit"]->isSubmittedBy() && $this->key) {
+		if (!$this["_submit"]->isSubmittedBy() && $this->key && !$this->isSubmitted()) {
 			$this->load();
 		}
 	}
