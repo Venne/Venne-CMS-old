@@ -139,7 +139,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter {
 
 	public function createComponentFormMenuEdit($name)
 	{
-		$form = new \Venne\NavigationModule\NavigationForm($this, $name, $this->getParam("id"));
+		$form = new \Venne\NavigationModule\NavigationForm($this, $name, $this->context->services->navigation->repository->find($this->getParam("id")));
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Navigation has been updated");
 		return $form;

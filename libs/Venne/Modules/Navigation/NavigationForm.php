@@ -55,7 +55,7 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 		}
 		
 		if($this->key){
-			$this["navigation_id"]->setItems($this->presenter->context->services->navigation->getCurrentList($this->key));
+			$this["navigation_id"]->setItems($this->presenter->context->services->navigation->getCurrentList($this->key->id));
 		}else{
 			$this["navigation_id"]->setItems($this->presenter->context->services->navigation->getCurrentList());
 		}
@@ -113,21 +113,20 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 
 	public function load()
 	{
-		$entity = $this->presenter->context->services->navigation->getRepository()->find($this->key);
-		$this["name"]->setValue($entity->name);
-		$this["type"]->setValue($entity->type);
-		if ($entity->type == "url") {
-			$this["url"]->setValue($entity->keys["url"]->val);
+		$this["name"]->setValue($this->key->name);
+		$this["type"]->setValue($this->key->type);
+		if ($this->key->type == "url") {
+			$this["url"]->setValue($this->key->keys["url"]->val);
 		}
-		if ($entity->type == "link") {
-			if (isset($entity->keys["module"]))
-				$this["module"]->setValue($entity->keys["module"]->val);
-			if (isset($entity->keys["presenter"]))
-				$this["presenter"]->setDefaultValue($entity->keys["presenter"]->val);
-			if (isset($entity->keys["action"]))
-				$this["action"]->setDefaultValue($entity->keys["action"]->val);
+		if ($this->key->type == "link") {
+			if (isset($this->key->keys["module"]))
+				$this["module"]->setValue($this->key->keys["module"]->val);
+			if (isset($this->key->keys["presenter"]))
+				$this["presenter"]->setDefaultValue($this->key->keys["presenter"]->val);
+			if (isset($this->key->keys["action"]))
+				$this["action"]->setDefaultValue($this->key->keys["action"]->val);
 			$i = 0;
-			foreach ($entity->keys as $item) {
+			foreach ($this->key->keys as $item) {
 				if ($item->key == "presenter" || $item->key == "module" || $item->key == "action")
 					continue;
 				$this["param_$i"]->setValue($item->key);
@@ -135,8 +134,8 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 				$i++;
 			}
 		}
-		if ($entity->parent) {
-			$this["navigation_id"]->setValue($entity->parent->id);
+		if ($this->key->parent) {
+			$this["navigation_id"]->setValue($this->key->parent->id);
 		}
 	}
 
@@ -150,13 +149,10 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 		$em = $service->getEntityManager();
 
 		if (!$this->key) {
-			$entity = $service->create(array(), true);
-			$em->persist($entity);
+			$this->key = $service->create(array(), true);
+			$em->persist($this->key);
 		} else {
-			$entity = $this->presenter->context->services->navigation->getRepository()->find($this->key);
-			foreach ($entity->keys as $key) {
-				$em->remove($key);
-			}
+			$this->key->keys->clear();
 		}
 
 		if ($values["type"] == "url") {
@@ -172,7 +168,7 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 					$ent = new NavigationKeyEntity();
 					$ent->key = $item;
 					$ent->val = $values[$item];
-					$ent->navigation = $entity;
+					$ent->navigation = $this->key;
 					$em->persist($ent);
 				}
 			}
@@ -181,17 +177,17 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 					$ent = new NavigationKeyEntity();
 					$ent->key = $values["param_$i"];
 					$ent->val = $values["value_$i"];
-					$ent->navigation = $entity;
+					$ent->navigation = $this->key;
 					$em->persist($ent);
 				}
 			}
 		}
-		$service->update($entity, $values, true);
-		$entity->parent = $service->getRepository()->find($values["navigation_id"]);
-		$entity->active = true;
+		$service->update($this->key, $values, true);
+		$this->key->parent = $service->getRepository()->find($values["navigation_id"]);
+		$this->key->active = true;
 
-		if (!$entity->order) {
-			$entity->order = $service->getOrderValue((isset($entity->parent->id) && $entity->parent->id) ? $entity->parent->id : NULL);
+		if (!$this->key->order) {
+			$this->key->order = $service->getOrderValue((isset($this->key->parent->id) && $this->key->parent->id) ? $this->key->parent->id : NULL);
 		}
 
 		$em->flush();
