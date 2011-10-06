@@ -136,7 +136,7 @@ class LayoutForm extends \Venne\Developer\Form\EntityForm{
 		if(!$this->key){
 			$model->createLayout($values["layout"], $values["module"], $values["presenter"], $values["action"], $params);
 		}else{
-			$model->updateLayout($this->id, $values["layout"], $values["module"], $values["presenter"], $values["action"], $params);
+			$model->updateLayout($this->key->id, $values["layout"], $values["module"], $values["presenter"], $values["action"], $params);
 		}
 	}
 
