@@ -35,7 +35,7 @@ common:
 		
 	venne:
 		website:
-			template: venne
+			theme: venne
 			defaultModule: pages
 			defaultErrorModule: error
 			
