@@ -56,6 +56,12 @@ common:
 			- confirm
 			- thumb
 			
+		extra:
+				mirrors:
+					- http://localhost/venne-ng/www/repo/extra/
+					
+				name: ""
+				password: ""
 		
 	
 development < common: 
