@@ -42,7 +42,7 @@ class Service extends \Venne\Developer\Service\DoctrineService {
 		$currentWebsite = new WebsiteEntity;
 		if ($this->context->params["venneModeFront"]) {
 			$currentWebsite->name = "test";
-			$currentWebsite->skin = $this->context->params["venne"]["website"]["template"];
+			$currentWebsite->skin = $this->context->params["venne"]["website"]["theme"];
 			return $currentWebsite;
 		} else {
 			$currentWebsite->name = "test";
@@ -73,6 +73,17 @@ class Service extends \Venne\Developer\Service\DoctrineService {
 			throw new InvalidWebsiteException("Website does not exist");
 		}
 		return $currentFrontWebsite;
+	}
+	
+	public function setTheme($name)
+	{
+		$config = \Nette\Config\NeonAdapter::load($this->context->params["appDir"] . '/config.neon');
+		$config["common"]["venne"]["website"]["theme"] = $name;
+		$config["development"]["venne"]["website"]["theme"] = $name;
+		$config["production"]["venne"]["website"]["theme"] = $name;
+		$config["console"]["venne"]["website"]["theme"] = $name;
+		\Venne\Config\NeonAdapter::save($config, $this->context->params["appDir"] . '/config.neon', "common", array("production", "development", "console"));
+
 	}
 
 }

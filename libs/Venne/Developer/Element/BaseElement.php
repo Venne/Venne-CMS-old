@@ -62,11 +62,9 @@ class BaseElement extends Venne\Application\UI\Control implements IElement {
 	{
 		$dir = dirname($this->getReflection()->getFileName());
 		$list = array(
-			$this->getContext()->params["wwwDir"] . "/skins/" . $this->getContext()->services->website->current->skin . "/".  ucfirst($this->name) . "Element/template.latte",
+			$this->getContext()->params["wwwDir"] . "/themes/" . $this->getContext()->services->website->current->skin . "/".  ucfirst($this->name) . "Element/template.latte",
 			$dir . "/template.latte"
 		);
-		//dump($list);
-		//die();
 		return $list;
 	}
 

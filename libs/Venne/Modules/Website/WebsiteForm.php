@@ -23,21 +23,24 @@ class WebsiteForm extends \Venne\Developer\Form\EditForm{
 	public function startup()
 	{
 		parent::startup();
-		$model = $this->getPresenter()->context->services->website;
+		$skins = $this->presenter->context->services->modules->getThemes();
 		
-		$this->addGroup("Routing");
-		$this->addText("routePrefix", "Route prefix");
+		$this->addGroup("Themes");
+		$arr = array();
+		foreach($skins as $skin){
+			if($skin == "admin"){
+				continue;
+			}
+			$arr[$skin] = $this->presenter->context->themes->{$skin}->getDescription();
+		}
+		
+		$this->addRadioList("theme", "Website theme", $arr);
+		$this["theme"]->setDefaultValue($this->presenter->context->params["venne"]["website"]["theme"]);
 	}
 	
-	public function load()
-	{
-		$this->presenter->context->params["venne"]["website"];
-	}
-
-
 	public function save()
 	{
-
+		$this->presenter->context->services->website->setTheme($this["theme"]->getValue());
 	}
 
 }

@@ -116,7 +116,6 @@ class BaseForm extends \Venne\Application\UI\Form {
 		$this[$name] = new \Venne\Forms\Controls\TagInput($label);
 		$this[$name]->setRenderName('tagInputSuggest' . ucfirst($name));
 
-		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/tagInput.js");
 		$this->getPresenter()->addCss("/css/Forms/Controls/tagInput.css");
 
@@ -134,11 +133,9 @@ class BaseForm extends \Venne\Application\UI\Form {
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_DATETIME);
 
-		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
 		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
 
 		return $this[$name];
@@ -155,11 +152,9 @@ class BaseForm extends \Venne\Application\UI\Form {
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_DATE);
 
-		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
 		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
 
 		return $this[$name];
@@ -176,11 +171,9 @@ class BaseForm extends \Venne\Application\UI\Form {
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_TIME);
 
-		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/jquery-ui-1.8.12.custom.css");
 		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
 
 		return $this[$name];
@@ -196,7 +189,6 @@ class BaseForm extends \Venne\Application\UI\Form {
 	{
 		$this[$name] = new \DependentSelectBox\DependentSelectBox($label, $parents, $dataCallback);
 
-		$this->getPresenter()->addJs("/js/jquery-1.6.min.js");
 		$this->getPresenter()->addJs("/js/Forms/Controls/jquery.nette.dependentselectbox.js");
 			
 		return $this[$name];

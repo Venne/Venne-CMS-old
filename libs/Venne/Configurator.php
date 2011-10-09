@@ -28,7 +28,7 @@ class Configurator extends \Nette\Configurator {
 
 
 	/** @var array */
-	protected $defaultModules = array(
+	public static $defaultModules = array(
 		"hook" => array(),
 		"website" => array(),
 		"system" => array(),
@@ -51,6 +51,7 @@ class Configurator extends \Nette\Configurator {
 		$this->container->addService("modules", new \Venne\DI\Container($this->container));
 		$this->container->addService("routes", new \Venne\DI\Container($this->container));
 		$this->container->addService("pages", new \Venne\DI\Container($this->container));
+		$this->container->addService("themes", new \Venne\DI\Container($this->container));
 
 		/*
 		 * Params
@@ -64,6 +65,7 @@ class Configurator extends \Nette\Configurator {
 			'warning' => "warning",
 		);
 		$this->container->params["venneDir"] = $this->container->params["libsDir"] . '/Venne';
+		$this->container->params["themesDir"] = $this->container->params["wwwDir"] . '/themes';
 		$this->container->params["frontDir"] = $this->container->params["rootDir"] . '/app';
 		$this->container->params["flagsDir"] = $this->container->params["rootDir"] . '/flags';
 		$this->container->params["configsDir"] = $this->container->params["appDir"] . '/configs';
@@ -71,7 +73,7 @@ class Configurator extends \Nette\Configurator {
 		$this->container->params["venneModeInstallation"] = false;
 		$this->container->params["venneModeAdmin"] = false;
 		$this->container->params["venneModeFront"] = false;
-
+		
 		$this->container->params["venneModulesNamespace"] = "\\Venne\\Modules\\";
 
 		if (!file_exists($this->container->params["appDir"] . "/config.neon")) {
@@ -125,7 +127,7 @@ class Configurator extends \Nette\Configurator {
 	{
 		$container = parent::loadConfig($file, $section);
 		$this->container->params["venne"]["moduleNamespaces"] = array("\\Venne\\", "\\");
-		$this->container->params['venne']['modules'] = $this->defaultModules + $this->container->params['venne']['modules'];
+		$this->container->params['venne']['modules'] = self::$defaultModules + $this->container->params['venne']['modules'];
 
 		foreach ($this->container->params['venne']['modules'] as $key => $module) {
 			$class = ucfirst($key) . "Module\\Module";
@@ -147,6 +149,13 @@ class Configurator extends \Nette\Configurator {
 
 		$this->setRoutes($container->application->router);
 
+		
+		// load themes
+		foreach ($this->container->services->modules->getThemes() as $skin) {
+			$class = "\\" . ucfirst($skin) . "Theme\\Theme";
+			$this->container->themes->addService($skin, new $class($container));
+		}
+		
 		return $container;
 	}
 
@@ -281,6 +290,55 @@ class Configurator extends \Nette\Configurator {
 	public static function createServiceTranslatorPanel(\Nette\DI\IContainer $container)
 	{
 		return new \Nella\Localization\Panel($container);
+	}
+	
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Nette\Latte\Engine
+	 */
+	public static function createServiceLatteEngine(\Nette\DI\IContainer $container)
+	{
+		$engine = new Nette\Latte\Engine();
+
+		/*
+		 * Load macros
+		 */
+		foreach($container->params["venne"]["macros"] as $item){
+			$class = "\Venne\Latte\Macros\\".ucfirst($item)."Macro";
+			$class::install($engine->parser);
+		}
+		
+		return $engine;
+	}
+	
+	/**
+	 * @param \Nette\DI\IContainer $container
+	 * @return Templating\TemplateContainer 
+	 */
+	public static function createServiceTemplateContainer(\Nette\DI\IContainer $container)
+	{
+		return new Templating\TemplateContainer($container->latteEngine);
+	}
+	
+	/**
+	 * @return Nette\Loaders\RobotLoader
+	 */
+	public static function createServiceRobotLoader(DI\Container $container, array $options = NULL)
+	{
+		$loader = new Nette\Loaders\RobotLoader;
+		$loader->autoRebuild = isset($options['autoRebuild']) ? $options['autoRebuild'] : !$container->params['productionMode'];
+		$loader->setCacheStorage($container->cacheStorage);
+		if (isset($options['directory'])) {
+			$loader->addDirectory($options['directory']);
+		} else {
+			foreach (array('appDir', 'libsDir', 'themesDir') as $var) {
+				if (isset($container->params[$var])) {
+					$loader->addDirectory($container->params[$var]);
+				}
+			}
+		}
+		$loader->register();
+		return $loader;
 	}
 
 }

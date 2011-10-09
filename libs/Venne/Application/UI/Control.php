@@ -19,7 +19,15 @@ use Venne;
  * @author Josef Kříž
  */
 class Control extends \Nette\Application\UI\Control {
-	
+
+	/**
+	 * @return Kdyby\Templating\FileTemplate
+	 */
+	protected function createTemplate($class = NULL)
+	{
+		return $this->context->templateContainer->createTemplate($this, $class);
+	}
+
 	/**
 	 * Descendant can override this method to customize template compile-time filters.
 	 * @param  Nette\Templating\Template
@@ -31,6 +39,6 @@ class Control extends \Nette\Application\UI\Control {
 		$template->registerHelper("thumb", '\Venne\Templating\ThumbHelper::thumb');
 		$template->registerFilter(new Venne\Latte\Engine($this->getPresenter()->getContext()));
 	}
-	
+
 }
 

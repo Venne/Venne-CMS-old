@@ -50,28 +50,28 @@ class DefaultPresenter extends BasePresenter
 	
 	public function handleActivate($key)
 	{
-		$this->getContext()->cms->moduleManager->activateModule($key);
+		$this->context->services->modules->activateModule($key);
 		$this->flashMessage("Module has been activated", "success");
 		$this->redirect("this");
 	}
 	
 	public function handleDeactivate($key)
 	{
-		$this->getContext()->cms->moduleManager->deactivateModule($key);
+		$this->context->services->modules->deactivateModule($key);
 		$this->flashMessage("Module has been deactivated", "success");
 		$this->redirect("this");
 	}
 	
 	public function handleInstall($key)
 	{
-		$this->getContext()->cms->moduleManager->installModule($key);
+		$this->context->services->modules->installModule($key);
 		$this->flashMessage("Module has been installed", "success");
 		$this->redirect("this");
 	}
 	
 	public function handleUninstall($key)
 	{
-		$this->getContext()->cms->moduleManager->uninstallModule($key);
+		$this->context->services->modules->uninstallModule($key);
 		$this->flashMessage("Module has been uninstalled", "success");
 		$this->redirect("this");
 	}

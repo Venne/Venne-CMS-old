@@ -46,6 +46,11 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public $onStartup;
 	public $onRender;
 
+	public function getTheme()
+	{
+		return $this->context->themes->{$this->context->params["venne"]["website"]["theme"]};
+	}
+
 
 	/**
 	 * @return Doctrine\ORM\EntityManager 
@@ -109,21 +114,6 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	public function startup()
 	{
 		parent::startup();
-		/*
-		 * Add modules to DebugBar
-		 */
-//		foreach ($this->getContext()->params["venne"]["panels"] as $item) {
-//			$class = "\\Venne\\Panels\\" . ucfirst($item);
-//			\Nette\Diagnostics\Debugger::addPanel(new $class($this->getContext()));
-//		}
-//		$userPanel = new Venne\Panels\UserPanel($this->getContext());
-//		$userPanel->setNameColumn("name");
-//		\Nette\Diagnostics\Debugger::addPanel($userPanel);
-
-		/*
-		 * Macros
-		 */
-		//\Venne\CMS\Macros\NConfirmMacro::register();
 
 		/*
 		 * Module
@@ -149,6 +139,9 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	{
 		parent::beforeRender();
 
+		$this->getTheme()->setMacros($this->context->latteEngine->parser);
+		//$template->registerFilter(new Venne\Latte\Engine($this->getContext()));
+		
 		$this->template->venneModeAdmin = $this->getContext()->params['venneModeAdmin'];
 		$this->template->venneModeFront = $this->getContext()->params['venneModeFront'];
 		$this->template->venneModeInstallation = $this->getContext()->params['venneModeInstallation'];
@@ -158,6 +151,18 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$this->onRender();
 
 		\Venne\Panels\Stopwatch::start();
+	}
+	
+	/**
+	 * If Debugger is enabled, print template variables to debug bar
+	 */
+	protected function afterRender()
+	{
+		parent::afterRender();
+
+		if (\Nette\Diagnostics\Debugger::isEnabled()) { // todo: as panel
+			\Nette\Diagnostics\Debugger::barDump($this->template->getParams(), 'Template variables');
+		}
 	}
 
 
@@ -170,9 +175,8 @@ class Presenter extends \Nette\Application\UI\Presenter {
 
 	protected function createTemplate($class = NULL)
 	{
-		$template = parent::createTemplate($class);
-		$template->setTranslator($this->getContext()->getService("ITranslator"));
-		$template->registerHelper("thumb", '\Venne\Templating\ThumbHelper::thumb');
+		$template = $this->getContext()->templateContainer->createTemplate($this, $class);
+		$this->getTheme()->setTemplate($template);
 		return $template;
 	}
 
@@ -182,11 +186,11 @@ class Presenter extends \Nette\Application\UI\Presenter {
 	 * @param  Nette\Templating\Template
 	 * @return void
 	 */
-	public function templatePrepareFilters($template)
-	{
-		// default filters
-		$template->registerFilter(new Venne\Latte\Engine($this->getContext()));
-	}
+//	public function templatePrepareFilters($template)
+//	{
+//		// default filters
+//		$template->registerFilter(new Venne\Latte\Engine($this->getContext()));
+//	}
 
 
 	/**
@@ -225,7 +229,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 			$layout = "layout";
 		}
 		$list = array(
-			$this->getContext()->params["wwwDir"] . "/skins/$skinName/layouts/@$layout.latte"
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/layouts/@$layout.latte"
 		);
 		return $list;
 	}
@@ -244,10 +248,10 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$dirP = substr(str_replace(realpath($this->getContext()->params["appDir"]), "", $dir), 1);
 
 		return array(
-			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.latte",
-			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.latte",
-			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter/$this->view.phtml",
-			$this->getContext()->params["wwwDir"] . "/skins/$skinName/$dirP/$presenter.$this->view.phtml",
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter/$this->view.latte",
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter.$this->view.latte",
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter/$this->view.phtml",
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter.$this->view.phtml",
 			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.latte",
 			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter.$this->view.latte",
 			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.phtml",

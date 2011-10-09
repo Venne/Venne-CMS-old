@@ -31,7 +31,7 @@ class PagesForm extends \Venne\Developer\Form\ContentEntityForm {
 				->setRequired('Enter title');
 		$this->addText("keywords", "Keywords");
 		$this->addText("description", "Description");
-		$this->addSelect("layout", "Layout");
+		$this->addSelect("layout", "Layout")->setPrompt("simply page");
 
 		$this->addGroup("Dates");
 		$this->addDateTime("created", "Created")->setDefaultValue(new \Nette\DateTime);

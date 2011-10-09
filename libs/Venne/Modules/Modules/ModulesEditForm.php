@@ -18,24 +18,17 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class ModulesEditForm extends \Venne\Developer\Form\BaseForm {
+class ModulesEditForm extends \Venne\Developer\Form\EditForm {
 
-	protected $module;
-	
-	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL, $module = NULL)
-	{
-		$this->module = $module;
-		parent::__construct($parent, $name);
-	}
-	
+
 	public function startup()
 	{
 		parent::startup();
 		
-		if($this->getPresenter()->getContext()->cms->{$this->module} instanceof \Venne\CMS\Developer\IFrontModule){
+		//if($this->presenter->context->services->{$this->module} instanceof \Venne\CMS\Developer\IFrontModule){
 			$this->addGroup("Routing");
 			$this->addText("routePrefix", "Prefix");
-		}
+		//}
 	}
 
 
@@ -43,20 +36,18 @@ class ModulesEditForm extends \Venne\Developer\Form\BaseForm {
 	{
 		$container = $this->getPresenter()->getContext();
 		
-		if($this->getPresenter()->getContext()->cms->{$this->module} instanceof \Venne\CMS\Developer\IFrontModule){
-			$this["routePrefix"]->setValue($container->params["venne"]["modules"][$this->module]["routePrefix"]);
-		}
+		//if($this->getPresenter()->getContext()->cms->{$this->module} instanceof \Venne\CMS\Developer\IFrontModule){
+			$this["routePrefix"]->setValue($container->params["venne"]["modules"][$this->key]["routePrefix"]);
+		//}
 	}
 
 	public function save()
 	{
-		$model = $this->getPresenter()->getContext()->cms->moduleManager;
+		$model = $this->presenter->context->services->modules;
 		$container = $this->getPresenter()->getContext();
 		$values = $this->getValues();
 		
-		if($this->getPresenter()->getContext()->cms->{$this->module} instanceof \Venne\CMS\Developer\IFrontModule){
-			$model->saveModuleRoutePrefix($this->module, $values["routePrefix"]);
-		}
+		$model->saveModuleRoutePrefix($this->key, $values["routePrefix"]);
 	}
 
 }
