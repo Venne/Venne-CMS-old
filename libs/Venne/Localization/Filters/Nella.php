@@ -7,16 +7,16 @@
  * This source file is subject to the GNU Lesser General Public License. For more information please see http://nella-project.org
  */
 
-namespace Nella\Localization\Filters;
+namespace Venne\Localization\Filters;
 
-use Nella\Localization\Dictionary;
+use Venne\Localization\Dictionary;
 
 /**
  * PHP file extractor filter (Nelle methods / functions predefined)
  *
  * @author	Patrik Votocek
  */
-class Nella extends \Nette\Object implements \Nella\Localization\IFilter
+class Nella extends \Nette\Object implements \Venne\Localization\IFilter
 {
 	public $exts = array("*.php");
 

@@ -21,7 +21,7 @@ namespace Venne\Localization;
  * @property string $nativeName
  * @property string $short
  */
-class LanguageEntity extends \Nella\Doctrine\Entity
+class LanguageEntity extends \Venne\Developer\Doctrine\BaseEntity
 {
 	/**
 	 * @column
