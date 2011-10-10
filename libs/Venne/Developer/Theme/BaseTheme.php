@@ -53,7 +53,7 @@ abstract class BaseTheme implements ITheme {
 
 	public function setTemplate(\Nette\Templating\ITemplate $template)
 	{
-		$template->setTranslator($this->context->getService("ITranslator"));
+		$template->setTranslator($this->context->translator);
 		$template->registerHelper("thumb", '\Venne\Templating\ThumbHelper::thumb');
 	}
 

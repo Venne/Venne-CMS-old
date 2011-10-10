@@ -162,6 +162,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 
 		if (\Nette\Diagnostics\Debugger::isEnabled()) { // todo: as panel
 			\Nette\Diagnostics\Debugger::barDump($this->template->getParams(), 'Template variables');
+			$this->context->translatorPanel;
 		}
 	}
 

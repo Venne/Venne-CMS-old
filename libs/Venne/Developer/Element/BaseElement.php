@@ -35,8 +35,6 @@ class BaseElement extends Venne\Application\UI\Control implements IElement {
 		parent::__construct($parent, $name);
 		$this->name = $element;
 		$this->key = $key;
-		
-		$this->template->setTranslator($this->getContext()->ITranslator);
 		$this->findTemplateFile();
 	}
 	

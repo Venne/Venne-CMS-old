@@ -1,0 +1,78 @@
+{block content}
+
+{include "../head.latte"}
+
+{js /ckeditor/ckeditor.js}
+
+<script type="text/javascript">
+	sdiak = "áäčďéěíĺľňóô öŕšťúů üýřžÁÄČĎÉĚÍĹĽŇÓÔ ÖŔŠŤÚŮ ÜÝŘŽ"; 
+	bdiak = "aacdeeillnoo orstuu uyrzAACDEEILLNOO ORSTUU UYRZ"; 
+	function removeSpecialChars(txt) 
+	{ 
+	  tx = ""; 
+	  for(p = 0; p < txt.length; p++) 
+	  { 
+		if (sdiak.indexOf(txt.charAt(p)) != -1) 
+		{ 
+		  tx += bdiak.charAt(sdiak.indexOf(txt.charAt(p))); 
+		} 
+		else tx += txt.charAt(p); 
+	  } 
+	  return tx; 
+	}
+	
+    jQuery(document).ready(function() {
+				
+				editor = CKEDITOR.replace('text',
+				{
+					height: "600",
+					toolbar :
+						[
+							['Source'],
+							['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
+							['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+							['BidiLtr','BidiRtl'],
+							'/',
+							['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+							['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
+							['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+							['Link','Unlink','Anchor'],
+							['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'],
+							'/',
+							['Styles','Format','Font','FontSize'],
+							['TextColor','BGColor'],
+							['Maximize', 'ShowBlocks','-','About']
+						]
+				});
+				
+				$("#frmform-title").change(function(){
+					var text = $("#frmform-title").val();
+					text = text.trim();
+					$("#frmform-title").val(text);
+					text = text.replace(/ /g, "-");
+					text = removeSpecialChars(text).toLowerCase();
+					var ok = true;
+					$('#frmform-url option').each(function(index, value) { 
+						if($(this).val() == text){
+							ok = false;
+							$(this).attr('selected', 'selected');
+						}else{
+							$(this).removeAttr('selected');
+						}						
+					});
+					if(ok){
+						$('#frmform-url').append(new Option(text, text, true, true));
+						$("#frmform-urls").next().val(text);
+						$("#frmform-urls").next().trigger('change');
+					}
+				});
+				
+				$("#frmform-urls").change(function(){
+					alert("ok");
+				});
+
+    });
+</script>
+
+
+{control form}

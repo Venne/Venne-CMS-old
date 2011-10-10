@@ -73,7 +73,7 @@ class Configurator extends \Nette\Configurator {
 		$this->container->params["venneModeInstallation"] = false;
 		$this->container->params["venneModeAdmin"] = false;
 		$this->container->params["venneModeFront"] = false;
-		
+
 		$this->container->params["venneModulesNamespace"] = "\\Venne\\Modules\\";
 
 		if (!file_exists($this->container->params["appDir"] . "/config.neon")) {
@@ -149,13 +149,13 @@ class Configurator extends \Nette\Configurator {
 
 		$this->setRoutes($container->application->router);
 
-		
+
 		// load themes
 		foreach ($this->container->services->modules->getThemes() as $skin) {
 			$class = "\\" . ucfirst($skin) . "Theme\\Theme";
 			$this->container->themes->addService($skin, new $class($container));
 		}
-		
+
 		return $container;
 	}
 
@@ -276,9 +276,24 @@ class Configurator extends \Nette\Configurator {
 	 */
 	public static function createServiceTranslator(\Nette\DI\IContainer $container)
 	{
-		$translator = new \Nella\Localization\Translator();
-		$translator->setLang($container->cms->language->getCurrentLang($container->httpRequest)->name);
-		$translator->addDictionary('Venne', $container->params["wwwDir"] . "/templates/" . $container->params['CMS']["template"]);
+		$translator = new \Venne\Localization\Translator();
+		$translator->setLang("cs");
+
+		$file = $container->params["wwwDir"] . "/themes/" . $container->params['venne']["website"]["theme"];
+		$translator->addDictionary('Venne', $file);
+
+		foreach ($container->params['venne']['modules'] as $key => $module) {
+			$file = $container->params["appDir"] . "/" . ucfirst($key) . "Module";
+			if (file_exists($file)) {
+				$translator->addDictionary($key, $file);
+			}
+		}
+
+		if ($container->params["venneModeAdmin"]) {
+			$file = $container->params["wwwDir"] . "/themes/admin";
+			$translator->addDictionary('Administration', $file);
+		}
+
 		return $translator;
 	}
 
@@ -289,9 +304,10 @@ class Configurator extends \Nette\Configurator {
 	 */
 	public static function createServiceTranslatorPanel(\Nette\DI\IContainer $container)
 	{
-		return new \Nella\Localization\Panel($container);
+		return new \Venne\Localization\Panel($container);
 	}
-	
+
+
 	/**
 	 * @param \Nette\DI\IContainer
 	 * @return \Nette\Latte\Engine
@@ -303,23 +319,25 @@ class Configurator extends \Nette\Configurator {
 		/*
 		 * Load macros
 		 */
-		foreach($container->params["venne"]["macros"] as $item){
-			$class = "\Venne\Latte\Macros\\".ucfirst($item)."Macro";
+		foreach ($container->params["venne"]["macros"] as $item) {
+			$class = "\Venne\Latte\Macros\\" . ucfirst($item) . "Macro";
 			$class::install($engine->parser);
 		}
-		
+
 		return $engine;
 	}
-	
+
+
 	/**
 	 * @param \Nette\DI\IContainer $container
 	 * @return Templating\TemplateContainer 
 	 */
 	public static function createServiceTemplateContainer(\Nette\DI\IContainer $container)
 	{
-		return new Templating\TemplateContainer($container->latteEngine);
+		return new Templating\TemplateContainer($container->latteEngine, $container->translator);
 	}
-	
+
+
 	/**
 	 * @return Nette\Loaders\RobotLoader
 	 */

@@ -12,8 +12,6 @@ common:
 		robotLoader:
 			run: true
 			
-		ITranslator: \Nella\Localization\Translator
-		
 	database:
 		driver: pdo_mysql
 		host: ""
