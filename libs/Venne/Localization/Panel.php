@@ -164,7 +164,7 @@ class Panel extends \Nette\FreezableObject implements \Nette\Diagnostics\IBarPan
 		$lang = $this->translator->lang;
 		$dictionaries = $this->getDictionaries();
 		ob_start();
-		require_once __DIR__ . "/Panel.phtml";
+		require_once __DIR__ . "/Panel.latte";
 		return ob_get_clean();
 	}
 
