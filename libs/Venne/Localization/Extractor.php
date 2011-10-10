@@ -31,11 +31,6 @@ class Extractor extends \Venne\FreezableObject
 		$this->context = $context;
 		$this->translator = $translator;
 		$this->addFilter(new Filters\Latte($this->context));
-
-		$this->onFreeze[] = function(Extractor $extractor) { // Setup default filters
-			$extractor->addFilter(new Filters\Latte($this->context));
-			$extractor->addFilter(new Filters\Nella);
-		};
 	}
 
 	/**
