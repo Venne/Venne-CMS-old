@@ -54,7 +54,8 @@ common:
 			- confirm
 			- thumb
 			
-		extra:
+		repositories:
+			extra:
 				mirrors:
 					- http://localhost/venne-ng/www/repo/extra/
 					
