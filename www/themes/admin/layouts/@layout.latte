@@ -34,8 +34,7 @@
 			<div id="middle-left">
 				<div id="submenu">
 					{if !isset($hideMenuItems)}
-						<h3>{_"Main settings"}</h3>
-						{*element navigation:main*}
+						<h3>{_"Modules settings"}</h3>
 						<ul>
 						{foreach $adminMenu as $item}
 							<li {if $presenter->isCurrent($item->keys["module"]->val.":*")}class="active" {/if}><a href="{$item->getLink($presenter)}">{$item->name}</a>
