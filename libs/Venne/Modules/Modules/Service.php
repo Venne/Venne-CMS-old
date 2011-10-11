@@ -227,7 +227,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function getLayouts()
 	{
 		$data = array();
-		foreach (\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/themes/" . $this->context->params["venne"]["website"]["template"] . "/layouts/") as $file) {
+		foreach (\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/themes/" . $this->context->params["venne"]["website"]["theme"] . "/layouts/") as $file) {
 			$data[substr($file->getBaseName(), 1, -6)] = substr($file->getBaseName(), 1, -6);
 		}
 		return $data;
