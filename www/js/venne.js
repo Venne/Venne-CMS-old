@@ -12,13 +12,13 @@ $(function() {
 		$.get(this.href);
 	});
 	
-	$("form.ajax").submit(function () {
+	$("form.ajax").live("submit", function () {
 		$(this).ajaxSubmit();
 		return false;
 	});
 
 	// odeslání pomocí tlačítek
-	$("form.ajax :submit").click(function () {
+	$("form.ajax :submit").live("click", function () {
 		$(this).ajaxSubmit();
 		return false;
 	});
