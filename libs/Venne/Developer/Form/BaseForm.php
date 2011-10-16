@@ -65,8 +65,9 @@ class BaseForm extends \Venne\Application\UI\Form {
 		if ($this->save() === NULL) {
 			if ($this->flash)
 				$this->getPresenter()->flashMessage($this->flash, $this->flashStatus);
-			if ($this->successLink)
+			if ($this->successLink && !$this->presenter->isAjax()){
 				$this->presenter->redirect($this->successLink, $this->successLinkParams);
+			}
 		}
 	}
 
