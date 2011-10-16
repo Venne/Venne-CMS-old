@@ -33,6 +33,14 @@ class FrontPresenter extends \Venne\Application\UI\Presenter {
 		parent::startup();
 	}
 	
+	public function checkRequirements($element)
+	{
+		if($this->mode != self::MODE_NORMAL && !$this->user->isLoggedIn()){
+			throw new \Nette\Application\ForbiddenRequestException;
+		}
+		parent::checkRequirements($element);
+	}
+	
 	public function isModeNormal()
 	{
 		return ($this->mode == self::MODE_NORMAL);
