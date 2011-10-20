@@ -101,7 +101,7 @@ class NavigationEntity extends \Venne\Developer\Doctrine\BaseEntity {
 	{
 		if (!$this->_link) {
 			if ($this->type == "url") {
-				$this->_link = $presenter->template->basePath . "/" . $this->keys["url"];
+				$this->_link = $this->keys["url"];
 			} elseif ($this->type == "dir") {
 				$data = $this->childrens[0];
 				$this->_link = $data->getLink($presenter);
