@@ -48,7 +48,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\InstallationPresenter
 			$this->setView("finish");
 		}else{
 			$this->setView("default");
-			if($this->context->params["venne"]["admin"]["password"]){
+			if($this->context->params["admin"]["password"]){
 				$this->setView("database");
 				if($this->context->params["database"]["dbname"]){
 					$this->setView("website");

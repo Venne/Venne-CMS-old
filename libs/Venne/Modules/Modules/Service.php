@@ -80,9 +80,9 @@ class Service extends \Venne\Developer\Service\BaseService {
 			"name" => $moduleName,
 			"description" => $this->getModuleDescription($moduleName),
 			"version" => $this->getModuleVersion($moduleName),
-			"run" => isset($this->context->params["venne"]["modules"][$moduleName]["run"])
-					&& $this->context->params["venne"]["modules"][$moduleName]["run"],
-			"routePrefix" => isset($this->context->params["venne"]["modules"][$moduleName]["routePrefix"]) ?$this->context->params["venne"]["modules"][$moduleName]["routePrefix"]: NULL
+			"run" => isset($this->context->params["modules"][$moduleName]["run"])
+					&& $this->context->params["modules"][$moduleName]["run"],
+			"routePrefix" => isset($this->context->params["modules"][$moduleName]["routePrefix"]) ?$this->context->params["modules"][$moduleName]["routePrefix"]: NULL
 		);
 	}
 
@@ -110,7 +110,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	protected function moduleExist($moduleName)
 	{
 		$class = "{$moduleName}Module\\Module";
-		foreach ($this->context->params["venne"]["moduleNamespaces"] as $ns) {
+		foreach ($this->context->params["moduleNamespaces"] as $ns) {
 			if (class_exists($ns . $class)) {
 				$class = $ns . $class;
 				break;
@@ -126,7 +126,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	protected function getInstanceOfModule($moduleName)
 	{
 		$class = "{$moduleName}Module\\Module";
-		foreach ($this->context->params["venne"]["moduleNamespaces"] as $ns) {
+		foreach ($this->context->params["moduleNamespaces"] as $ns) {
 			if (class_exists($ns . $class)) {
 				$class = $ns . $class;
 				break;
@@ -227,7 +227,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function getLayouts()
 	{
 		$data = array();
-		foreach (\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/themes/" . $this->context->params["venne"]["website"]["theme"] . "/layouts/") as $file) {
+		foreach (\Nette\Utils\Finder::findFiles("@*.latte")->in($this->context->params["wwwDir"] . "/themes/" . $this->context->params["website"]["theme"] . "/layouts/") as $file) {
 			$data[substr($file->getBaseName(), 1, -6)] = substr($file->getBaseName(), 1, -6);
 		}
 		return $data;
@@ -241,16 +241,16 @@ class Service extends \Venne\Developer\Service\BaseService {
 	 */
 	public function getRepositoryInfo($name)
 	{
-		return isset($this->context->params["venne"]["repositories"][$name]) ? $this->context->params["venne"]["repositories"][$name] : NULL;
+		return isset($this->context->params["repositories"][$name]) ? $this->context->params["repositories"][$name] : NULL;
 	}
 	
 	public function removeRepository($name)
 	{
 		$config = \Nette\Config\NeonAdapter::load($this->context->params["appDir"] . '/config.neon');
-		unset($config["common"]["venne"]["repositories"][$name]);
-		unset($config["development"]["venne"]["repositories"][$name]);
-		unset($config["production"]["venne"]["repositories"][$name]);
-		unset($config["console"]["venne"]["repositories"][$name]);
+		unset($config["common"]["repositories"][$name]);
+		unset($config["development"]["repositories"][$name]);
+		unset($config["production"]["repositories"][$name]);
+		unset($config["console"]["repositories"][$name]);
 		\Venne\Config\NeonAdapter::save($config, $this->context->params["appDir"] . '/config.neon', "common", array("production", "development", "console"));
 	}
 
@@ -258,19 +258,19 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function saveRepository($name, $mirrors, $userName = NULL, $userPassword = NULL)
 	{
 		$config = \Nette\Config\NeonAdapter::load($this->context->params["appDir"] . '/config.neon');
-		$config["common"]["venne"]["repositories"][$name]["mirrors"] = $mirrors;
+		$config["common"]["repositories"][$name]["mirrors"] = $mirrors;
 		if($userName){
-			$config["common"]["venne"]["repositories"][$name]["name"] = $userName;
+			$config["common"]["repositories"][$name]["name"] = $userName;
 		}else{
-			if(isset($config["common"]["venne"]["repositories"][$name]["name"])){
-				unset($config["common"]["venne"]["repositories"][$name]["name"]);
+			if(isset($config["common"]["repositories"][$name]["name"])){
+				unset($config["common"]["repositories"][$name]["name"]);
 			}
 		}
 		if($userName){
-			$config["common"]["venne"]["repositories"][$name]["password"] = $userPassword;
+			$config["common"]["repositories"][$name]["password"] = $userPassword;
 		}else{
-			if(isset($config["common"]["venne"]["repositories"][$name]["password"])){
-				unset($config["common"]["venne"]["repositories"][$name]["password"]);
+			if(isset($config["common"]["repositories"][$name]["password"])){
+				unset($config["common"]["repositories"][$name]["password"]);
 			}
 		}
 		\Venne\Config\NeonAdapter::save($config, $this->context->params["appDir"] . '/config.neon', "common", array("production", "development", "console"));
@@ -281,7 +281,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	 */
 	public function getRepositories()
 	{
-		return $this->context->params["venne"]["repositories"];
+		return $this->context->params["repositories"];
 	}
 	
 	public function savePackageBuild($pkgname, $pkgver, $pkgdesc, $licence, $dependencies, $packager, $files)
@@ -398,7 +398,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 				@unlink($file->getPathname());
 		}
 
-		foreach ($this->context->params["venne"]["repositories"] as $repo => $item) {
+		foreach ($this->context->params["repositories"] as $repo => $item) {
 			foreach ($item["mirrors"] as $url) {
 				umask(0000);
 				@mkdir(self::$availableDir . "/" . $repo);
@@ -556,7 +556,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function downloadPackage($pkgname, $pkgver)
 	{
 		set_error_handler(array($this, 'handleError'));
-		foreach ($this->context->params["venne"]["repositories"] as $repo => $item) {
+		foreach ($this->context->params["repositories"] as $repo => $item) {
 
 			if (file_exists(self::$availableDir . "/" . $repo . "/" . $pkgname)) {
 				

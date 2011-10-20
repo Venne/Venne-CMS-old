@@ -58,8 +58,8 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function setAdminAccount($name, $password, $section = "common")
 	{
 		$config = $this->loadConfig();
-		$config[$section]["venne"]["admin"]["name"] = $name;
-		$config[$section]["venne"]["admin"]["password"] = $password;
+		$config[$section]["admin"]["name"] = $name;
+		$config[$section]["admin"]["password"] = $password;
 		$config = $this->saveConfig($config);
 	}
 
@@ -141,7 +141,7 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function loadAccount($section = "common")
 	{
 		$config = $this->loadConfig();
-		return $config[$section]["venne"]["admin"];
+		return $config[$section]["admin"];
 	}
 
 
@@ -153,14 +153,14 @@ class Service extends \Venne\Developer\Service\BaseService {
 			foreach ($this->modes as $mode) {
 				if ($mode == "common")
 					continue;
-				if ($config[$mode]["venne"]["admin"]["name"] == $config["common"]["venne"]["admin"]["name"])
-					$config[$mode]["venne"]["admin"]["name"] = $name;
-				if ($config[$mode]["venne"]["admin"]["password"] == $config["common"]["venne"]["admin"]["password"])
-					$config[$mode]["venne"]["admin"]["password"] = $password;
+				if ($config[$mode]["admin"]["name"] == $config["common"]["admin"]["name"])
+					$config[$mode]["admin"]["name"] = $name;
+				if ($config[$mode]["admin"]["password"] == $config["common"]["admin"]["password"])
+					$config[$mode]["admin"]["password"] = $password;
 			}
 		}
-		$config[$section]["venne"]["admin"]["name"] = $name;
-		$config[$section]["venne"]["admin"]["password"] = $password;
+		$config[$section]["admin"]["name"] = $name;
+		$config[$section]["admin"]["password"] = $password;
 
 		$this->saveConfig($config);
 	}
@@ -180,10 +180,10 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function saveDefaultModule($name)
 	{
 		$config = $this->loadConfig();
-		$config["common"]["venne"]["website"]["defaultModule"] = $name;
-		$config["development"]["venne"]["website"]["defaultModule"] = $name;
-		$config["production"]["venne"]["website"]["defaultModule"] = $name;
-		$config["console"]["venne"]["website"]["defaultModule"] = $name;
+		$config["common"]["website"]["defaultModule"] = $name;
+		$config["development"]["website"]["defaultModule"] = $name;
+		$config["production"]["website"]["defaultModule"] = $name;
+		$config["console"]["website"]["defaultModule"] = $name;
 		$this->saveConfig($config);
 	}
 
@@ -191,10 +191,10 @@ class Service extends \Venne\Developer\Service\BaseService {
 	public function saveDefaultErrorModule($name)
 	{
 		$config = $this->loadConfig();
-		$config["common"]["venne"]["website"]["defaultErrorModule"] = $name;
-		$config["development"]["venne"]["website"]["defaultErrorModule"] = $name;
-		$config["production"]["venne"]["website"]["defaultErrorModule"] = $name;
-		$config["console"]["venne"]["website"]["defaultErrorModule"] = $name;
+		$config["common"]["website"]["defaultErrorModule"] = $name;
+		$config["development"]["website"]["defaultErrorModule"] = $name;
+		$config["production"]["website"]["defaultErrorModule"] = $name;
+		$config["console"]["website"]["defaultErrorModule"] = $name;
 		$this->saveConfig($config);
 	}
 

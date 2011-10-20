@@ -37,7 +37,7 @@ class ModulesEditForm extends \Venne\Developer\Form\EditForm {
 		$container = $this->getPresenter()->getContext();
 		
 		//if($this->getPresenter()->getContext()->cms->{$this->module} instanceof \Venne\CMS\Developer\IFrontModule){
-			$this["routePrefix"]->setValue($container->params["venne"]["modules"][$this->key]["routePrefix"]);
+			$this["routePrefix"]->setValue($container->params["modules"][$this->key]["routePrefix"]);
 		//}
 	}
 

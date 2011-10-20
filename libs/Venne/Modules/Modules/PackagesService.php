@@ -52,7 +52,7 @@ class PackagesService extends Venne\Developer\Service\BaseService {
 	 */
 	public function getRepositories()
 	{
-		return $this->container->params["venne"]["repositories"];
+		return $this->container->params["repositories"];
 	}
 	
 	/**
@@ -61,16 +61,16 @@ class PackagesService extends Venne\Developer\Service\BaseService {
 	public function getRepositoryInfo($name)
 	{
 		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
-		return $config["common"]["venne"]["repositories"][$name];
+		return $config["common"]["repositories"][$name];
 	}
 	
 	public function removeRepository($name)
 	{
 		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
-		unset($config["common"]["venne"]["repositories"][$name]);
-		unset($config["development"]["venne"]["repositories"][$name]);
-		unset($config["production"]["venne"]["repositories"][$name]);
-		unset($config["console"]["venne"]["repositories"][$name]);
+		unset($config["common"]["repositories"][$name]);
+		unset($config["development"]["repositories"][$name]);
+		unset($config["production"]["repositories"][$name]);
+		unset($config["console"]["repositories"][$name]);
 		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
 	}
 
@@ -78,19 +78,19 @@ class PackagesService extends Venne\Developer\Service\BaseService {
 	public function saveRepository($name, $mirrors, $userName = NULL, $userPassword = NULL)
 	{
 		$config = \Nette\Config\NeonAdapter::load($this->container->params["wwwDir"] . '/../config.neon');
-		$config["common"]["venne"]["repositories"][$name]["mirrors"] = $mirrors;
+		$config["common"]["repositories"][$name]["mirrors"] = $mirrors;
 		if($userName){
-			$config["common"]["venne"]["repositories"][$name]["name"] = $userName;
+			$config["common"]["repositories"][$name]["name"] = $userName;
 		}else{
-			if(isset($config["common"]["venne"]["repositories"][$name]["name"])){
-				unset($config["common"]["venne"]["repositories"][$name]["name"]);
+			if(isset($config["common"]["repositories"][$name]["name"])){
+				unset($config["common"]["repositories"][$name]["name"]);
 			}
 		}
 		if($userName){
-			$config["common"]["venne"]["repositories"][$name]["password"] = $userPassword;
+			$config["common"]["repositories"][$name]["password"] = $userPassword;
 		}else{
-			if(isset($config["common"]["venne"]["repositories"][$name]["password"])){
-				unset($config["common"]["venne"]["repositories"][$name]["password"]);
+			if(isset($config["common"]["repositories"][$name]["password"])){
+				unset($config["common"]["repositories"][$name]["password"]);
 			}
 		}
 		\Venne\Config\NeonAdapter::save($config, $this->container->params["wwwDir"] . '/../config.neon', "common", array("production", "development", "console"));
@@ -210,7 +210,7 @@ class PackagesService extends Venne\Developer\Service\BaseService {
 				@unlink($file->getPathname());
 		}
 
-		foreach ($this->container->params["venne"]["repositories"] as $repo => $item) {
+		foreach ($this->container->params["repositories"] as $repo => $item) {
 			foreach ($item["mirrors"] as $url) {
 				umask(0000);
 				@mkdir(self::$availableDir . "/" . $repo);
@@ -368,7 +368,7 @@ class PackagesService extends Venne\Developer\Service\BaseService {
 	public function downloadPackage($pkgname, $pkgver)
 	{
 		set_error_handler(array($this, 'handleError'));
-		foreach ($this->container->params["venne"]["repositories"] as $repo => $item) {
+		foreach ($this->container->params["repositories"] as $repo => $item) {
 
 			if (file_exists(self::$availableDir . "/" . $repo . "/" . $pkgname)) {
 				

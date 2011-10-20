@@ -57,7 +57,7 @@ class Authorizator extends \Nette\Security\Permission {
 		 */
 		$this->addResource("adminpanel");
 		$this->addResource("AdminModule");
-		foreach ($this->container->params["venne"]["modules"] as $key => $module) {
+		foreach ($this->container->params["modules"] as $key => $module) {
 			$this->container->modules->$key->setPermissions($container, $this);
 		}
 

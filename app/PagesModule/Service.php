@@ -39,7 +39,7 @@ class Service extends \Venne\Developer\Service\DoctrineService {
 		$pages = $this->getRepository()->findByWebsite($this->website->current->id);
 
 		$url = $this->container->httpRequest->getUrl();
-		$prefix = $url->getScheme() . "://" . $url->getHost() . $url->getBasePath() . $this->params["venne"]["modules"]["pagesModule"]["routePrefix"];
+		$prefix = $url->getScheme() . "://" . $url->getHost() . $url->getBasePath() . $this->params["modules"]["pagesModule"]["routePrefix"];
 
 		foreach ($pages as $page) {
 			$sitemap->addItem($prefix . $page->url, $page->updated->format('Y-m-d'), \Venne\CMS\Sitemap\Sitemap::CHANGE_WEEKLY, round(0.5 * $priority * 10) / 10);

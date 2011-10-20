@@ -14,9 +14,9 @@ namespace Venne;
 /**
  * Load Nette framework
  */
-require_once __DIR__ . "/../Nette/loader.php";
-
-
+require_once $params['libsDir'] . "/Nette/loader.php";
+require_once __DIR__  . '/DI/Container.php';
+require_once __DIR__  . '/Application/Container.php';
 require_once __DIR__ . "/Configurator.php";
 
 /**
@@ -26,3 +26,9 @@ define('VENNE', TRUE);
 define('VENNE_DIR', __DIR__);
 define('VENNE_VERSION_ID', '2.0000');
 define('VENNE_VERSION_STATE', 'pre-alpha');
+
+$configurator = new Venne\Configurator($params);
+$container = $configurator->loadConfig(__DIR__ . '/config.neon');
+$application = $container->application;
+$application->catchExceptions = (bool) Debugger::$productionMode;
+$application->errorPresenter = ucfirst($container->params['website']['defaultErrorModule']) . ":Error";

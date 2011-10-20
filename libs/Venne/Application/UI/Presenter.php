@@ -48,7 +48,7 @@ class Presenter extends \Nette\Application\UI\Presenter {
 
 	public function getTheme()
 	{
-		return $this->context->themes->{$this->context->params["venne"]["website"]["theme"]};
+		return $this->context->themes->{$this->context->params["website"]["theme"]};
 	}
 
 

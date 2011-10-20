@@ -50,8 +50,8 @@ class Authenticator extends \Nette\Object implements \Nette\Security\IAuthentica
 		 */
 		$cfg = \Nette\Config\NeonAdapter::load($this->container->params["appDir"] . "/config.neon");
 		if (
-				$this->container->params["venne"]["admin"]["name"] == $username &&
-				$this->container->params["venne"]["admin"]["password"] == $password
+				$this->container->params["admin"]["name"] == $username &&
+				$this->container->params["admin"]["password"] == $password
 		) {
 			return new \Nette\Security\Identity($username, array("admin"), array("name"=>"admin"));
 		}

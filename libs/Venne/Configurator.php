@@ -43,8 +43,6 @@ class Configurator extends \Nette\Configurator {
 
 	public function __construct($params, $containerClass = 'Venne\Application\Container')
 	{
-		require_once $params["libsDir"] . '/Venne/DI/Container.php';
-		require_once $params["libsDir"] . '/Venne/Application/Container.php';
 		parent::__construct($containerClass);
 
 		$this->container->addService("services", new \Venne\DI\Container($this->container));
@@ -57,28 +55,17 @@ class Configurator extends \Nette\Configurator {
 		 * Params
 		 */
 		$this->container->params += (array) $params;
-		$this->container->params["rootDir"] = $this->container->params["wwwDir"] . '/..';
 		$this->container->params['flashes'] = array(
 			'success' => "success",
 			'error' => "error",
 			'info' => "info",
 			'warning' => "warning",
 		);
-		$this->container->params["venneDir"] = $this->container->params["libsDir"] . '/Venne';
-		$this->container->params["themesDir"] = $this->container->params["wwwDir"] . '/themes';
-		$this->container->params["frontDir"] = $this->container->params["rootDir"] . '/app';
-		$this->container->params["flagsDir"] = $this->container->params["rootDir"] . '/flags';
-		$this->container->params["configsDir"] = $this->container->params["appDir"] . '/configs';
 
 		$this->container->params["venneModeInstallation"] = false;
 		$this->container->params["venneModeAdmin"] = false;
 		$this->container->params["venneModeFront"] = false;
-
 		$this->container->params["venneModulesNamespace"] = "\\Venne\\Modules\\";
-
-		if (!file_exists($this->container->params["appDir"] . "/config.neon")) {
-			copy($this->container->params["venneDir"] . "/sources/config.neon", $this->container->params["appDir"] . "/config.neon");
-		}
 
 		/*
 		 * Detect mode
@@ -126,12 +113,12 @@ class Configurator extends \Nette\Configurator {
 	public function loadConfig($file, $section = NULL)
 	{
 		$container = parent::loadConfig($file, $section);
-		$this->container->params["venne"]["moduleNamespaces"] = array("\\Venne\\", "\\");
-		$this->container->params['venne']['modules'] = self::$defaultModules + $this->container->params['venne']['modules'];
+		$this->container->params["moduleNamespaces"] = array("\\Venne\\", "\\");
+		$this->container->params['modules'] = self::$defaultModules + $this->container->params['modules'];
 
-		foreach ($this->container->params['venne']['modules'] as $key => $module) {
+		foreach ($this->container->params['modules'] as $key => $module) {
 			$class = ucfirst($key) . "Module\\Module";
-			foreach ($this->container->params["venne"]["moduleNamespaces"] as $ns) {
+			foreach ($this->container->params["moduleNamespaces"] as $ns) {
 				if (class_exists($ns . $class)) {
 					$class = $ns . $class;
 					break;
@@ -140,10 +127,10 @@ class Configurator extends \Nette\Configurator {
 			$this->container->modules->addService($key, new $class);
 			$this->container->modules->$key->setListeners($this->container);
 		}
-		foreach ($this->container->params['venne']['modules'] as $key => $module) {
+		foreach ($this->container->params['modules'] as $key => $module) {
 			$this->container->modules->$key->setServices($this->container);
 		}
-		foreach ($this->container->params['venne']['modules'] as $key => $module) {
+		foreach ($this->container->params['modules'] as $key => $module) {
 			$this->container->modules->$key->setHooks($this->container, $this->container->hookManager);
 		}
 
@@ -178,7 +165,7 @@ class Configurator extends \Nette\Configurator {
 		/*
 		 * Routes for modules
 		 */
-		foreach ($this->container->params["venne"]["modules"] as $key => $module) {
+		foreach ($this->container->params["modules"] as $key => $module) {
 			if (isset($module["routePrefix"])) {
 				$this->container->modules->$key->setRoutes($router, $prefix . $module["routePrefix"]);
 			}
@@ -187,9 +174,9 @@ class Configurator extends \Nette\Configurator {
 		/*
 		 * Default route
 		 */
-		$router[] = new Route('', $this->container->params["venne"]["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
+		$router[] = new Route('', $this->container->params["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
 		if ($prefix) {
-			$router[] = new Route($prefix, $this->container->params["venne"]["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
+			$router[] = new Route($prefix, $this->container->params["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
 		}
 	}
 
@@ -279,10 +266,10 @@ class Configurator extends \Nette\Configurator {
 		$translator = new \Venne\Localization\Translator();
 		$translator->setLang("cs");
 
-		$file = $container->params["wwwDir"] . "/themes/" . $container->params['venne']["website"]["theme"];
+		$file = $container->params["wwwDir"] . "/themes/" . $container->params["website"]["theme"];
 		$translator->addDictionary('Venne', $file);
 
-		foreach ($container->params['venne']['modules'] as $key => $module) {
+		foreach ($container->params['modules'] as $key => $module) {
 			$file = $container->params["appDir"] . "/" . ucfirst($key) . "Module";
 			if (file_exists($file)) {
 				$translator->addDictionary($key, $file);
@@ -319,7 +306,7 @@ class Configurator extends \Nette\Configurator {
 		/*
 		 * Load macros
 		 */
-		foreach ($container->params["venne"]["macros"] as $item) {
+		foreach ($container->params["macros"] as $item) {
 			$class = "\Venne\Latte\Macros\\" . ucfirst($item) . "Macro";
 			$class::install($engine->parser);
 		}

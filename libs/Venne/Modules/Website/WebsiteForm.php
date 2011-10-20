@@ -35,7 +35,7 @@ class WebsiteForm extends \Venne\Developer\Form\EditForm{
 		}
 		
 		$this->addRadioList("theme", "Website theme", $arr);
-		$this["theme"]->setDefaultValue($this->presenter->context->params["venne"]["website"]["theme"]);
+		$this["theme"]->setDefaultValue($this->presenter->context->params["website"]["theme"]);
 	}
 	
 	public function save()

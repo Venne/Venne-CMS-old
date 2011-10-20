@@ -30,8 +30,8 @@ class ModulesDefaultForm extends \Venne\Developer\Form\EditForm {
 		$this->addSelect("defaultModule", "Default module")->setItems($model->getFrontModules(), false);
 		$this->addSelect("defaultErrorModule", "Error module")->setItems($model->getFrontModules(), false);
 		
-		$this["defaultModule"]->setDefaultValue($this->presenter->context->params["venne"]["website"]["defaultModule"]);
-		$this["defaultErrorModule"]->setDefaultValue($this->presenter->context->params["venne"]["website"]["defaultErrorModule"]);
+		$this["defaultModule"]->setDefaultValue($this->presenter->context->params["website"]["defaultModule"]);
+		$this["defaultErrorModule"]->setDefaultValue($this->presenter->context->params["website"]["defaultErrorModule"]);
 	}
 
 	public function save()
