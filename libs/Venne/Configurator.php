@@ -345,5 +345,16 @@ class Configurator extends \Nette\Configurator {
 		$loader->register();
 		return $loader;
 	}
+	
+	/**
+	 * @return \Venne\Application\IPresenterFactory
+	 */
+	public static function createServicePresenterFactory(DI\Container $container)
+	{
+		return new \Venne\Application\PresenterFactory(
+			isset($container->params['appDir']) ? $container->params['appDir'] : NULL,
+			$container
+		);
+	}
 
 }

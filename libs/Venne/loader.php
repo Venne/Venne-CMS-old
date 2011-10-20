@@ -11,13 +11,17 @@
 
 namespace Venne;
 
+use Nette\Diagnostics\Debugger,
+	Nette\Application\Routers\SimpleRouter,
+	Nette\Application\Routers\Route;
+
 /**
  * Load Nette framework
  */
 require_once $params['libsDir'] . "/Nette/loader.php";
-require_once __DIR__  . '/DI/Container.php';
-require_once __DIR__  . '/Application/Container.php';
-require_once __DIR__ . "/Configurator.php";
+require_once $params['venneDir'] . '/DI/Container.php';
+require_once $params['venneDir'] . '/Application/Container.php';
+require_once $params['venneDir'] . "/Configurator.php";
 
 /**
  * Load and configure Nette Framework.
@@ -27,8 +31,8 @@ define('VENNE_DIR', __DIR__);
 define('VENNE_VERSION_ID', '2.0000');
 define('VENNE_VERSION_STATE', 'pre-alpha');
 
-$configurator = new Venne\Configurator($params);
-$container = $configurator->loadConfig(__DIR__ . '/config.neon');
+$configurator = new Configurator($params);
+$container = $configurator->loadConfig($params['appDir'] . '/config.neon');
 $application = $container->application;
 $application->catchExceptions = (bool) Debugger::$productionMode;
 $application->errorPresenter = ucfirst($container->params['website']['defaultErrorModule']) . ":Error";
