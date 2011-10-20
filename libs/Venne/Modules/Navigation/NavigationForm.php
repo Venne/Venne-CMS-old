@@ -156,10 +156,10 @@ class NavigationForm extends \Venne\Developer\Form\EditForm {
 		}
 
 		if ($values["type"] == "url") {
-			$ent = new NavigationKey();
+			$ent = new NavigationKeyEntity();
 			$ent->key = "url";
 			$ent->val = $values["url"];
-			$ent->navigation = $this->entity;
+			$ent->navigation = $this->key;
 			$em->persist($ent);
 		} else if ($values["type"] == "link") {
 			$arr = array("module", "presenter", "action");
