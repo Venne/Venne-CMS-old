@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace PagesModule;
+namespace App\PagesModule;
 
 use Venne;
 
@@ -18,15 +18,15 @@ use Venne;
  */
 class Service extends \Venne\Developer\Service\DoctrineService {
 
-	public $entityNamespace = "\\PagesModule\\";
+	public $entityNamespace = "\\App\\PagesModule\\";
 
 	/** @var array */
 	public $onRemoveItem;
 	
-	/** @var \Venne\HookModule\Manager */
+	/** @var \HookModule\Manager */
 	protected $hookManager;
 
-	public function __construct($moduleName, \Doctrine\ORM\EntityManager $entityManager, \Venne\HookModule\Manager $hookManager)
+	public function __construct($moduleName, \Doctrine\ORM\EntityManager $entityManager, \App\HookModule\Manager $hookManager)
 	{
 		$this->hookManager = $hookManager;
 		parent::__construct($moduleName, $entityManager);
@@ -60,7 +60,7 @@ class Service extends \Venne\Developer\Service\DoctrineService {
 
 	public function hookAdminMenu($menu)
 	{
-		$nav = new Venne\NavigationModule\NavigationEntity("Pages module");
+		$nav = new \App\NavigationModule\NavigationEntity("Pages module");
 		$nav->addKey("module", "Pages:Admin");
 		$menu[] = $nav;
 	}

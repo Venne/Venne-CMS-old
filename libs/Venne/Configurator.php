@@ -43,6 +43,8 @@ class Configurator extends \Nette\Configurator {
 
 	public function __construct($params, $containerClass = 'Venne\Application\Container')
 	{
+		require_once $params['venneDir'] . '/DI/Container.php';
+		require_once $params['venneDir'] . '/Application/Container.php';
 		parent::__construct($containerClass);
 
 		$this->container->addService("services", new \Venne\DI\Container($this->container));
@@ -113,7 +115,7 @@ class Configurator extends \Nette\Configurator {
 	public function loadConfig($file, $section = NULL)
 	{
 		$container = parent::loadConfig($file, $section);
-		$this->container->params["moduleNamespaces"] = array("\\Venne\\", "\\");
+		$this->container->params["moduleNamespaces"] = array("\\App\\", "\\");
 		$this->container->params['modules'] = self::$defaultModules + $this->container->params['modules'];
 
 		foreach ($this->container->params['modules'] as $key => $module) {
@@ -223,17 +225,17 @@ class Configurator extends \Nette\Configurator {
 	 */
 	public static function createServiceAuthenticator(\Nette\DI\IContainer $container)
 	{
-		return new Security\Authenticator($container);
+		return new \App\SecurityModule\Authenticator($container);
 	}
 
 
 	/**
 	 * @param \Nette\DI\IContainer
-	 * @return \Venne\Security\Authorizator
+	 * @return \App\SecurityModule\Authorizator
 	 */
 	public static function createServiceAuthorizator(\Nette\DI\IContainer $container)
 	{
-		return new Security\Authorizator($container);
+		return new \App\SecurityModule\Authorizator($container);
 	}
 
 
@@ -345,16 +347,14 @@ class Configurator extends \Nette\Configurator {
 		$loader->register();
 		return $loader;
 	}
-	
+
+
 	/**
 	 * @return \Venne\Application\IPresenterFactory
 	 */
 	public static function createServicePresenterFactory(DI\Container $container)
 	{
-		return new \Venne\Application\PresenterFactory(
-			isset($container->params['appDir']) ? $container->params['appDir'] : NULL,
-			$container
-		);
+		return new \Venne\Application\PresenterFactory($container);
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace PagesModule;
+namespace App\PagesModule;
 
 use Nette\Environment;
 

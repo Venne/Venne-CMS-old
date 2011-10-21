@@ -22,7 +22,7 @@ class DoctrineService extends BaseService {
 
 	/** @var \Doctrine\ORM\EntityManager */
 	public $entityManager;
-	public $entityNamespace = "\\";
+	public $entityNamespace = "\\App\\";
 
 
 	public function __construct($moduleName, \Doctrine\ORM\EntityManager $entityManager)

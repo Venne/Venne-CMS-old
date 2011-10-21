@@ -11,39 +11,28 @@
 
 namespace Venne\Application;
 
-use Venne;
-use Nette;
-use Nette\Application\InvalidPresenterException;
+use Nette\Utils\Strings;
 
 /**
  * @author Josef Kříž
+ * @author Patrik Votoček
  */
 class PresenterFactory implements \Nette\Application\IPresenterFactory
 {
-	/** @var bool */
-	public $caseSensitive = FALSE;
-
-	/** @var string */
-	private $baseDir;
-
-	/** @var array */
-	private $cache = array();
+	const DEFAULT_NAMESPACE = 'App';
 
 	/** @var Nette\DI\IContainer */
-	private $context;
-
-
+	private $container;
+	
+	protected $caseSensitive = false;
 
 	/**
-	 * @param  string
+	 * @param Nette\DI\IContainer
 	 */
-	public function __construct($baseDir, Nette\DI\IContainer $context)
+	public function __construct(\Nette\DI\IContainer $container)
 	{
-		$this->baseDir = $baseDir;
-		$this->context = $context;
+		$this->container = $container;
 	}
-
-
 
 	/**
 	 * Create new presenter instance.
@@ -54,53 +43,71 @@ class PresenterFactory implements \Nette\Application\IPresenterFactory
 	{
 		$class = $this->getPresenterClass($name);
 		$presenter = new $class;
-		$presenter->setContext($this->context);
+		$presenter->setContext($this->container);
 		return $presenter;
 	}
 
 
 
 	/**
-	 * @param  string  presenter name
-	 * @return string  class name
-	 * @throws InvalidPresenterException
+	 * Format presenter class with prefixes
+	 *
+	 * @param string
+	 * @return string
+	 * @throws \Nette\Application\InvalidPresenterException
+	 */
+	private function formatPresenterClasses($name)
+	{
+		$class = NULL;
+		$namespaces = isset($this->container->params['namespaces'])
+			 ? $this->container->params['namespaces']
+			 : array(static::DEFAULT_NAMESPACE);
+		foreach ($namespaces as $namespace) {
+			$class = $this->formatPresenterClass($name, $namespace);
+			if (class_exists($class)) {
+				break;
+			}
+		}
+
+		//die($class);
+		if (!class_exists($class)) {
+			$class = $this->formatPresenterClass($name, reset($namespaces));
+			throw new \Nette\Application\InvalidPresenterException("Cannot load presenter '$name', class '$class' was not found.");
+		}
+
+		return $class;
+	}
+
+	/**
+	 * Get presenter class name
+	 *
+	 * @param string
+	 * @return string
+	 * @throws \Nette\Application\InvalidPresenterException
 	 */
 	public function getPresenterClass(& $name)
 	{
-		if (isset($this->cache[$name])) {
-			list($class, $name) = $this->cache[$name];
-			return $class;
+		if (!is_string($name) || !preg_match("#^[a-zA-Z\x7f-\xff][a-zA-Z0-9\x7f-\xff:]*$#", $name)) {
+			throw new \Nette\Application\InvalidPresenterException("Presenter name must be an alphanumeric string, '$name' is invalid.");
 		}
 
-		if (!is_string($name) || !Nette\Utils\Strings::match($name, "#^[a-zA-Z\x7f-\xff][a-zA-Z0-9\x7f-\xff:]*$#")) {
-			throw new InvalidPresenterException("Presenter name must be alphanumeric string, '$name' is invalid.");
-		}
-
-		$class = $this->formatPresenterClass($name);
-
-		if (!class_exists($class)) {
-			// internal autoloading
-			$file = $this->formatPresenterFile($name);
-			if (is_file($file) && is_readable($file)) {
-				Nette\Utils\LimitedScope::load($file);
-			}
-
-			if (!class_exists($class)) {
-				throw new InvalidPresenterException("Cannot load presenter '$name', class '$class' was not found in '$file'.");
-			}
-		}
-
-		$reflection = new Nette\Reflection\ClassType($class);
+		$class = $this->formatPresenterClasses($name);
+		$reflection = \Nette\Reflection\ClassType::from($class);
 		$class = $reflection->getName();
 
 		if (!$reflection->implementsInterface('Nette\Application\IPresenter')) {
-			throw new InvalidPresenterException("Cannot load presenter '$name', class '$class' is not Nette\\Application\\IPresenter implementor.");
+			throw new \Nette\Application\InvalidPresenterException("Cannot load presenter '$name', class '$class' is not Nette\\Application\\IPresenter implementor.");
 		}
-
 		if ($reflection->isAbstract()) {
-			throw new InvalidPresenterException("Cannot load presenter '$name', class '$class' is abstract.");
+			throw new \Nette\Application\InvalidPresenterException("Cannot load presenter '$name', class '$class' is abstract.");
 		}
 
+//		// canonicalize presenter name
+//		$realName = $this->unformatPresenterClass($class);
+//		if ($name !== $realName) {
+//			throw new \Nette\Application\InvalidPresenterException("Cannot load presenter '$name', case mismatch. Real name is '$realName'.");
+//		}
+		
 		// canonicalize presenter name
 		$realName = $this->unformatPresenterClass($class);
 		if ($name !== $realName) {
@@ -118,42 +125,45 @@ class PresenterFactory implements \Nette\Application\IPresenterFactory
 	}
 
 
-
 	/**
 	 * Formats presenter class name from its name.
-	 * @param  string
+	 *
+	 * @param string presenter name
+	 * @param string
 	 * @return string
 	 */
-	public function formatPresenterClass($presenter)
+	public function formatPresenterClass($presenter, $namespace = 'App')
 	{
-		/*5.2*return strtr($presenter, ':', '_') . 'Presenter';*/
-		return str_replace(':', 'Module\\', $presenter) . 'Presenter';
+		return $namespace . "\\" . str_replace(':', "Module\\", $presenter.'Presenter');
 	}
-
-
 
 	/**
 	 * Formats presenter name from class name.
-	 * @param  string
+	 *
+	 * @param string presenter class
 	 * @return string
 	 */
 	public function unformatPresenterClass($class)
 	{
-		/*5.2*return strtr(substr($class, 0, -9), '_', ':');*/
-		return str_replace('Module\\', ':', substr($class, 0, -9));
-	}
+		$active = "";
+		$namespaces = isset($this->container->params['namespaces'])
+			 ? $this->container->params['namespaces']
+			 : array(static::DEFAULT_NAMESPACE);
+		foreach ($namespaces as $namespace) {
+			if (Strings::startsWith($class, $namespace)) {
+				$current = $namespace . "\\";
+				if (!$active || strlen($active) < strlen($current)) {
+					$active = $current;
+				}
+			}
+		}
 
-
-
-	/**
-	 * Formats presenter class file name.
-	 * @param  string
-	 * @return string
-	 */
-	public function formatPresenterFile($presenter)
-	{
-		$path = '/' . str_replace(':', 'Module/', $presenter);
-		return $this->baseDir . substr_replace($path, '/presenters', strrpos($path, '/'), 0) . 'Presenter.php';
+		$class = Strings::startsWith('\\', $class) ? substr($class, 1) : $class;
+		if (strlen($active)) {
+			return str_replace("Module\\", ':', substr($class, strlen($active), -9));
+		} else {
+			return str_replace("Module\\", ':', substr($class, 0, -9));
+		}
 	}
 
 }

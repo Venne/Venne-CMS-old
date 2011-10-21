@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace PagesModule;
+namespace App\PagesModule;
 
 use \Venne\Developer\Module\Service\IRouteService;
 
@@ -60,7 +60,7 @@ class Module extends \Venne\Developer\Module\AutoModule {
 	}
 
 
-	public function setHooks(\Venne\Application\Container $container, \Venne\HookModule\Manager $manager)
+	public function setHooks(\Venne\Application\Container $container, \App\HookModule\Manager $manager)
 	{
 		parent::setHooks($container, $manager);
 		$manager->addHook("admin\\menu", \callback($container->services->pages, "hookAdminMenu"));

@@ -19,8 +19,6 @@ use Nette\Diagnostics\Debugger,
  * Load Nette framework
  */
 require_once $params['libsDir'] . "/Nette/loader.php";
-require_once $params['venneDir'] . '/DI/Container.php';
-require_once $params['venneDir'] . '/Application/Container.php';
 require_once $params['venneDir'] . "/Configurator.php";
 
 /**

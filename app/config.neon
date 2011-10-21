@@ -1,5 +1,5 @@
 global:
-	mode: detect
+	mode: development
 	developerIp: null
 	
 common:
@@ -12,10 +12,10 @@ common:
 			
 	database:
 		driver: pdo_mysql
-		host: ""
-		dbname: ""
-		user: ""
-		password: ""
+		host: localhost
+		dbname: venne-ng
+		user: root
+		password: tajne
 		charset: utf8
 		driverOptions:
 			1002: SET NAMES utf8
@@ -32,19 +32,21 @@ common:
 	venneDir: %libsDir%/Venne
 	themesDir: %wwwDir%/themes
 	flagsDir: %rootDir%/flags
-	tempDir: %rootDir%/temp
 		
 	website:
-		theme: venne
+		theme: stawebniny
 		defaultModule: pages
 		defaultErrorModule: error
 
 	lang: cs
 	admin:
-		name: ""
-		password: ""
+		name: "root"
+		password: "tajne"
 
 	modules:
+		sta:
+			routePrefix: ""
+
 		pages:
 			routePrefix: ""
 

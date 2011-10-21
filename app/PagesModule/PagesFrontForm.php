@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace PagesModule;
+namespace App\PagesModule;
 
 use Venne\ORM\Column;
 use Nette\Utils\Html;

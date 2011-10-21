@@ -1,6 +1,6 @@
 <?php
 
-namespace PagesModule\AdminModule;
+namespace App\PagesModule\AdminModule;
 
 use Nette\Forms\Form;
 use Nette\Web\Html;
@@ -36,7 +36,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter {
 
 	public function createComponentForm($name)
 	{
-		$form = new \PagesModule\PagesForm($this, $name);
+		$form = new \App\PagesModule\PagesForm($this, $name);
 		$form->setSuccessLink("default");
 		$form->setFlashMessage("Page has been created");
 		$form->setSubmitLabel("Create");
@@ -46,7 +46,7 @@ class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter {
 
 	public function createComponentFormEdit($name)
 	{
-		$form = new \PagesModule\PagesForm($this, $name, $this->presenter->context->services->pages->getRepository()->find($this->id));
+		$form = new \App\PagesModule\PagesForm($this, $name, $this->presenter->context->services->pages->getRepository()->find($this->id));
 		$form->setSuccessLink("this");
 		$form->setFlashMessage("Page has been updated");
 		$form->setSubmitLabel("Update");

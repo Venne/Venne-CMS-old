@@ -24,7 +24,7 @@ abstract class BaseModule implements IModule {
 		
 	}
 	
-	public function setPermissions(\Venne\Application\Container $container, \Venne\Security\Authorizator $permissions)
+	public function setPermissions(\Venne\Application\Container $container, \App\SecurityModule\Authorizator $permissions)
 	{
 		
 	}
@@ -39,7 +39,7 @@ abstract class BaseModule implements IModule {
 		
 	}
 
-	public function setHooks(\Venne\Application\Container $container, \Venne\HookModule\Manager $manager)
+	public function setHooks(\Venne\Application\Container $container, \App\HookModule\Manager $manager)
 	{
 		
 	}

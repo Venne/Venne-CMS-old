@@ -17,34 +17,40 @@ namespace Venne\Developer\Module;
 abstract class AutoModule extends BaseModule {
 
 
-	public function setPermissions(\Venne\Application\Container $container, \Venne\Security\Authorizator $permissions)
+	public function setPermissions(\Venne\Application\Container $container, \App\SecurityModule\Authorizator $permissions)
 	{
 		parent::setPermissions($container, $permissions);
 
 		$resources = array();
 
-		$path = $container->params["appDir"] . "/" . ucfirst($this->getName()) . "Module";
+		$paths = array(
+			$container->params["appDir"] . "/" . ucfirst($this->getName()) . "Module",
+			$container->params["libsDir"] . "/App/" . ucfirst($this->getName()) . "Module"
+		);
 
-		if (file_exists($path)) {
-			foreach (array(""=>$path . "/presenters", "\\AdminModule"=>$path . "/AdminModule/presenters") as $key=>$pathP) {
-				if (file_exists($pathP)) {
-					foreach (\Nette\Utils\Finder::findFiles("*Presenter.php")->in($pathP) as $file) {
 
-						$className = "\\" . ucfirst($this->getName()) . "Module{$key}\\" . substr($file->getBaseName(), 0, -4);
+		foreach ($paths as $path) {
+			if (file_exists($path)) {
+				foreach (array("" => $path . "/presenters", "\\AdminModule" => $path . "/AdminModule/presenters") as $key => $pathP) {
+					if (file_exists($pathP)) {
+						foreach (\Nette\Utils\Finder::findFiles("*Presenter.php")->in($pathP) as $file) {
 
-						$ref = new \Nette\Reflection\ClassType($className);
-						if ($ref->hasAnnotation("resource")) {
-							$resource = $ref->getAnnotation("resource");
-							$j = explode("\\", $resource);
-							unset($j[count($j) - 1]);
-							$j = join("\\", $j);
+							$className = "\\App\\" . ucfirst($this->getName()) . "Module{$key}\\" . substr($file->getBaseName(), 0, -4);
 
-							$resources[] = array("resource" => $resource, "privilege" => NULL, "parent" => $j);
-						}
+							$ref = new \Nette\Reflection\ClassType($className);
+							if ($ref->hasAnnotation("resource")) {
+								$resource = $ref->getAnnotation("resource");
+								$j = explode("\\", $resource);
+								unset($j[count($j) - 1]);
+								$j = join("\\", $j);
 
-						foreach ($ref->getMethods() as $method) {
-							if ($method->hasAnnotation("privilege")) {
-								$resources[] = array("resource" => $resource, "privilege" => $method->getAnnotation("privilege"), "parent" => NULL);
+								$resources[] = array("resource" => $resource, "privilege" => NULL, "parent" => $j);
+							}
+
+							foreach ($ref->getMethods() as $method) {
+								if ($method->hasAnnotation("privilege")) {
+									$resources[] = array("resource" => $resource, "privilege" => $method->getAnnotation("privilege"), "parent" => NULL);
+								}
 							}
 						}
 					}
@@ -53,7 +59,7 @@ abstract class AutoModule extends BaseModule {
 		}
 
 		sort($resources);
-		
+
 		foreach ($resources as $item) {
 			if (!$permissions->hasResource($item["resource"])) {
 				$permissions->addResource($item["resource"], $item["parent"] ? $item["parent"] : NULL);

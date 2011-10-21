@@ -97,13 +97,13 @@ class Presenter extends \Nette\Application\UI\Presenter {
 			return true;
 		}
 
-		$data = \Venne\Security\Authorizator::parseAnnotations(get_called_class(), $method);
+		$data = \App\SecurityModule\Authorizator::parseAnnotations(get_called_class(), $method);
 
-		if($data[\Venne\Security\Authorizator::RESOURCE] === NULL){
+		if($data[\App\SecurityModule\Authorizator::RESOURCE] === NULL){
 			return true;
 		}
 		
-		if (!$this->user->isAllowed($data[\Venne\Security\Authorizator::RESOURCE], $data[\Venne\Security\Authorizator::PRIVILEGE])) {
+		if (!$this->user->isAllowed($data[\App\SecurityModule\Authorizator::RESOURCE], $data[\App\SecurityModule\Authorizator::PRIVILEGE])) {
 			return false;
 		}
 
@@ -246,17 +246,18 @@ class Presenter extends \Nette\Application\UI\Presenter {
 		$name = $this->getName();
 		$presenter = substr($name, strrpos(':' . $name, ':'));
 		$dir = dirname(dirname($this->getReflection()->getFileName()));
-		$dirP = substr(str_replace(realpath($this->getContext()->params["appDir"]), "", $dir), 1);
+		
+		$path = str_replace(":", "Module/", substr($name, 0, strrpos($name, ":")))."Module";
+		$subPath = substr($name, strrpos($name, ":") !== FALSE ? strrpos($name, ":") + 1 : 0);
+		if ($path) {
+			$path .= "/";
+		}
 
 		return array(
-			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter/$this->view.latte",
-			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter.$this->view.latte",
-			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter/$this->view.phtml",
-			$this->getContext()->params["wwwDir"] . "/themes/$skinName/$dirP/$presenter.$this->view.phtml",
-			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.latte",
-			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter.$this->view.latte",
-			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter/$this->view.phtml",
-			$this->getContext()->params["appDir"] . "/$dirP/templates/$presenter.$this->view.phtml",
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/templates/$path$presenter/$this->view.latte",
+			$this->getContext()->params["wwwDir"] . "/themes/$skinName/templates/$path$presenter.$this->view.latte",
+			"$dir/templates/$presenter/$this->view.latte",
+			"$dir/templates/$presenter.$this->view.latte",
 		);
 	}
 

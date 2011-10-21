@@ -28,7 +28,6 @@ class AdminRoute extends \Nette\Application\Routers\Route
 		if($data === NULL){
 			return NULL;
 		}
-		dump($data);
 		$presenter = explode(":", $data->presenterName);
 		$presenter = $presenter[0] . ":Admin:" . implode(":", array_splice($presenter, 1));
 		$data->setPresenterName($presenter);
@@ -44,12 +43,8 @@ class AdminRoute extends \Nette\Application\Routers\Route
 	public function constructUrl(\Nette\Application\Request $appRequest, \Nette\Http\Url $refUrl)
 	{
 		$data = parent::constructUrl($appRequest, $refUrl);
-		dump($data);
-		//$data = preg_replace('/\/(a-zA-Z)+\./i', "/", $data);
-		$data = str_replace("/admin.", "/", $data);
-		$data = str_replace(".admin/", "/", $data);
-		dump($data);
-		die();
+		$data = str_replace("/Admin.", "/", $data);
+		$data = str_replace(".Admin/", "/", $data);
 		return $data;
 	}
 

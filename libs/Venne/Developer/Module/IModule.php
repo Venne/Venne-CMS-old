@@ -32,7 +32,7 @@ interface IModule {
 	public function setRoutes(\Nette\Application\Routers\RouteList $router, $prefix = "");
 
 
-	public function setPermissions(\Venne\Application\Container $container, \Venne\Security\Authorizator $permissions);
+	public function setPermissions(\Venne\Application\Container $container, \App\SecurityModule\Authorizator $permissions);
 
 
 	public function setListeners(\Venne\Application\Container $container);
@@ -41,7 +41,7 @@ interface IModule {
 	public function setServices(\Venne\Application\Container $container);
 
 
-	public function setHooks(\Venne\Application\Container $container, \Venne\HookModule\Manager $manager);
+	public function setHooks(\Venne\Application\Container $container,  \App\HookModule\Manager $manager);
 
 
 	public function install();
