@@ -140,6 +140,9 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 			$robotLoader = $this->presenter->context->robotLoader;
 			$robotLoader->rebuild();
 			foreach($robotLoader->getIndexedClasses() as $key=>$item){
+				if($key == "Venne\Testing\TestCase"){
+					continue; // because Class 'PHPUnit_Framework_TestCase' not found
+				}
 				$class = "\\{$key}";
 				$classReflection = new \Nette\Reflection\ClassType($class);
 				if($classReflection->isSubclassOf("\\Venne\\Developer\\Doctrine\\BaseEntity")){
