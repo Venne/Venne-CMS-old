@@ -1,0 +1,29 @@
+<h1>{_"System settings"}</h1>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+		$("#frmformMode-mode").change(function(){
+			$("#frm-formMode").submit();
+		})
+
+    });
+</script>
+
+<ul class="toolbar">
+	
+	<li n:if="$presenter->isAllowed('System:Admin:Default:default')">
+		<a href="{plink Default:}"{if $presenter->isCurrent("System:Admin:Default:*")} class="active"{/if}>general</a>
+	</li>
+	<li n:if="$presenter->isAllowed('System:Admin:Database:default')">
+		<a href="{plink Database:}"{if $presenter->isCurrent("System:Admin:Database:*")} class="active"{/if}>database</a>
+	</li>
+	<li n:if="$presenter->isAllowed('System:Admin:Account:default')">
+		<a href="{plink Account:}"{if $presenter->isCurrent("System:Admin:Account:*")} class="active"{/if}>account</a>
+	</li>
+	
+	<li class="form"><label>{form formMode}<span>mode:</span>{input mode}{/form}</li>
+	
+</ul>
+
+<h2>Select mode</h2>
+

@@ -1,0 +1,13 @@
+<h1>{_"Error module"}</h1>
+
+<ul class="menu">
+
+	<li n:if="$presenter->isAllowed('Error:Admin:Default:default')">
+		<a href="{link default}"{if $presenter->isCurrent("Error:Admin:Default:default")} class="active"{/if}>list</a>
+	</li>
+
+	<li n:if="$presenter->isAllowed('Error:Admin:Default:create')">
+		<a href="{link create}"{if $presenter->isCurrent("Error:Admin:Default:create")} class="active"{/if}>new item</a>
+	</li>
+
+</ul>
