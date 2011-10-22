@@ -147,10 +147,10 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 				$class = "\\{$key}";
 				try{
 					$classReflection = new \Nette\Reflection\ClassType($class);
+					if($classReflection->isSubclassOf("\\Venne\\Developer\\Doctrine\\BaseEntity")){
+						$classes[] = $em->getClassMetadata($class);
+					}
 				}catch(\ReflectionException $e){
-				}
-				if($classReflection->isSubclassOf("\\Venne\\Developer\\Doctrine\\BaseEntity")){
-					$classes[] = $em->getClassMetadata($class);
 				}
 			}
 			$classes[] = $em->getClassMetadata("\App\SecurityModule\UserEntity");
