@@ -36,7 +36,7 @@ class LayoutKeyEntity extends \Venne\Developer\Doctrine\BaseEntity{
 	
 	/**
 	 * @ManyToOne(targetEntity="layoutEntity", inversedBy="id")
-	 * @JoinColumn(name="layout_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE")
+	 * @JoinColumn(name="layout_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	protected $layout;
 	

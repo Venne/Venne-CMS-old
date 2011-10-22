@@ -30,7 +30,7 @@ class PermissionEntity extends \Venne\Developer\Doctrine\BaseEntity {
 	protected $resource;
 
 	/**
-	 * @Column(type="string", nullable="true")
+	 * @Column(type="string", nullable=true)
 	 */
 	protected $privilege;
 

@@ -32,7 +32,7 @@ class RoleEntity extends \Venne\Developer\Doctrine\BaseEntity {
 	protected $childrens;
 	/**
 	 * @ManyToOne(targetEntity="roleEntity", inversedBy="id")
-	 * @JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE")
+	 * @JoinColumn(name="role_id", referencedColumnName="id", onDelete="CASCADE")
 	 * @OrderBy({"order" = "ASC"})
 	 */
 	protected $parent;

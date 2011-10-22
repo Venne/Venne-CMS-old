@@ -36,7 +36,7 @@ class AliasKey extends \Venne\Developer\Doctrine\BaseEntity{
 	
 	/**
 	 * @ManyToOne(targetEntity="alias", inversedBy="id")
-	 * @JoinColumn(name="alias_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE")
+	 * @JoinColumn(name="alias_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	protected $alias;
 	

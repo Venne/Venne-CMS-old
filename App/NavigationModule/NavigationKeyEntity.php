@@ -36,7 +36,7 @@ class NavigationKeyEntity extends \Venne\Developer\Doctrine\BaseEntity{
 	
 	/**
 	 * @ManyToOne(targetEntity="navigationEntity", inversedBy="id")
-	 * @JoinColumn(name="navigation_id", referencedColumnName="id", onDelete="CASCADE", onUpdate="CASCADE")
+	 * @JoinColumn(name="navigation_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	protected $navigation;
 	
