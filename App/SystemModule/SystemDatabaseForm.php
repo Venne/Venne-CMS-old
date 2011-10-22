@@ -118,6 +118,7 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 				$this->getPresenter()->flashMessage("Cannot connect to database ".$e->getMessage(), "warning");
 				return false;
 			}
+			restore_error_handler();
 		}
 		
 		if ($values["section"] == "common" || $values["use"]) {
@@ -144,12 +145,15 @@ class SystemDatabaseForm extends \Venne\Developer\Form\EditForm {
 					continue; // because Class 'PHPUnit_Framework_TestCase' not found
 				}
 				$class = "\\{$key}";
-				$classReflection = new \Nette\Reflection\ClassType($class);
+				try{
+					$classReflection = new \Nette\Reflection\ClassType($class);
+				}catch(\ReflectionException $e){
+				}
 				if($classReflection->isSubclassOf("\\Venne\\Developer\\Doctrine\\BaseEntity")){
 					$classes[] = $em->getClassMetadata($class);
 				}
 			}
-			$classes[] = $em->getClassMetadata("\SecurityModule\UserEntity");
+			$classes[] = $em->getClassMetadata("\App\SecurityModule\UserEntity");
 			$tool = new \Doctrine\ORM\Tools\SchemaTool($em);
 			$tool->createSchema($classes);
 			
