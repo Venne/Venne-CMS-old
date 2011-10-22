@@ -22,9 +22,9 @@ class NavigationElement extends \Venne\Developer\Element\BaseElement {
 	{
 		$this->template->type = "navigation";
 		if ($this->key == "main" || $this->key == "tree" || $this->key == "submain") {
-			$this->template->startDepth = 0;
-			$this->template->maxDepth = 9999;
-			$this->template->followActive = true;
+			$this->template->startDepth = isset($this->params["startDepth"]) ? $this->params["startDepth"] : 0;
+			$this->template->maxDepth = isset($this->params["maxDepth"]) ? $this->params["maxDepth"] : 9999;
+			$this->template->followActive = isset($this->params["followActive"]) ? $this->params["followActive"] : true;
 			
 			if($this->key == "main"){
 				$this->template->maxDepth = 1;
@@ -34,11 +34,6 @@ class NavigationElement extends \Venne\Developer\Element\BaseElement {
 				$this->template->startDepth = 1;
 				$this->template->maxDepth = 1;
 			}
-			
-			if(isset($this->params["followActive"])){
-				$this->template->followActive = $this->params["followActive"];
-			}
-			
 		}else{
 			$this->template->type = "path";
 		}
