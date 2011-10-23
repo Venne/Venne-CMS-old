@@ -176,9 +176,9 @@ class Configurator extends \Nette\Configurator {
 		/*
 		 * Default route
 		 */
-		$router[] = new Route('', $this->container->params["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
+		$router[] = new Route('', $this->container->params["website"]["defaultPresenter"] . ":", Route::ONE_WAY);
 		if ($prefix) {
-			$router[] = new Route($prefix, $this->container->params["website"]["defaultModule"] . ":Default:", Route::ONE_WAY);
+			$router[] = new Route($prefix, $this->container->params["website"]["defaultPresenter"] . ":", Route::ONE_WAY);
 		}
 	}
 
