@@ -56,7 +56,7 @@ class Service extends Venne\Developer\Service\DoctrineService {
 			$repo = $this->getRepository();
 
 			$website = $this->context->services->website->current;
-			$this->rootItems = $repo->findBy(array("parent" => NULL, array("order"=>"ASC")));
+			$this->rootItems = $repo->findBy(array("parent" => NULL), array("order"=>"ASC"));
 		}
 		return $this->rootItems;
 	}
