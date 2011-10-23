@@ -14,11 +14,12 @@ namespace Venne\Forms;
 /**
  * @author     Josef Kříž
  */
-class Container extends \Nette\Forms\Container
-{
-	
+class Container extends \Nette\Forms\Container {
+
+
 	/** @var \Nette\DI\Container */
 	protected $container;
+
 
 	/**
 	 * @param \Nette\DI\Container
@@ -27,7 +28,8 @@ class Container extends \Nette\Forms\Container
 	{
 		$this->container = $container;
 	}
-	
+
+
 	/**
 	 * @param string $name
 	 * @param string $label
@@ -38,11 +40,11 @@ class Container extends \Nette\Forms\Container
 	{
 		$this[$name] = new \Venne\Forms\Controls\TagInput($label);
 		$this[$name]->setRenderName('tagInputSuggest' . ucfirst($name));
-		
+
 		$this->container->application->presenter->addJs("/js/jquery-1.6.min.js");
 		$this->container->application->presenter->addJs("/js/Forms/Controls/tagInput.js");
 		$this->container->application->presenter->addCss("/css/Forms/Controls/tagInput.css");
-		
+
 		return $this[$name];
 	}
 

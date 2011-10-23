@@ -194,5 +194,26 @@ class BaseForm extends \Venne\Application\UI\Form {
 			
 		return $this[$name];
 	}
+	
+	/**
+	 * Adds editor input control to the form.
+	 * @param  string  control name
+	 * @param  string  label
+	 * @param  int  width of the control
+	 * @param  int  height of the control in text lines
+	 * @return Nette\Forms\Controls\TextArea
+	 */
+	public function addEditor($name, $label = NULL, $cols = 40, $rows = 80)
+	{
+		$ret = parent::addTextArea($name, $label, $cols, $rows);
+		$ret->getControlPrototype()->class[] = "control-editor";
+		$ret->getControlPrototype()->venneBasePath[] = $this->presenter->template->basePath;
+		
+		$this->getPresenter()->addJs("/ckeditor/ckeditor.js");
+		$this->getPresenter()->addJs("/ckeditor/adapters/jquery.js");
+		$this->getPresenter()->addJs("/js/Forms/Controls/Editor.js?basePath=".$this->presenter->template->basePath);
+		
+		return $ret;
+	}
 
 }
