@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Latte\Macros;
+namespace App\CoreModule;
 
 use Venne;
 

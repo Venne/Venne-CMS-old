@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Latte\Macros;
+namespace App\CoreModule;
 
 use Venne;
 
@@ -30,7 +30,7 @@ class ThumbMacro extends \Nette\Latte\Macros\MacroSet {
 		if(!count($param)){
 			return $writer->write('?>src="<?php echo $basePath;?>' . $name . '"<?php');
 		}
-		return $writer->write('?>src="<?php echo \Venne\Latte\Macros\ThumbMacro::thumb($presenter, "' . $name . '", ' . implode(", ", $param) . '); ?>"<?php');
+		return $writer->write('?>src="<?php echo \App\CoreModule\ThumbMacro::thumb($presenter, "' . $name . '", ' . implode(", ", $param) . '); ?>"<?php');
 	}
 	
 	public static function install(\Nette\Latte\Parser $parser)

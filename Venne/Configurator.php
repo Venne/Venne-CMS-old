@@ -298,26 +298,6 @@ class Configurator extends \Nette\Configurator {
 
 
 	/**
-	 * @param \Nette\DI\IContainer
-	 * @return \Nette\Latte\Engine
-	 */
-	public static function createServiceLatteEngine(\Nette\DI\IContainer $container)
-	{
-		$engine = new Nette\Latte\Engine();
-
-		/*
-		 * Load macros
-		 */
-		foreach ($container->params["macros"] as $item) {
-			$class = "\Venne\Latte\Macros\\" . ucfirst($item) . "Macro";
-			$class::install($engine->parser);
-		}
-
-		return $engine;
-	}
-
-
-	/**
 	 * @param \Nette\DI\IContainer $container
 	 * @return Templating\TemplateContainer 
 	 */

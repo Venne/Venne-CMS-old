@@ -46,8 +46,11 @@ abstract class Theme implements ITheme {
 
 	public function setMacros(\Nette\Latte\Parser $parser)
 	{
-		\Venne\Latte\Macros\JsMacro::install($parser);
-		\Venne\Latte\Macros\CssMacro::install($parser);
+		\App\CoreModule\JsMacro::install($parser);
+		\App\CoreModule\CssMacro::install($parser);
+		\App\CoreModule\ElementMacro::install($parser);
+		\App\CoreModule\ThumbMacro::install($parser);
+		\App\CoreModule\ConfirmMacro::install($parser);
 	}
 
 
