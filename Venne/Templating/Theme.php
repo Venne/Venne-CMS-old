@@ -9,12 +9,12 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Developer\Theme;
+namespace Venne\Templating;
 
 /**
  * @author Josef Kříž
  */
-abstract class BaseTheme implements ITheme {
+abstract class Theme implements ITheme {
 
 	protected $context;
 	
