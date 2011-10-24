@@ -18,7 +18,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class SystemAccountForm extends \Venne\Developer\Form\EditForm {
+class SystemAccountForm extends \Venne\Forms\EditForm {
 
 	protected $mode;
 

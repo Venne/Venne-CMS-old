@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class LayoutForm extends \Venne\Developer\Form\EntityForm{
+class LayoutForm extends \Venne\Forms\EntityForm{
 	
 	public function startup()
 	{

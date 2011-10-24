@@ -18,7 +18,7 @@ use Nette\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class WebsiteForm extends \Venne\Developer\Form\EditForm{
+class WebsiteForm extends \Venne\Forms\EditForm{
 	
 	public function startup()
 	{

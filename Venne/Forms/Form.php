@@ -9,76 +9,12 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Developer\Form;
+namespace Venne\Forms;
 
 /**
  * @author     Josef Kříž
  */
-class BaseForm extends \Venne\Application\UI\Form {
-
-
-	protected $successLink;
-	protected $successLinkParams;
-	protected $flash;
-	protected $flashStatus;
-
-
-	/**
-	 * Application form constructor.
-	 */
-	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL)
-	{
-		parent::__construct($parent, $name);
-		$this->startup();
-		$this->setCurrentGroup();
-		$this->flashStatus = $this->getPresenter()->getContext()->params['flashes']['success'];
-	}
-
-	public function setSuccessLink($link, $params = NULL)
-	{
-		$this->successLink = $link;
-		$this->successLinkParams = (array)$params;
-	}
-
-
-	public function setFlashMessage($value, $status = NULL)
-	{
-		if ($status) {
-			$this->flashStatus = $status;
-		}
-		$this->flash = $value;
-	}
-
-
-	public function startup()
-	{
-		
-	}
-
-
-	public function onSubmitForm()
-	{
-		if (!$this->isValid()) {
-			return;
-		}
-
-		if ($this->save() === NULL) {
-			if ($this->flash)
-				$this->getPresenter()->flashMessage($this->flash, $this->flashStatus);
-			if ($this->successLink && !$this->presenter->isAjax()){
-				$this->presenter->redirect($this->successLink, $this->successLinkParams);
-			}
-		}
-	}
-
-
-	public function save()
-	{
-		
-	}
-
-
-	/* --------------- new controls ------------ */
+class Form extends \Venne\Application\UI\Form {
 
 
 	/**
@@ -92,18 +28,17 @@ class BaseForm extends \Venne\Application\UI\Form {
 		$control->currentGroup = $this->currentGroup;
 		return $this[$name] = $control;
 	}
-	
+
+
 	/**
 	 * Adds naming container to the form.
 	 * @param  string  name
 	 * @return Container
 	 */
-	public function addDynamic($name, $factory , $createDefault = 0)
+	public function addDynamic($name, $factory, $createDefault = 0)
 	{
 		return $this[$name] = new \Venne\Forms\Containers\Replicator($factory, $createDefault);
 	}
-	
-	
 
 
 	/**
@@ -179,7 +114,8 @@ class BaseForm extends \Venne\Application\UI\Form {
 
 		return $this[$name];
 	}
-	
+
+
 	/**
 	 * @param string $label label
 	 * @param int $cols šířka elementu input
@@ -191,10 +127,11 @@ class BaseForm extends \Venne\Application\UI\Form {
 		$this[$name] = new \DependentSelectBox\DependentSelectBox($label, $parents, $dataCallback);
 
 		$this->getPresenter()->addJs("/js/Forms/Controls/jquery.nette.dependentselectbox.js");
-			
+
 		return $this[$name];
 	}
-	
+
+
 	/**
 	 * Adds editor input control to the form.
 	 * @param  string  control name
@@ -208,11 +145,11 @@ class BaseForm extends \Venne\Application\UI\Form {
 		$ret = parent::addTextArea($name, $label, $cols, $rows);
 		$ret->getControlPrototype()->class[] = "control-editor";
 		$ret->getControlPrototype()->venneBasePath[] = $this->presenter->template->basePath;
-		
+
 		$this->getPresenter()->addJs("/ckeditor/ckeditor.js");
 		$this->getPresenter()->addJs("/ckeditor/adapters/jquery.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/Editor.js?basePath=".$this->presenter->template->basePath);
-		
+		$this->getPresenter()->addJs("/js/Forms/Controls/Editor.js?basePath=" . $this->presenter->template->basePath);
+
 		return $ret;
 	}
 

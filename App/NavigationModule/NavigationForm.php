@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class NavigationForm extends \Venne\Developer\Form\EditForm {
+class NavigationForm extends \Venne\Forms\EditForm {
 
 	public function startup()
 	{

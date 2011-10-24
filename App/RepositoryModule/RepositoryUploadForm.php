@@ -18,7 +18,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class RepositoryUploadForm extends \Venne\Developer\Form\EditForm {
+class RepositoryUploadForm extends \Venne\Forms\EditForm {
 
 	protected $repository;
 	

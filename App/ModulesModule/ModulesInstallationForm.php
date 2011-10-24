@@ -18,7 +18,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class ModulesInstalltionForm extends \Venne\Developer\Form\EditForm {
+class ModulesInstalltionForm extends \Venne\Forms\EditForm {
 
 	public function startup()
 	{

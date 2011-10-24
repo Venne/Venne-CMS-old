@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class LoginForm extends \Venne\Developer\Form\EditForm {
+class LoginForm extends \Venne\Forms\EditForm {
 
 
 	public function startup()

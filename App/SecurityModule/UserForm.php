@@ -17,7 +17,7 @@ use Nette\Utils\Html;
 /**
  * @author Josef Kříž
  */
-class UserForm extends \Venne\Developer\Form\EntityForm {
+class UserForm extends \Venne\Forms\EntityForm {
 
 	/** @var UserEntity*/
 	protected $key;

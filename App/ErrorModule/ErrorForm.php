@@ -18,7 +18,7 @@ use Venne\Forms\Form;
 /**
  * @author Josef Kříž
  */
-class ErrorForm extends \Venne\Developer\Form\EditForm {
+class ErrorForm extends \Venne\Forms\EditForm {
 
 	public function startup()
 	{

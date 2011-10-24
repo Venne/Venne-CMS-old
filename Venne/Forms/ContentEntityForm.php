@@ -9,7 +9,7 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace Venne\Developer\Form;
+namespace Venne\Forms;
 
 /**
  * @author     Josef Kříž
