@@ -49,8 +49,6 @@ class Configurator extends \Nette\Configurator {
 
 		$this->container->addService("services", new \Venne\DI\Container($this->container));
 		$this->container->addService("modules", new \Venne\DI\Container($this->container));
-		$this->container->addService("routes", new \Venne\DI\Container($this->container));
-		$this->container->addService("pages", new \Venne\DI\Container($this->container));
 		$this->container->addService("themes", new \Venne\DI\Container($this->container));
 
 		/*
@@ -294,6 +292,17 @@ class Configurator extends \Nette\Configurator {
 	public static function createServiceTranslatorPanel(\Nette\DI\IContainer $container)
 	{
 		return new \Venne\Localization\Panel($container);
+	}
+
+
+	/**
+	 * @param \Nette\DI\IContainer
+	 * @return \Nette\Latte\Engine
+	 */
+	public static function createServiceLatteEngine(\Nette\DI\IContainer $container)
+	{
+		$engine = new Nette\Latte\Engine();
+		return $engine;
 	}
 
 
