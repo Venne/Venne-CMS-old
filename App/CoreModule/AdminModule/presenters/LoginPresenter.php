@@ -7,7 +7,7 @@
  * @package    MyApplication
  */
 
-namespace App\DefaultModule\AdminModule;
+namespace App\CoreModule\AdminModule;
 
 use Nette\Application\UI,
 	Nette\Security;

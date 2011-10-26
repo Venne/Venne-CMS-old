@@ -9,20 +9,20 @@
  * the file license.txt that was distributed with this source code.
  */
 
-namespace App\DefaultModule\AdminModule;
+namespace App\CoreModule\AdminModule;
 
 /**
  * @author Josef Kříž
  */
-class DefaultPresenter extends \Venne\Developer\Presenter\AdminPresenter
+class AboutPresenter extends \Venne\Developer\Presenter\AdminPresenter
 {
-	
+
 	public function renderDefault()
 	{
-		$this->setTitle("Venne:CMS");
-		$this->setKeywords("Venne:CMS");
-		$this->setDescription("Venne:CMS");
+		$this->setTitle("Venne:CMS | About Venne:CMS");
+		$this->setKeywords("about Venne:CMS");
+		$this->setDescription("About Venne:CMS");
 		$this->setRobots(self::ROBOTS_NOINDEX | self::ROBOTS_NOFOLLOW);
 	}
-
+	
 }

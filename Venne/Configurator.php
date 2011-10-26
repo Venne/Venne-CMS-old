@@ -157,7 +157,7 @@ class Configurator extends \Nette\Configurator {
 
 		$router[] = $adminRouter = new \Venne\Application\Routers\RouteList("admin");
 		$adminRouter[] = new Route('admin/<module>/<presenter>[/<action>[/<id>]]', array(
-					'module' => "Default",
+					'module' => "Core",
 					'presenter' => 'Default',
 					'action' => 'default',
 				));
