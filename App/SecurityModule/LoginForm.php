@@ -49,7 +49,7 @@ class LoginForm extends \Venne\Forms\EditForm {
 			if ($backlink) {
 				$this->presenter->redirect($this->presenter->getApplication()->restoreRequest($backlink));
 			} else {
-				$this->presenter->redirect(':Default:Admin:Default:');
+				$this->presenter->redirect(':Core:Admin:Default:');
 			}
 
 		} catch (\Nette\Security\AuthenticationException $e) {
