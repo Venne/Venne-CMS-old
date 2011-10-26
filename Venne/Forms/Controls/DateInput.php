@@ -116,17 +116,18 @@ class DateInput extends BaseControl  {
 	 */
 	public function getControl() {
 		$control = parent::getControl();
+		$format = self::$formats[$this->type];
 		if ($this->value !== null) {
-			$control->value = $this->value->format(self::$formats[$this->type]);
+			$control->value = $this->value->format($format);
 		}
 		if ($this->submitedValue !== null && is_string($this->submitedValue)) {
 			$control->value = $this->submitedValue;
 		}
 		if ($this->range['min'] !== null) {
-			$control->min = $this->range['min']->format(self::$formats[$this->type]);
+			$control->min = $this->range['min']->format($format);
 		}
 		if ($this->range['max'] !== null) {
-			$control->max = $this->range['max']->format(self::$formats[$this->type]);
+			$control->max = $this->range['max']->format($format);
 		}
 		return $control;
 	}
@@ -142,25 +143,14 @@ class DateInput extends BaseControl  {
 		if ($operation === \Nette\Forms\Form::RANGE) {
 			$this->range['min'] = $arg[0];
 			$this->range['max'] = $arg[1];
-			$this->addRule(function(DateInput $control, $range) {
-				if ($range['min'] !== null) {
-					if ($range['min'] > $control->getValue()) {
-						return false;
-					}
-				}
-				if ($range['max'] !== null) {
-					if ($range['max'] < $control->getValue()) {
-						return false;
-					}
-				}
-				return true;
-			}, $message, $this->range);
-			return $this;
+			$operation = ':dateInputRange';
+			$arg[0] = $this->formatDate($arg[0]);
+			$arg[1] = $this->formatDate($arg[1]);
+		} elseif ($operation === \Nette\Forms\Form::VALID) {
+			$operation = ':dateInputValid';
 		}
 		return parent::addRule($operation, $message, $arg);
 	}
-
-
 
 	/**
 	 * Filled validator: is control filled?
@@ -174,7 +164,14 @@ class DateInput extends BaseControl  {
 		return ($control->value !== null || $control->submitedValue !== null);
 	}
 
-
+	/**
+	 * Valid validator: is control valid?
+	 * @param  IControl
+	 * @return bool
+	 */
+	public static function validateDateInputValid(IControl $control) {
+		return self::validateValid($control);
+	}
 
 	/**
 	 * Valid validator: is control valid?
@@ -189,25 +186,29 @@ class DateInput extends BaseControl  {
 	}
 
 	/**
-	 *
 	 * @param self $control
 	 * @param array $args
 	 * @return bool
 	 */
-	public static function validateRange(self $control) {
+	public static function validateDateInputRange(self $control) {
 		if ($control->range['min'] !== null) {
-			if ($control->range['min'] > $control->getValue()) {
+			if ($control->range['min'] >= $control->value) {
 				return false;
 			}
 		}
 		if ($control->range['max'] !== null) {
-			if ($control->range['max'] < $control->getValue()) {
+			if ($control->range['max'] <= $control->value) {
 				return false;
 			}
 		}
 		return true;
 	}
 
+	/**
+	 *
+	 * @param string $value
+	 * @return \DateTime
+	 */
 	private function parseValue($value) {
 		$date = null;
 		if ($this->type === self::TYPE_WEEK) {
@@ -220,5 +221,17 @@ class DateInput extends BaseControl  {
 			$date = \DateTime::createFromFormat('!'.self::$formats[$this->type], $value);
 		}
 		return $date;
+	}
+
+	/**
+	 *
+	 * @param \DateTime $value
+	 * @return string
+	 */
+	private function formatDate(\DateTime $value = null) {
+		if ($value) {
+			$value = $value->format(self::$formats[$this->type]);
+		}
+		return $value;
 	}
 }

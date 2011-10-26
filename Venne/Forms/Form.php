@@ -16,6 +16,14 @@ namespace Venne\Forms;
  */
 class Form extends \Venne\Application\UI\Form {
 
+	/**
+	 * Application form constructor.
+	 */
+	public function __construct(\Nette\ComponentModel\IContainer $parent = NULL, $name = NULL)
+	{
+		parent::__construct($parent, $name);
+		$this->getElementPrototype()->class[] = "venne-form";
+	}
 
 	/**
 	 * Adds naming container to the form.
@@ -51,10 +59,7 @@ class Form extends \Venne\Application\UI\Form {
 	{
 		$this[$name] = new \Venne\Forms\Controls\TagInput($label);
 		$this[$name]->setRenderName('tagInputSuggest' . ucfirst($name));
-
-		$this->getPresenter()->addJs("/js/Forms/Controls/tagInput.js");
-		$this->getPresenter()->addCss("/css/Forms/Controls/tagInput.css");
-
+		$this->getPresenter()->addJs("/js/Forms/Controls/tag.js");
 		return $this[$name];
 	}
 
@@ -68,12 +73,7 @@ class Form extends \Venne\Application\UI\Form {
 	public function addDateTime($name, $label = NULL)
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_DATETIME);
-
-		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
-
+		$this->getPresenter()->addJs("/js/Forms/Controls/date.js");
 		return $this[$name];
 	}
 
@@ -87,12 +87,7 @@ class Form extends \Venne\Application\UI\Form {
 	public function addDate($name, $label = NULL)
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_DATE);
-
-		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
-
+		$this->getPresenter()->addJs("/js/Forms/Controls/date.js");
 		return $this[$name];
 	}
 
@@ -106,12 +101,7 @@ class Form extends \Venne\Application\UI\Form {
 	public function addTime($name, $label = NULL)
 	{
 		$this[$name] = new \Venne\Forms\Controls\DateInput($label, \Venne\Forms\Controls\DateInput::TYPE_TIME);
-
-		$this->getPresenter()->addJs("/js/jquery-ui-timepicker-addon.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInput.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/DateInputSettings.js");
-		$this->getPresenter()->addCss("/css/Forms/Controls/DateInput.css");
-
+		$this->getPresenter()->addJs("/js/Forms/Controls/date.js");
 		return $this[$name];
 	}
 
@@ -125,9 +115,7 @@ class Form extends \Venne\Application\UI\Form {
 	public function addDependentSelectBox($name, $label, $parents, $dataCallback)
 	{
 		$this[$name] = new \DependentSelectBox\DependentSelectBox($label, $parents, $dataCallback);
-
-		$this->getPresenter()->addJs("/js/Forms/Controls/jquery.nette.dependentselectbox.js");
-
+		$this->getPresenter()->addJs("/js/Forms/Controls/dependentSelectBox.js");
 		return $this[$name];
 	}
 
@@ -143,13 +131,8 @@ class Form extends \Venne\Application\UI\Form {
 	public function addEditor($name, $label = NULL, $cols = 40, $rows = 80)
 	{
 		$ret = parent::addTextArea($name, $label, $cols, $rows);
-		$ret->getControlPrototype()->class[] = "control-editor";
-		$ret->getControlPrototype()->venneBasePath[] = $this->presenter->template->basePath;
-
-		$this->getPresenter()->addJs("/ckeditor/ckeditor.js");
-		$this->getPresenter()->addJs("/ckeditor/adapters/jquery.js");
-		$this->getPresenter()->addJs("/js/Forms/Controls/Editor.js?basePath=" . $this->presenter->template->basePath);
-
+		$ret->getControlPrototype()->data('venne-editor', true);
+		$this->getPresenter()->addJs("/js/Forms/Controls/editor.js");
 		return $ret;
 	}
 
