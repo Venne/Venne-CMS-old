@@ -11,6 +11,8 @@
 
 namespace App\SecurityModule;
 
+use Nette\Application\UI\InvalidLinkException;
+
 use Venne\ORM\Column;
 use Nette\Utils\Html;
 
@@ -47,7 +49,11 @@ class LoginForm extends \Venne\Forms\EditForm {
 			
 			$backlink = $this->presenter->getParam('backlink');
 			if ($backlink) {
-				$this->presenter->redirect($this->presenter->getApplication()->restoreRequest($backlink));
+				try {
+					$this->presenter->redirect($this->presenter->getApplication()->restoreRequest($backlink));				
+				} catch (InvalidLinkException $e) {
+					$this->presenter->redirect(':Core:Admin:Default:');
+				}
 			} else {
 				$this->presenter->redirect(':Core:Admin:Default:');
 			}
